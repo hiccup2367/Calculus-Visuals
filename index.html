@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Calculus Explorer — Vyom Krothapalli</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.0/math.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#f5f7fb;--w:#fff;--b9:#1e3a5f;--b8:#1e40af;--b7:#1d4ed8;--b6:#2563eb;
+  --b5:#3b82f6;--b4:#60a5fa;--b3:#93c5fd;--b2:#bfdbfe;--b1:#dbeafe;--b0:#eff6ff;
+  --tx:#1e2d42;--txm:#4a6080;--txd:#7a94b0;
+}
+html,body{height:100%;overflow:hidden;font-family:'Source Serif 4',Georgia,serif}
+body{display:flex;background:var(--bg);color:var(--tx)}
+ 
+/* Sidebar */
+.sb{width:228px;min-width:228px;background:var(--w);border-right:1.5px solid var(--b1);display:flex;flex-direction:column;overflow-y:auto}
+.sb::-webkit-scrollbar{width:3px}.sb::-webkit-scrollbar-thumb{background:var(--b2)}
+.sbl{padding:20px 18px 16px;border-bottom:1.5px solid var(--b1);flex-shrink:0}
+.slr{display:flex;align-items:center;gap:10px}
+.lsy{width:34px;height:34px;background:var(--b7);color:#fff;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:20px;font-family:'Lora',serif;flex-shrink:0}
+.ltx{font-family:'Lora',serif;font-size:18px;font-weight:700;color:var(--b9);line-height:1.1}
+.ltx small{display:block;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--txd);font-weight:400;margin-top:2px}
+.scl{padding:12px 18px 4px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--b3);flex-shrink:0}
+.nv{padding:8px 18px 8px 16px;cursor:pointer;font-size:13px;color:var(--txm);border-left:3px solid transparent;transition:all .14s;display:flex;align-items:center;gap:9px;user-select:none;flex-shrink:0}
+.nv:hover{color:var(--b7);background:var(--b0)}.nv.active{color:var(--b7);border-left-color:var(--b6);background:var(--b0);font-weight:600}
+.nv .ni{font-size:12px;width:17px;text-align:center;flex-shrink:0;font-family:'JetBrains Mono',monospace;color:var(--b3)}.nv.active .ni{color:var(--b4)}
+.nv .ns{font-size:10px;color:var(--txd);font-style:italic;display:block;margin-top:1px}
+.nd{height:1.5px;background:var(--b1);margin:4px 0;flex-shrink:0}
+.sb-foot{padding:8px 18px 14px;font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--b3);text-align:center;letter-spacing:.06em;margin-top:auto;border-top:1px solid var(--b1);flex-shrink:0}
+ 
+/* Main layout */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.mod{display:none;flex-direction:column;height:100%;overflow:hidden}.mod.active{display:flex}
+ 
+/* Text section */
+.ts{flex-shrink:0;overflow-y:auto;background:var(--w);border-bottom:1.5px solid var(--b1);padding:22px 34px 18px;max-height:44%}
+.ts::-webkit-scrollbar{width:3px}.ts::-webkit-scrollbar-thumb{background:var(--b2)}
+.cb{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--b4);margin-bottom:7px}
+.pt{font-family:'Lora',serif;font-size:25px;font-weight:700;color:var(--b9);line-height:1.2;margin-bottom:3px}
+.ptag{font-family:'Lora',serif;font-style:italic;font-size:13.5px;color:var(--txd);margin-bottom:14px}
+.pb{display:flex;gap:22px}
+.prose{flex:1;min-width:0}
+.prose p{font-size:13px;line-height:1.78;color:var(--tx);margin-bottom:10px}
+.prose p:last-child{margin-bottom:0}
+.prose b{color:var(--b8);font-weight:600}.prose em{font-style:italic;color:var(--b8)}
+.db{width:218px;min-width:218px;flex-shrink:0;background:var(--b0);border:1.5px solid var(--b2);border-radius:8px;padding:13px 15px;align-self:flex-start}
+.dbt{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--b4);margin-bottom:7px}
+.dbb{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--b8);line-height:1.9}
+.dbb .katex{font-size:.95em}.dbb .katex-display{margin:.2em 0;text-align:left}
+ 
+/* Interactive section */
+.is{flex:1;min-height:0;display:flex;flex-direction:column;background:var(--bg)}
+.ih{padding:8px 34px;border-bottom:1px solid var(--b1);background:var(--w);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.il{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--b4);display:flex;align-items:center;gap:7px}
+.il::before{content:'';width:16px;height:1.5px;background:var(--b3);display:block}
+.share-mini{padding:4px 11px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.06em;background:var(--b0);border:1.5px solid var(--b2);color:var(--b7);border-radius:4px;cursor:pointer;transition:all .14s;white-space:nowrap}
+.share-mini:hover{background:var(--b7);color:#fff;border-color:var(--b7)}.share-mini.copied{background:#16a34a;border-color:#16a34a;color:#fff}
+ 
+/* Controls */
+.cb2{flex-shrink:0;background:var(--w);border-bottom:1.5px solid var(--b1);padding:9px 34px;display:flex;flex-wrap:wrap;gap:7px 22px;align-items:center}
+.cg{display:flex;flex-direction:column;gap:4px;min-width:120px}
+.cl{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--txd);display:flex;justify-content:space-between}
+.cv{color:var(--b7);font-weight:500;font-size:11px}
+input[type=range]{-webkit-appearance:none;width:100%;height:3px;background:var(--b2);border-radius:2px;outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--b7);border:2px solid #fff;box-shadow:0 0 0 2px var(--b3);cursor:pointer;transition:transform .1s}
+input[type=range]:active::-webkit-slider-thumb{transform:scale(1.2)}
+input[type=range]:focus-visible{outline:2px solid var(--b5);outline-offset:5px;border-radius:4px}
+select{background:#fff;border:1.5px solid var(--b2);color:var(--tx);padding:5px 8px;border-radius:5px;font-family:'Source Serif 4',serif;font-size:12px;cursor:pointer;outline:none}
+select:hover{border-color:var(--b3)}select:focus-visible{outline:2px solid var(--b5);outline-offset:2px}
+.tg{display:flex;gap:3px}
+.tb{padding:4px 10px;font-family:'JetBrains Mono',monospace;font-size:9.5px;background:#fff;border:1.5px solid var(--b2);color:var(--txd);cursor:pointer;border-radius:4px;transition:all .12s;user-select:none}
+.tb:hover{color:var(--b7);border-color:var(--b3)}.tb.active{background:var(--b7);border-color:var(--b7);color:#fff}
+.abt{padding:5px 13px;font-family:'JetBrains Mono',monospace;font-size:9.5px;background:var(--b7);border:none;color:#fff;border-radius:4px;cursor:pointer;transition:background .15s;white-space:nowrap}
+.abt:hover{background:var(--b8)}.abt.running{background:var(--b5)}
+ 
+/* Graph window */
+.gw{flex:1;min-height:0;position:relative;margin:14px 34px 0;border:1.5px solid var(--b2);border-radius:8px;background:#fff;overflow:hidden;box-shadow:0 1px 8px rgba(30,64,175,.06);cursor:crosshair}
+.gw:hover{border-color:var(--b3)}
+.gw canvas{position:absolute;inset:0;width:100%;height:100%}
+.gc{position:absolute;top:9px;left:13px;font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--b3);pointer-events:none;z-index:1}
+.gc-right{position:absolute;top:9px;right:13px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--b3);pointer-events:none;z-index:1;font-style:italic}
+ 
+/* Hint bar */
+.hint{flex-shrink:0;padding:5px 34px;background:linear-gradient(to right,var(--b0),transparent);border-top:1px solid var(--b1);display:flex;align-items:center;gap:8px;min-height:26px}
+.hint-txt{font-size:11.5px;font-style:italic;color:var(--txm);line-height:1.4}
+ 
+/* Results bar */
+.rb{flex-shrink:0;padding:7px 34px 11px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.ri{background:#fff;border:1.5px solid var(--b1);border-radius:6px;padding:6px 13px;display:flex;flex-direction:column;min-width:100px}
+.rl{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.09em;text-transform:uppercase;color:var(--txd);margin-bottom:2px}
+.rv{font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:500;color:var(--b7)}
+.ri.hi{border-color:var(--b3);background:var(--b0)}.ri.hi .rv{color:var(--b8)}
+.ri.dm .rv{color:var(--txm);font-size:12px}
+.rl .katex,.rv .katex{font-size:.82em}
+ 
+/* About Creator module */
+.about-wrap{flex:1;overflow-y:auto;display:flex;flex-direction:column;align-items:center;padding:36px 48px 48px;background:var(--bg)}
+.about-wrap::-webkit-scrollbar{width:4px}.about-wrap::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px}
+.about-hero{display:flex;align-items:center;gap:24px;margin-bottom:28px;width:100%;max-width:820px}
+.about-avatar{width:76px;height:76px;border-radius:50%;background:linear-gradient(135deg,var(--b7),var(--b4));color:#fff;font-family:'Lora',serif;font-weight:700;font-size:26px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 18px rgba(29,78,216,.22)}
+.about-hero-name{font-family:'Lora',serif;font-size:28px;font-weight:700;color:var(--b9);line-height:1.15;margin-bottom:4px}
+.about-hero-meta{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--b4)}
+.about-grid{display:grid;grid-template-columns:1fr 300px;gap:24px;width:100%;max-width:820px}
+.acard{background:var(--w);border:1.5px solid var(--b1);border-radius:10px;padding:24px 26px}
+.acard-title{font-family:'Lora',serif;font-size:15px;font-weight:700;color:var(--b9);margin-bottom:12px;display:flex;align-items:center;gap:7px}
+.bio-p{font-size:13.5px;line-height:1.82;color:var(--tx);margin-bottom:14px}
+.bio-p:last-of-type{margin-bottom:0}
+.stack-row{display:flex;flex-wrap:wrap;gap:5px;margin-top:14px}
+.spill{font-family:'JetBrains Mono',monospace;font-size:9px;padding:3px 9px;background:var(--b0);border:1.5px solid var(--b2);border-radius:20px;color:var(--b7)}
+.stat-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.scard{background:var(--b0);border:1.5px solid var(--b2);border-radius:8px;padding:14px 10px;text-align:center}
+.scard-num{font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:500;color:var(--b7);line-height:1}
+.scard-lbl{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--txd);margin-top:5px}
+.clink{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.clink-icon{width:28px;height:28px;background:var(--b0);border:1.5px solid var(--b2);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.clink a{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--b6);text-decoration:none;word-break:break-all}
+.clink a:hover{text-decoration:underline}
+.share-big{width:100%;padding:10px 0;font-family:'JetBrains Mono',monospace;font-size:10.5px;background:var(--b7);border:none;color:#fff;border-radius:6px;cursor:pointer;transition:background .14s;display:flex;align-items:center;justify-content:center;gap:7px;margin-top:16px}
+.share-big:hover{background:var(--b8)}.share-big.copied{background:#16a34a}
+</style>
+</head>
+<body>
+ 
+<nav class="sb">
+  <div class="sbl"><div class="slr">
+    <div class="lsy">&#x222b;</div>
+    <div class="ltx">Calculus<small>Interactive Explorer</small></div>
+  </div></div>
+ 
+  <div class="scl">Calculus I</div>
+  <div class="nv active" onclick="go('limits',this)"><span class="ni">&#8594;</span><div>Limits<span class="ns">&epsilon;-&delta; &amp; continuity</span></div></div>
+  <div class="nv" onclick="go('deriv',this)"><span class="ni">&#x2202;</span><div>The Derivative<span class="ns">tangent &amp; secant</span></div></div>
+  <div class="nv" onclick="go('sketch',this)"><span class="ni">&#12316;</span><div>Curve Sketching<span class="ns">f, f&prime;, f&Prime;</span></div></div>
+  <div class="nv" onclick="go('optim',this)"><span class="ni">&#9650;</span><div>Optimization<span class="ns">extrema on [a,b]</span></div></div>
+  <div class="nv" onclick="go('riemann',this)"><span class="ni">&#9644;</span><div>Riemann Sums<span class="ns">rectangular approx.</span></div></div>
+  <div class="nv" onclick="go('integral',this)"><span class="ni">&#x222b;</span><div>Definite Integral<span class="ns">signed area</span></div></div>
+  <div class="nv" onclick="go('ftc',this)"><span class="ni">&#x2261;</span><div>Fund. Theorem<span class="ns">F&prime;(x) = f(x)</span></div></div>
+  <div class="nd"></div>
+ 
+  <div class="scl">Calculus II</div>
+  <div class="nv" onclick="go('taylor',this)"><span class="ni">&#x2248;</span><div>Taylor Series<span class="ns">polynomial approx.</span></div></div>
+  <div class="nv" onclick="go('volumes',this)"><span class="ni">&#x25cb;</span><div>Volumes of Rev.<span class="ns">disk method</span></div></div>
+  <div class="nv" onclick="go('series',this)"><span class="ni">&#x3a3;</span><div>Series &amp; Conv.<span class="ns">partial sums</span></div></div>
+  <div class="nd"></div>
+ 
+  <div class="scl">Creator</div>
+  <div class="nv" onclick="go('about',this)"><span class="ni">&#9998;</span><div>About Creator<span class="ns">Vyom Krothapalli</span></div></div>
+ 
+  <div class="sb-foot">MIT License &middot; Open Source</div>
+</nav>
+ 
+<main class="main">
+ 
+<!-- ══ LIMITS ══ -->
+<div id="m-limits" class="mod active">
+  <div class="ts">
+    <div class="cb">Calculus I &middot; Chapter 1</div>
+    <h1 class="pt">Limits &amp; Continuity</h1>
+    <p class="ptag">The language of approaching &mdash; not arriving</p>
+    <div class="pb">
+      <div class="prose">
+        <p>One of the foundational ideas in calculus is the <b>limit</b> &mdash; the value a function <em>approaches</em> as its input draws near to some point. Crucially, a limit describes behavior <em>near</em> a point, not necessarily at it. A function may fail to be defined at \(x = a\) and yet still possess a well-defined limit there.</p>
+        <p>We write \(\lim_{x\to a}f(x)=L\) when \(f(x)\) can be made arbitrarily close to \(L\) by taking \(x\) sufficiently close to \(a\) &mdash; from <b>both sides simultaneously</b>. If left-hand and right-hand limits disagree, the limit does not exist (DNE).</p>
+        <p>Move <b>\(a\)</b> to choose an approach point and adjust <b>\(\delta\)</b> for the neighborhood. Try each function to experience removable holes, jump discontinuities, and vertical asymptotes.</p>
+      </div>
+      <div class="db"><div class="dbt">&epsilon;-&delta; Definition</div><div class="dbb">\(\displaystyle\lim_{x \to a} f(x) = L\)<br><br>\(\forall\,\varepsilon>0,\ \exists\,\delta>0\,:\)<br>\(0<|x-a|<\delta\)<br>\(\Rightarrow|f(x)-L|<\varepsilon\)<br><br><span style="color:var(--b4);font-size:9px">Blue band \(=\delta\)-neighborhood</span></div></div>
+    </div>
+  </div>
+  <div class="is">
+    <div class="ih"><span class="il">Interactive Visualization &mdash; click graph to place a</span><button class="share-mini" onclick="shareURL(this)">&#x1F517; Share</button></div>
+    <div class="cb2">
+      <div class="cg"><div class="cl">Function</div><select id="lf" onchange="D.limits()"><option value="sin(x)/x">sin(x)/x</option><option value="(x^2-1)/(x-1)">(x&sup2;&minus;1)/(x&minus;1)</option><option value="abs(x)/x">|x|/x [jump]</option><option value="1/x">1/x [asymptote]</option><option value="floor(x)">floor(x) [steps]</option><option value="x*sin(1/x)">x&middot;sin(1/x)</option></select></div>
+      <div class="cg" style="min-width:150px"><div class="cl">Approach point a <span class="cv" id="la-v">0.00</span></div><input type="range" id="la" min="-3" max="3" step="0.05" value="0" oninput="D.limits()"></div>
+      <div class="cg" style="min-width:140px"><div class="cl">Neighborhood \(\delta\) <span class="cv" id="ld-v">0.60</span></div><input type="range" id="ld" min="0.05" max="1.8" step="0.05" value="0.6" oninput="D.limits()"></div>
+    </div>
+    <div class="gw" id="limits-win"><canvas id="limits-cv"></canvas><div class="gc" id="lfl">f(x) = sin(x)/x</div><div class="gc-right">click to place a</div></div>
+    <div class="hint"><span class="hint-txt">&#128161; Try sin(x)/x: f(0) is undefined, yet \(\lim_{x\to 0}\sin(x)/x=1\). Switch to |x|/x to see a jump &mdash; left and right limits disagree, so the limit DNE.</span></div>
+    <div class="rb">
+      <div class="ri"><div class="rl">\(a\)</div><div class="rv" id="r-la">0</div></div>
+      <div class="ri"><div class="rl">Left limit</div><div class="rv" id="r-ll">&mdash;</div></div>
+      <div class="ri"><div class="rl">Right limit</div><div class="rv" id="r-lr">&mdash;</div></div>
+      <div class="ri hi"><div class="rl">Limit \(L\)</div><div class="rv" id="r-lL">&mdash;</div></div>
+      <div class="ri"><div class="rl">\(f(a)\)</div><div class="rv" id="r-lfa">&mdash;</div></div>
+      <div class="ri hi"><div class="rl">Exists?</div><div class="rv" id="r-lex">&mdash;</div></div>
+    </div>
+  </div>
+</div>
+ 
+<!-- ══ DERIVATIVE ══ -->
+<div id="m-deriv" class="mod">
+  <div class="ts">
+    <div class="cb">Calculus I &middot; Chapter 2</div>
+    <h1 class="pt">The Derivative</h1>
+    <p class="ptag">Instantaneous rate of change &mdash; the tangent line as a limit</p>
+    <div class="pb">
+      <div class="prose">
+        <p>The <b>average rate of change</b> of \(f\) over \([x_0,x_0+h]\) is the slope of the <em>secant line</em> through two points on the curve. As \(h\) shrinks toward zero, that secant pivots toward the <b>tangent line</b> at \(x_0\). The slope of this limiting tangent is the derivative \(f'(x_0)\).</p>
+        <p>A function is <b>differentiable</b> at \(x_0\) when this limit exists. Corners (like \(|x|\) at 0) are not differentiable there &mdash; left and right secant slopes approach different values, so no unique tangent can be drawn.</p>
+        <p>Click the graph to place \(x_0\), then press <b>Animate \(h\to 0\)</b> to watch the secant automatically converge to the tangent.</p>
+      </div>
+      <div class="db"><div class="dbt">Limit Definition</div><div class="dbb">\(\displaystyle f'(x_0)=\lim_{h\to 0}\frac{f(x_0{+}h)-f(x_0)}{h}\)<br><br><span style="color:var(--b4);font-size:9px">&#8212; solid = tangent \((f')\)<br>&middot;&middot; dashed = secant</span></div></div>
+    </div>
+  </div>
+  <div class="is">
+    <div class="ih"><span class="il">Interactive Visualization &mdash; click graph to place x&#8320;</span><button class="share-mini" onclick="shareURL(this)">&#x1F517; Share</button></div>
+    <div class="cb2">
+      <div class="cg"><div class="cl">\(f(x)\)</div><select id="df" onchange="D.deriv()"><option value="x^2">x&sup2;</option><option value="x^3 - 3*x">x&sup3;&minus;3x</option><option value="sin(x)">sin(x)</option><option value="cos(x)">cos(x)</option><option value="exp(x)">e&sup1;</option><option value="log(x)">ln(x)</option><option value="x^2 * sin(x)">x&sup2;&middot;sin(x)</option><option value="sqrt(abs(x))">&radic;|x|</option></select></div>
+      <div class="cg" style="min-width:148px"><div class="cl">Point \(x_0\) <span class="cv" id="dx0-v">1.00</span></div><input type="range" id="dx0" min="-3.5" max="3.5" step="0.05" value="1" oninput="D.deriv()"></div>
+      <div class="cg" style="min-width:148px"><div class="cl">Step \(h\) (&rarr;0) <span class="cv" id="dh-v">1.00</span></div><input type="range" id="dh" min="0.01" max="2.5" step="0.01" value="1" oninput="D.deriv()"></div>
+      <button class="abt" id="abt-h" onclick="animateH()">&#9654; Animate h&rarr;0</button>
+    </div>
+    <div class="gw" id="deriv-win"><canvas id="deriv-cv"></canvas><div class="gc" id="dfl">f(x) = x&sup2;</div><div class="gc-right">click to place x&#8320;</div></div>
+    <div class="hint"><span class="hint-txt">&#128161; For x&sup2; at x&#8320;=2: drag h from 2 down to 0.01 &mdash; the secant slope converges to exactly 4, confirming \(f'(2)=4\). Press Animate to watch it happen automatically.</span></div>
+    <div class="rb">
+      <div class="ri"><div class="rl">\(x_0\)</div><div class="rv" id="r-dx">1.0000</div></div>
+      <div class="ri"><div class="rl">\(f(x_0)\)</div><div class="rv" id="r-dfx">&mdash;</div></div>
+      <div class="ri"><div class="rl">Secant slope</div><div class="rv" id="r-dsec">&mdash;</div></div>
+      <div class="ri hi"><div class="rl">\(f'(x_0)\) tangent</div><div class="rv" id="r-dfp">&mdash;</div></div>
+    </div>
+  </div>
+</div>
+ 
+<!-- ══ SKETCH ══ -->
+<div id="m-sketch" class="mod">
+  <div class="ts">
+    <div class="cb">Calculus I &middot; Chapter 3</div>
+    <h1 class="pt">Curve Sketching</h1>
+    <p class="ptag">Reading a function&rsquo;s geometry through its derivatives</p>
+    <div class="pb">
+      <div class="prose">
+        <p>The <b>first derivative</b> \(f'(x)\) gives the slope of the curve &mdash; positive where the function rises, negative where it falls, and zero at <em>critical points</em> that are candidates for local maxima and minima.</p>
+        <p>The <b>second derivative</b> \(f''(x)\) captures <em>concavity</em>. Where \(f''>0\), the curve bends upward (concave up); where \(f''&lt;0\), it bends downward. Where concavity switches, we have an <b>inflection point</b>.</p>
+        <p>Toggle the three curves and click the graph to move the trace point. Watch \(f'=0\) align exactly with the peaks and valleys of \(f\), and \(f''=0\) coincide with inflection points.</p>
+      </div>
+      <div class="db"><div class="dbt">Key Relationships</div><div class="dbb">\(f'>0\) \(\Rightarrow\) increasing<br>\(f'<0\) \(\Rightarrow\) decreasing<br>\(f'=0\) \(\Rightarrow\) critical pt<br><br>\(f''>0\) \(\Rightarrow\) concave up<br>\(f''<0\) \(\Rightarrow\) concave dn<br>\(f''=0\) \(\Rightarrow\) inflection</div></div>
+    </div>
+  </div>
+  <div class="is">
+    <div class="ih"><span class="il">Interactive Visualization &mdash; click graph to set trace</span><button class="share-mini" onclick="shareURL(this)">&#x1F517; Share</button></div>
+    <div class="cb2">
+      <div class="cg"><div class="cl">\(f(x)\)</div><select id="skf" onchange="D.sketch()"><option value="x^3 - 3*x">x&sup3;&minus;3x</option><option value="x^4 - 4*x^3 + 4*x">x&sup4;&minus;4x&sup3;+4x</option><option value="sin(x)">sin(x)</option><option value="x^2 * exp(-x)">x&sup2;&middot;e^(&minus;x)</option><option value="x / (1 + x^2)">x/(1+x&sup2;)</option><option value="exp(-x^2)">e^(&minus;x&sup2;)</option></select></div>
+      <div class="cg" style="min-width:150px"><div class="cl">Trace \(x\) <span class="cv" id="skx-v">0.00</span></div><input type="range" id="skx" min="-3.5" max="3.5" step="0.05" value="0" oninput="D.sketch()"></div>
+      <div class="cg"><div class="cl">Show</div><div class="tg"><div class="tb active" id="sk-tf" onclick="skT('f')">f(x)</div><div class="tb active" id="sk-tfp" onclick="skT('fp')">f&prime;(x)</div><div class="tb active" id="sk-tfpp" onclick="skT('fpp')">f&Prime;(x)</div></div></div>
+    </div>
+    <div class="gw" id="sketch-win"><canvas id="sketch-cv"></canvas><div class="gc">f &middot; f&prime; &middot; f&Prime;</div><div class="gc-right">click to set trace</div></div>
+    <div class="hint"><span class="hint-txt">&#128161; For x&sup3;&minus;3x: drag through \(x=\pm1\) to find critical points where \(f'=0\). The local max at \(x=-1\) has \(f''&lt;0\) (concave down); the local min at \(x=1\) has \(f''>0\) (concave up).</span></div>
+    <div class="rb">
+      <div class="ri"><div class="rl">\(x\)</div><div class="rv" id="r-skx">0</div></div>
+      <div class="ri hi"><div class="rl">\(f(x)\)</div><div class="rv" id="r-skf">&mdash;</div></div>
+      <div class="ri"><div class="rl">\(f'(x)\) slope</div><div class="rv" id="r-skfp">&mdash;</div></div>
+      <div class="ri"><div class="rl">\(f''(x)\) concavity</div><div class="rv" id="r-skfpp">&mdash;</div></div>
+    </div>
+  </div>
+</div>
+ 
+<!-- ══ OPTIM ══ -->
+<div id="m-optim" class="mod">
+  <div class="ts">
+    <div class="cb">Calculus I &middot; Chapter 4</div>
+    <h1 class="pt">Optimization</h1>
+    <p class="ptag">Finding the largest and smallest values on a closed interval</p>
+    <div class="pb">
+      <div class="prose">
+        <p>By the <b>Extreme Value Theorem</b>, every continuous function on a closed interval \([a,b]\) is guaranteed to attain both a global maximum and a global minimum. This underpins applications from minimizing material cost to maximizing revenue.</p>
+        <p>The <b>Closed Interval Method</b> is systematic: global extrema occur only at endpoints or at <em>critical points</em> inside \((a,b)\) where \(f'=0\). Evaluate \(f\) at all candidates and compare.</p>
+        <p>Drag the interval bounds to redefine \([a,b]\). The same function can have different extrema on different intervals &mdash; the bounds matter critically.</p>
+      </div>
+      <div class="db"><div class="dbt">Closed Interval Method</div><div class="dbb">1. Find all \(c\in(a,b)\)<br>&nbsp;&nbsp;&nbsp;where \(f'(c)=0\)<br><br>2. Evaluate \(f\) at \(a,b\)<br>&nbsp;&nbsp;&nbsp;and each critical \(c\)<br><br>3. Largest \(=\) global max<br>&nbsp;&nbsp;&nbsp;Smallest \(=\) global min</div></div>
+    </div>
+  </div>
+  <div class="is">
+    <div class="ih"><span class="il">Interactive Visualization</span><button class="share-mini" onclick="shareURL(this)">&#x1F517; Share</button></div>
+    <div class="cb2">
+      <div class="cg"><div class="cl">\(f(x)\)</div><select id="opf" onchange="D.optim()"><option value="x^3 - 3*x^2 + 1">x&sup3;&minus;3x&sup2;+1</option><option value="sin(x) + cos(x)">sin+cos</option><option value="x^4 - 8*x^2 + 3">x&sup4;&minus;8x&sup2;+3</option><option value="x * exp(-x)">x&middot;e^(&minus;x)</option><option value="x^2 - 4*x + 3">x&sup2;&minus;4x+3</option><option value="x^3 - x">x&sup3;&minus;x</option></select></div>
+      <div class="cg" style="min-width:150px"><div class="cl">Left bound \(a\) <span class="cv" id="opa-v">&minus;1.00</span></div><input type="range" id="opa" min="-4" max="-0.1" step="0.1" value="-1" oninput="D.optim()"></div>
+      <div class="cg" style="min-width:150px"><div class="cl">Right bound \(b\) <span class="cv" id="opb-v">3.00</span></div><input type="range" id="opb" min="0.5" max="5" step="0.1" value="3" oninput="D.optim()"></div>
+    </div>
+    <div class="gw" id="optim-win"><canvas id="optim-cv"></canvas><div class="gc">global extrema on [a,b]</div><div class="gc-right">hover to read values</div></div>
+    <div class="hint"><span class="hint-txt">&#128161; Try x&sup3;&minus;3x&sup2;+1 on [&minus;1,3]: local max near x=0, local min near x=2. Move the left bound past x=0 &mdash; watch the global max shift from an interior critical point to the endpoint.</span></div>
+    <div class="rb">
+      <div class="ri hi"><div class="rl">Global Max \(f=\)</div><div class="rv" id="r-opmax">&mdash;</div></div>
+      <div class="ri dm"><div class="rl">at \(x=\)</div><div class="rv" id="r-opmaxx">&mdash;</div></div>
+      <div class="ri hi"><div class="rl">Global Min \(f=\)</div><div class="rv" id="r-opmin">&mdash;</div></div>
+      <div class="ri dm"><div class="rl">at \(x=\)</div><div class="rv" id="r-opminx">&mdash;</div></div>
+    </div>
+  </div>
+</div>
+ 
+<!-- ══ RIEMANN ══ -->
+<div id="m-riemann" class="mod">
+  <div class="ts">
+    <div class="cb">Calculus I &middot; Chapter 5</div>
+    <h1 class="pt">Riemann Sums</h1>
+    <p class="ptag">Approximating area with rectangles &mdash; as \(n\to\infty\) the exact integral emerges</p>
+    <div class="pb">
+      <div class="prose">
+        <p>The <b>area problem</b> asks for the area bounded by \(y=f(x)\), the \(x\)-axis, and the lines \(x=a\) and \(x=b\). A Riemann sum approximates it by partitioning \([a,b]\) into \(n\) equal subintervals of width \(\Delta x=(b-a)/n\) and placing a rectangle of height \(f(x_i^*)\) on each.</p>
+        <p>Four sampling methods exist: <b>Left</b>, <b>Right</b>, <b>Midpoint</b>, and <b>Trapezoid</b>. All four converge to \(\int_a^b f(x)\,dx\) as \(n\to\infty\), though the midpoint and trapezoid rules converge roughly <b>4&times; faster</b> for smooth functions.</p>
+        <p>Push \(n\) to 100 and watch the error shrink. Switch between methods to compare convergence rates.</p>
+      </div>
+      <div class="db"><div class="dbt">Riemann Sum</div><div class="dbb">\(\displaystyle\sum_i f(x_i^*)\cdot\Delta x\)<br><br>\(\Delta x=\dfrac{b-a}{n}\)<br><br>As \(n\to\infty\,:\)<br>\(\displaystyle\sum\to\int_a^b f(x)\,dx\)<br><br><span style="color:var(--b4);font-size:9px">Error \(\to 0\) as \(n\) grows</span></div></div>
+    </div>
+  </div>
+  <div class="is">
+    <div class="ih"><span class="il">Interactive Visualization</span><button class="share-mini" onclick="shareURL(this)">&#x1F517; Share</button></div>
+    <div class="cb2">
+      <div class="cg"><div class="cl">\(f(x)\)</div><select id="rmf" onchange="D.riemann()"><option value="x^2">x&sup2;</option><option value="sin(x)">sin(x)</option><option value="exp(-x^2/2)">e^(&minus;x&sup2;/2)</option><option value="sqrt(max(0,4-x^2))">&radic;(4&minus;x&sup2;)</option><option value="x^3 - x + 2">x&sup3;&minus;x+2</option></select></div>
+      <div class="cg"><div class="cl">Method</div><div class="tg"><div class="tb active" id="rm-left" onclick="setRM('left')">Left</div><div class="tb" id="rm-right" onclick="setRM('right')">Right</div><div class="tb" id="rm-mid" onclick="setRM('mid')">Mid</div><div class="tb" id="rm-trap" onclick="setRM('trap')">Trap</div></div></div>
+      <div class="cg" style="min-width:145px"><div class="cl">Subdivisions \(n\) <span class="cv" id="rmn-v">8</span></div><input type="range" id="rmn" min="1" max="120" step="1" value="8" oninput="D.riemann()"></div>
+      <div class="cg" style="min-width:108px"><div class="cl">\(a\) <span class="cv" id="rma-v">0.00</span></div><input type="range" id="rma" min="-3" max="2" step="0.1" value="0" oninput="D.riemann()"></div>
+      <div class="cg" style="min-width:108px"><div class="cl">\(b\) <span class="cv" id="rmb-v">3.00</span></div><input type="range" id="rmb" min="0.5" max="5" step="0.1" value="3" oninput="D.riemann()"></div>
+    </div>
+    <div class="gw" id="riemann-win"><canvas id="riemann-cv"></canvas><div class="gc">Riemann approximation</div><div class="gc-right">hover to read f(x)</div></div>
+    <div class="hint"><span class="hint-txt">&#128161; Set n=4 with Left vs Midpoint and compare errors. Set n=8 for both &mdash; Left error halves, Midpoint drops to roughly &frac14;. This is the second-order convergence advantage.</span></div>
+    <div class="rb">
+      <div class="ri"><div class="rl">\(n\)</div><div class="rv" id="r-rmn">8</div></div>
+      <div class="ri"><div class="rl">Riemann sum</div><div class="rv" id="r-rmsum">&mdash;</div></div>
+      <div class="ri hi"><div class="rl">Exact \(\int f\,dx\)</div><div class="rv" id="r-rmex">&mdash;</div></div>
+      <div class="ri"><div class="rl">|Error|</div><div class="rv" id="r-rmerr">&mdash;</div></div>
+    </div>
+  </div>
+</div>
+ 
+<!-- ══ INTEGRAL ══ -->
+<div id="m-integral" class="mod">
+  <div class="ts">
+    <div class="cb">Calculus I &middot; Chapter 6</div>
+    <h1 class="pt">The Definite Integral</h1>
+    <p class="ptag">Net signed area &mdash; above the axis is positive, below is negative</p>
+    <div class="pb">
+      <div class="prose">
+        <p>The <b>definite integral</b> \(\int_a^b f(x)\,dx\) measures <em>signed area</em> between the curve and the \(x\)-axis. Regions above contribute positive area; regions below contribute negative area. The integral returns the <b>net result</b> &mdash; they can partially or fully cancel.</p>
+        <p>If \(f(t)\) is velocity, \(\int_a^b f(t)\,dt\) gives <em>displacement</em> (net position change), which can be zero even if you traveled far. Total distance would require integrating \(|f(t)|\).</p>
+        <p>Adjust the bounds \(a\) and \(b\) to select the region. Dark blue marks positive area; lighter blue marks negative.</p>
+      </div>
+      <div class="db"><div class="dbt">Signed Area</div><div class="dbb">\(\displaystyle\int_a^b f(x)\,dx\)<br>\(=(\text{above})-(\text{below})\)<br><br>Dark blue = positive<br>Light blue = negative<br><br>\(\int_a^b=-\int_b^a\)<br>\(\int_a^a=0\)</div></div>
+    </div>
+  </div>
+  <div class="is">
+    <div class="ih"><span class="il">Interactive Visualization</span><button class="share-mini" onclick="shareURL(this)">&#x1F517; Share</button></div>
+    <div class="cb2">
+      <div class="cg"><div class="cl">\(f(x)\)</div><select id="inf" onchange="D.integral()"><option value="sin(x)">sin(x)</option><option value="x^2 - 4">x&sup2;&minus;4</option><option value="x^3 - 3*x">x&sup3;&minus;3x</option><option value="cos(x)">cos(x)</option><option value="exp(-x)">e^(&minus;x)</option><option value="x * sin(x)">x&middot;sin(x)</option></select></div>
+      <div class="cg" style="min-width:150px"><div class="cl">Lower bound \(a\) <span class="cv" id="ina-v">0.00</span></div><input type="range" id="ina" min="-4" max="3" step="0.1" value="0" oninput="D.integral()"></div>
+      <div class="cg" style="min-width:150px"><div class="cl">Upper bound \(b\) <span class="cv" id="inb-v">3.14</span></div><input type="range" id="inb" min="-3" max="7" step="0.1" value="3.14159" oninput="D.integral()"></div>
+    </div>
+    <div class="gw" id="integral-win"><canvas id="integral-cv"></canvas><div class="gc">\(\int_a^b f(x)\,dx\)</div><div class="gc-right">hover to read f(x)</div></div>
+    <div class="hint"><span class="hint-txt">&#128161; Try x&sup2;&minus;4 on [&minus;2,2]: positive and negative areas cancel &mdash; net integral = 0. Move \(b\) to 3 to add the positive region back and watch the net rise.</span></div>
+    <div class="rb">
+      <div class="ri hi"><div class="rl">Positive area</div><div class="rv" id="r-inpos">&mdash;</div></div>
+      <div class="ri"><div class="rl">Negative area</div><div class="rv" id="r-inneg">&mdash;</div></div>
+      <div class="ri hi"><div class="rl">Net \(\int f\,dx\)</div><div class="rv" id="r-innet">&mdash;</div></div>
+    </div>
+  </div>
+</div>
+ 
+<!-- ══ FTC ══ -->
+<div id="m-ftc" class="mod">
+  <div class="ts">
+    <div class="cb">Calculus I &middot; Chapter 7</div>
+    <h1 class="pt">The Fundamental Theorem of Calculus</h1>
+    <p class="ptag">Differentiation and integration are inverse operations</p>
+    <div class="pb">
+      <div class="prose">
+        <p><b>Part 1</b> states that if \(F(x)=\int_a^x f(t)\,dt\) is the <em>accumulation function</em> &mdash; the running total of signed area from \(a\) to \(x\) &mdash; then \(F'(x)=f(x)\). Differentiating the integral of \(f\) gives back \(f\) itself.</p>
+        <p><b>Part 2</b> is the computational tool: \(\int_a^b f(x)\,dx = F(b)-F(a)\), where \(F\) is any antiderivative. This eliminates Riemann sum limits entirely; just evaluate an antiderivative at the bounds and subtract.</p>
+        <p>Click the graph or drag \(x\) to watch \(F(x)\) accumulate signed area. \(F\) grows when \(f\) is positive, shrinks when \(f\) is negative. The <b>slope of \(F\) at any \(x\) equals \(f(x)\)</b>.</p>
+      </div>
+      <div class="db"><div class="dbt">FTC &mdash; Both Parts</div><div class="dbb"><b>Part 1:</b><br>\(\displaystyle\frac{d}{dx}\int_a^x f(t)\,dt=f(x)\)<br><br><b>Part 2:</b><br>\(\displaystyle\int_a^b f(x)\,dx\)<br>\(=F(b)-F(a)\)<br><br><span style="color:var(--b4);font-size:9px">\(F\) = any antiderivative of \(f\)</span></div></div>
+    </div>
+  </div>
+  <div class="is">
+    <div class="ih"><span class="il">Interactive Visualization &mdash; click graph to set x</span><button class="share-mini" onclick="shareURL(this)">&#x1F517; Share</button></div>
+    <div class="cb2">
+      <div class="cg"><div class="cl">\(f(t)\)</div><select id="ftcf" onchange="D.ftc()"><option value="sin(t)">sin(t)</option><option value="cos(t)">cos(t)</option><option value="t^2 - 2">t&sup2;&minus;2</option><option value="exp(-t)">e^(&minus;t)</option><option value="t * cos(t)">t&middot;cos(t)</option></select></div>
+      <div class="cg" style="min-width:145px"><div class="cl">Lower bound \(a\) <span class="cv" id="ftca-v">0.00</span></div><input type="range" id="ftca" min="-3" max="0" step="0.1" value="0" oninput="D.ftc()"></div>
+      <div class="cg" style="min-width:155px"><div class="cl">Upper bound \(x\) <span class="cv" id="ftcx-v">2.00</span></div><input type="range" id="ftcx" min="-4" max="7" step="0.05" value="2" oninput="D.ftc()"></div>
+    </div>
+    <div class="gw" id="ftc-win"><canvas id="ftc-cv"></canvas><div class="gc">\(F(x)=\int_a^x f(t)\,dt\)</div><div class="gc-right">click to set x</div></div>
+    <div class="hint"><span class="hint-txt">&#128161; Drag \(x\) slowly from 0 rightward through sin(t): \(F(x)\) rises through the positive hump \((0\to\pi)\), then falls as the negative hump accumulates \((\pi\to 2\pi)\).</span></div>
+    <div class="rb">
+      <div class="ri"><div class="rl">\(x\)</div><div class="rv" id="r-ftcx">2.00</div></div>
+      <div class="ri hi"><div class="rl">\(F(x)=\int_a^x f\,dt\)</div><div class="rv" id="r-ftcFx">&mdash;</div></div>
+      <div class="ri"><div class="rl">\(F'(x)=f(x)\)</div><div class="rv" id="r-ftcfx">&mdash;</div></div>
+    </div>
+  </div>
+</div>
+ 
+<!-- ══ TAYLOR ══ -->
+<div id="m-taylor" class="mod">
+  <div class="ts">
+    <div class="cb">Calculus II &middot; Chapter 1</div>
+    <h1 class="pt">Taylor Series</h1>
+    <p class="ptag">Approximating any smooth function with polynomials centered at a point</p>
+    <div class="pb">
+      <div class="prose">
+        <p>A <b>Taylor series</b> approximates a smooth function near a center \(a\): \(T_n(x)=\sum_{k=0}^{n}\frac{f^{(k)}(a)}{k!}(x-a)^k\). The key insight is matching not just \(f(a)\), but its entire sequence of derivatives &mdash; each additional term extends the radius of accurate approximation.</p>
+        <p>Famous <em>Maclaurin series</em> (centered at 0) include \(\sin x = x - \frac{x^3}{6} + \frac{x^5}{120} - \cdots\) and \(e^x = 1 + x + \frac{x^2}{2} + \cdots\). For \(e^x\) and sin/cos the polynomial tracks the function everywhere as \(n\) grows.</p>
+        <p>Increase \(n\) to watch the solid polynomial track the dashed true function farther from center. Move \(a\) to re-center the expansion.</p>
+      </div>
+      <div class="db"><div class="dbt">Taylor / Maclaurin</div><div class="dbb">\(\displaystyle T_n(x)=\sum_{k=0}^{n}\frac{f^{(k)}(a)}{k!}(x-a)^k\)<br><br>\(\sin x = x-\tfrac{x^3}{6}+\cdots\)<br>\(e^x = 1+x+\tfrac{x^2}{2}+\cdots\)<br><br><span style="color:var(--b4);font-size:9px">Dashed = true \(f(x)\)</span></div></div>
+    </div>
+  </div>
+  <div class="is">
+    <div class="ih"><span class="il">Interactive Visualization</span><button class="share-mini" onclick="shareURL(this)">&#x1F517; Share</button></div>
+    <div class="cb2">
+      <div class="cg"><div class="cl">Function</div><select id="tayf" onchange="D.taylor()"><option value="sin">sin(x)</option><option value="cos">cos(x)</option><option value="exp">e&sup1;</option><option value="ln1p">ln(1+x)</option><option value="atan">arctan(x)</option></select></div>
+      <div class="cg" style="min-width:140px"><div class="cl">Center \(a\) <span class="cv" id="taya-v">0.00</span></div><input type="range" id="taya" min="-1.5" max="1.5" step="0.1" value="0" oninput="D.taylor()"></div>
+      <div class="cg" style="min-width:140px"><div class="cl">Terms \(n\) <span class="cv" id="tayn-v">3</span></div><input type="range" id="tayn" min="1" max="14" step="1" value="3" oninput="D.taylor()"></div>
+    </div>
+    <div class="gw" id="taylor-win"><canvas id="taylor-cv"></canvas><div class="gc">T&#x2099;(x) vs f(x)</div><div class="gc-right">hover to compare</div></div>
+    <div class="hint"><span class="hint-txt">&#128161; Start sin(x) at n=1 &mdash; just a line. At n=3 it tracks well near 0, at n=7 it is good to &plusmn;&pi;, and by n=11 it is nearly perfect across the visible window.</span></div>
+    <div class="rb">
+      <div class="ri"><div class="rl">Degree</div><div class="rv" id="r-taydeg">3</div></div>
+      <div class="ri hi" style="flex:1;max-width:500px"><div class="rl">Polynomial \(T_n(x)\)</div><div class="rv" id="r-taypoly" style="font-size:12px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis">&mdash;</div></div>
+    </div>
+  </div>
+</div>
+ 
+<!-- ══ VOLUMES ══ -->
+<div id="m-volumes" class="mod">
+  <div class="ts">
+    <div class="cb">Calculus II &middot; Chapter 2</div>
+    <h1 class="pt">Volumes of Revolution</h1>
+    <p class="ptag">The disk method &mdash; rotating a curve around the x-axis generates a 3D solid</p>
+    <div class="pb">
+      <div class="prose">
+        <p>When the region bounded by \(y=f(x)\) is rotated around the \(x\)-axis, it sweeps out a <em>solid of revolution</em>. The <b>disk method</b> slices this solid perpendicular to the rotation axis &mdash; each slice is a circular disk with radius \(r=f(x)\) and area \(\pi r^2\).</p>
+        <p>Integrating these disk areas gives total volume: \(V=\pi\int_a^b[f(x)]^2\,dx\). This is exact. The curve and its reflection \(-f(x)\) suggest the solid&rsquo;s cross-sectional silhouette.</p>
+        <p>Click the graph or drag the <b>slice position</b> to move the cross-sectional disk (shown as an ellipse). Its radius equals \(f(x)\) at the slice.</p>
+      </div>
+      <div class="db"><div class="dbt">Disk Method</div><div class="dbb">\(\displaystyle V=\pi\int_a^b[f(x)]^2\,dx\)<br><br>Each slice:<br>Radius \(r=f(x)\)<br>Area \(=\pi r^2\)<br>Vol \(=\pi r^2\,dx\)<br><br><span style="color:var(--b4);font-size:9px">Ellipse shows cross-section</span></div></div>
+    </div>
+  </div>
+  <div class="is">
+    <div class="ih"><span class="il">Interactive Visualization &mdash; click graph to move slice</span><button class="share-mini" onclick="shareURL(this)">&#x1F517; Share</button></div>
+    <div class="cb2">
+      <div class="cg"><div class="cl">\(f(x)\)</div><select id="volf" onchange="D.volumes()"><option value="sqrt(x)">&radic;x</option><option value="x">x</option><option value="sin(x)">sin(x)</option><option value="x^2">x&sup2;</option><option value="exp(-x)">e^(&minus;x)</option><option value="1 - x^2/4">1&minus;x&sup2;/4</option></select></div>
+      <div class="cg" style="min-width:110px"><div class="cl">\(a\) <span class="cv" id="vola-v">0.00</span></div><input type="range" id="vola" min="0" max="2" step="0.1" value="0" oninput="D.volumes()"></div>
+      <div class="cg" style="min-width:110px"><div class="cl">\(b\) <span class="cv" id="volb-v">3.00</span></div><input type="range" id="volb" min="0.5" max="5" step="0.1" value="3" oninput="D.volumes()"></div>
+      <div class="cg" style="min-width:140px"><div class="cl">Slice at \(x\) <span class="cv" id="volx-v">1.50</span></div><input type="range" id="volx" min="0" max="5" step="0.05" value="1.5" oninput="D.volumes()"></div>
+    </div>
+    <div class="gw" id="volumes-win"><canvas id="volumes-cv"></canvas><div class="gc">\(V=\pi\int[f(x)]^2\,dx\)</div><div class="gc-right">click to set slice</div></div>
+    <div class="hint"><span class="hint-txt">&#128161; Try &radic;x on [0,4]: the solid is a paraboloid. Move the slice from x=0 (radius 0) to x=4 (radius 2) and watch the disk grow. Compare to x&sup2; &mdash; same interval, but the disk expands much faster.</span></div>
+    <div class="rb">
+      <div class="ri hi"><div class="rl">\(V=\)</div><div class="rv" id="r-volv">&mdash;</div></div>
+      <div class="ri"><div class="rl">\(r=f(x)\) at slice</div><div class="rv" id="r-volr">&mdash;</div></div>
+    </div>
+  </div>
+</div>
+ 
+<!-- ══ SERIES ══ -->
+<div id="m-series" class="mod">
+  <div class="ts">
+    <div class="cb">Calculus II &middot; Chapter 3</div>
+    <h1 class="pt">Series &amp; Convergence</h1>
+    <p class="ptag">When does an infinite sum converge to a finite value?</p>
+    <div class="pb">
+      <div class="prose">
+        <p>An <b>infinite series</b> \(\sum a_n\) is a sum of infinitely many terms. Whether it has a finite value depends on the <em>partial sums</em> \(S_n=a_1+\cdots+a_n\). If \(S_n\) approaches a finite limit as \(n\to\infty\), the series <b>converges</b>; if not, it <b>diverges</b>.</p>
+        <p><b>Geometric series</b> \(\sum r^n\) converge when \(|r|&lt;1\) with exact sum \(r/(1-r)\), and diverge when \(|r|\ge1\). The <b>\(p\)-series</b> \(\sum 1/n^p\) converges when \(p&gt;1\). The harmonic series (\(p=1\)) diverges &mdash; astonishingly slowly.</p>
+        <p>Watch the partial sum plot: a converging series levels off toward the green dashed limit; a diverging series climbs without bound.</p>
+      </div>
+      <div class="db"><div class="dbt">Key Results</div><div class="dbb">Geometric \(\sum r^n\):<br>\(|r|&lt;1\Rightarrow S=\dfrac{r}{1-r}\)<br>\(|r|\ge1\Rightarrow\) diverges<br><br>\(p\)-series \(\sum\frac{1}{n^p}\):<br>\(p&gt;1\Rightarrow\) converges<br>\(p\le1\Rightarrow\) diverges</div></div>
+    </div>
+  </div>
+  <div class="is">
+    <div class="ih"><span class="il">Interactive Visualization</span><button class="share-mini" onclick="shareURL(this)">&#x1F517; Share</button></div>
+    <div class="cb2">
+      <div class="cg"><div class="cl">Series type</div><select id="serf" onchange="D.series()"><option value="geometric">Geometric: &sum; r&#x207F;</option><option value="pseries">p-Series: &sum; 1/n&#x1D56;</option><option value="harmonic">Harmonic: &sum; 1/n</option><option value="alternating">Alternating: &sum; (&minus;1)&#x207F;/n</option><option value="telescoping">Telescoping: &sum; 1/(n(n+1))</option></select></div>
+      <div class="cg" id="ser-rg" style="min-width:140px"><div class="cl">Ratio \(r\) <span class="cv" id="serr-v">0.50</span></div><input type="range" id="serr" min="-1.45" max="1.45" step="0.05" value="0.5" oninput="D.series()"></div>
+      <div class="cg" id="ser-pg" style="display:none;min-width:140px"><div class="cl">Power \(p\) <span class="cv" id="serp-v">2.00</span></div><input type="range" id="serp" min="0.2" max="4" step="0.1" value="2" oninput="D.series()"></div>
+      <div class="cg" style="min-width:140px"><div class="cl">Terms \(N\) <span class="cv" id="sern-v">40</span></div><input type="range" id="sern" min="5" max="150" step="1" value="40" oninput="D.series()"></div>
+    </div>
+    <div class="gw" id="series-win"><canvas id="series-cv"></canvas><div class="gc">Partial sums S&#x2099;</div><div class="gc-right">hover to read S&#x2099;</div></div>
+    <div class="hint"><span class="hint-txt">&#128161; Set Geometric with r=0.95, then drag r above 1.0 &mdash; watch the partial sums shift from leveling off to escaping upward. The exact boundary at |r|=1 is not approximate; it is exact.</span></div>
+    <div class="rb">
+      <div class="ri hi"><div class="rl">Exact sum \(S\)</div><div class="rv" id="r-serS">&mdash;</div></div>
+      <div class="ri"><div class="rl">\(S_n\) partial</div><div class="rv" id="r-serSn">&mdash;</div></div>
+      <div class="ri hi"><div class="rl">Converges?</div><div class="rv" id="r-serconv">&mdash;</div></div>
+    </div>
+  </div>
+</div>
+ 
+<!-- ══ ABOUT CREATOR ══ -->
+<div id="m-about" class="mod">
+  <div class="ts" style="max-height:none;flex-shrink:0">
+    <div class="cb">Creator &middot; About This Project</div>
+    <h1 class="pt">About the Creator</h1>
+    <p class="ptag">Vyom Krothapalli &mdash; Class of 2027</p>
+  </div>
+  <div class="about-wrap">
+    <div class="about-hero">
+      <div class="about-avatar">VK</div>
+      <div>
+        <div class="about-hero-name">Vyom Krothapalli</div>
+        <div class="about-hero-meta">Class of 2027 &nbsp;&middot;&nbsp; Self-taught Calculus &nbsp;&middot;&nbsp; Math &amp; CS</div>
+      </div>
+    </div>
+ 
+    <div class="about-grid">
+      <!-- Left: Bio + Stack -->
+      <div class="acard">
+        <div class="acard-title">&#x1F4D6; My Story</div>
+        <p class="bio-p">I have always been interested in mathematics, and as someone who has taught themselves calculus, I came to an important conclusion. While calculus may seem daunting at first, in truth, it&rsquo;s the same exact thing as algebra.</p>
+        <p class="bio-p">The rules that we had to learn when we were first solving equations with one unknown variable are very similar to the rules of calculus you have to learn when exploring this topic: the only real difference is that algebra is a lot easier to visualize compared to calculus, which is why I chose to build this tool.</p>
+        <p class="bio-p">The goal here is to provide aspiring math students with the ability to visually see calculus concepts and what they measure so that they can understand these concepts more deeply.</p>
+        <div class="acard-title" style="margin-top:22px">&#x2699;&#xFE0F; Built With</div>
+        <div class="stack-row">
+          <span class="spill">Vanilla JavaScript</span>
+          <span class="spill">HTML5 Canvas API</span>
+          <span class="spill">KaTeX</span>
+          <span class="spill">math.js</span>
+          <span class="spill">Google Fonts</span>
+          <span class="spill">Zero build step</span>
+        </div>
+      </div>
+ 
+      <!-- Right: Stats + Contact + Share -->
+      <div style="display:flex;flex-direction:column;gap:20px">
+ 
+        <div class="acard">
+          <div class="acard-title">&#x1F4CA; Usage Stats</div>
+          <div class="stat-2">
+            <div class="scard">
+              <div class="scard-num" id="visitor-count">&mdash;</div>
+              <div class="scard-lbl">Total Visits</div>
+            </div>
+            <div class="scard">
+              <div class="scard-num" id="session-modules">&mdash;</div>
+              <div class="scard-lbl">Modules Explored</div>
+            </div>
+          </div>
+          <p style="font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--txd);line-height:1.6;margin:0">
+            Visits tracked via <a href="https://counterapi.dev" target="_blank" rel="noopener" style="color:var(--b5)">CounterAPI</a>. No personal data collected. Modules explored is stored locally in your browser only.
+          </p>
+        </div>
+ 
+        <div class="acard">
+          <div class="acard-title">&#x1F4AC; Get in Touch</div>
+          <div class="clink">
+            <div class="clink-icon">&#x2709;</div>
+            <a href="mailto:hiccup2367@gmail.com">hiccup2367@gmail.com</a>
+          </div>
+          <div class="clink">
+            <div class="clink-icon">&#x1F419;</div>
+            <a href="https://github.com/vyomkrothapalli" target="_blank" rel="noopener">github.com/vyomkrothapalli</a>
+          </div>
+          <p style="font-family:'Source Serif 4',serif;font-size:11.5px;color:var(--txd);line-height:1.65;margin-top:8px;font-style:italic">
+            Questions, feedback, or just want to talk math? I&rsquo;d love to hear from you.
+          </p>
+        </div>
+ 
+        <div class="acard" style="text-align:center">
+          <div class="acard-title" style="justify-content:center">&#x1F517; Share This Tool</div>
+          <p style="font-size:12px;color:var(--txd);line-height:1.6;margin-bottom:0">
+            Copy a link that restores the exact module &amp; slider state &mdash; great for sharing with classmates or a teacher.
+          </p>
+          <button class="share-big" id="share-main" onclick="shareURL(this)">&#x1F517; Copy Shareable Link</button>
+          <p style="font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--b3);margin-top:10px">MIT License &middot; Open Source &middot; Free to use</p>
+        </div>
+ 
+      </div>
+    </div>
+  </div>
+</div>
+ 
+</main>
+ 
+<script>
+/*
+ * Calculus Explorer — Interactive Visualization Tool
+ * Created by Vyom Krothapalli, Class of 2027
+ * MIT License — Open Source — hiccup2367@gmail.com
+ *
+ * External dependencies (all free, no API keys required):
+ *   KaTeX 0.16.9 (MIT), math.js 11.11.0 (Apache 2.0),
+ *   Google Fonts, counterapi.dev (free anonymous hit counter)
+ */
+'use strict';
+const $=id=>document.getElementById(id);
+ 
+// ── Math helpers ─────────────────────────────────────────────────────────
+function ev(e,x){try{return math.evaluate(e,{x});}catch{return NaN;}}
+function evt(e,t){try{return math.evaluate(e,{t});}catch{return NaN;}}
+function nd1(e,x,h=1e-6){return(ev(e,x+h)-ev(e,x-h))/(2*h);}
+function nd2(e,x,h=1e-4){return(ev(e,x+h)-2*ev(e,x)+ev(e,x-h))/(h*h);}
+function trapI(fn,a,b,n=1200){if(!isFinite(a)||!isFinite(b)||a>=b)return 0;const h=(b-a)/n;let s=0;for(let i=0;i<n;i++){const x1=a+i*h,x2=x1+h,y1=fn(x1),y2=fn(x2);if(isFinite(y1)&&isFinite(y2))s+=(y1+y2)*.5*h;}return s;}
+function trapE(e,a,b){return trapI(x=>ev(e,x),a,b);}
+function trapT(e,a,b){return trapI(t=>evt(e,t),a,b);}
+function f4(v){return isFinite(v)?v.toFixed(4):'—';}
+function f2(v){return isFinite(v)?v.toFixed(2):'—';}
+function fN(n){let r=1;for(let i=2;i<=n;i++)r*=i;return r;}
+ 
+// ── Canvas ────────────────────────────────────────────────────────────────
+function iC(wId,cId){
+  const w=$(wId),c=$(cId);if(!w||!c)return null;
+  const W=w.clientWidth,H=w.clientHeight;if(W<1||H<1)return null;
+  const d=window.devicePixelRatio||1;
+  c.width=W*d;c.height=H*d;c.style.width=W+'px';c.style.height=H+'px';
+  const g=c.getContext('2d');g.scale(d,d);return{g,W,H};
+}
+function ws(x,y,xm,xM,ym,yM,W,H){return[((x-xm)/(xM-xm))*W,H-((y-ym)/(yM-ym))*H];}
+function nt(r){const p=Math.pow(10,Math.floor(Math.log10(r/6)));const f=r/6/p;return(f<1.5?1:f<3.5?2:f<7.5?5:10)*p;}
+function aY(e,xm,xM){let mn=Infinity,mx=-Infinity;for(let i=0;i<=400;i++){const x=xm+(i/400)*(xM-xm),y=ev(e,x);if(isFinite(y)){mn=Math.min(mn,y);mx=Math.max(mx,y);}}if(!isFinite(mn))return[-3,3];const p=Math.max((mx-mn)*.18,.5);return[Math.max(mn-p,-25),Math.min(mx+p,25)];}
+ 
+function dG(g,xm,xM,ym,yM,W,H){
+  const xs=nt(xM-xm),ys=nt(yM-ym);
+  g.strokeStyle='#dbeafe';g.lineWidth=1;
+  for(let x=Math.ceil(xm/xs)*xs;x<=xM+1e-9;x+=xs){const[sx]=ws(x,0,xm,xM,ym,yM,W,H);g.beginPath();g.moveTo(sx,0);g.lineTo(sx,H);g.stroke();}
+  for(let y=Math.ceil(ym/ys)*ys;y<=yM+1e-9;y+=ys){const[,sy]=ws(0,y,xm,xM,ym,yM,W,H);g.beginPath();g.moveTo(0,sy);g.lineTo(W,sy);g.stroke();}
+  g.strokeStyle='#93c5fd';g.lineWidth=1.5;
+  if(ym<=0&&yM>=0){const[,sy]=ws(0,0,xm,xM,ym,yM,W,H);g.beginPath();g.moveTo(0,sy);g.lineTo(W,sy);g.stroke();}
+  if(xm<=0&&xM>=0){const[sx]=ws(0,0,xm,xM,ym,yM,W,H);g.beginPath();g.moveTo(sx,0);g.lineTo(sx,H);g.stroke();}
+  g.fillStyle='#bfdbfe';g.font='9.5px JetBrains Mono,monospace';
+  const[,ay]=ws(0,0,xm,xM,ym,yM,W,H);g.textAlign='center';
+  for(let x=Math.ceil(xm/xs)*xs;x<=xM+1e-9;x+=xs){if(Math.abs(x)<xs*.01)continue;const[sx]=ws(x,0,xm,xM,ym,yM,W,H);g.fillText(+x.toFixed(1),sx,Math.min(Math.max(ay+12,11),H-3));}
+  const[ax]=ws(0,0,xm,xM,ym,yM,W,H);g.textAlign='right';
+  for(let y=Math.ceil(ym/ys)*ys;y<=yM+1e-9;y+=ys){if(Math.abs(y)<ys*.01)continue;const[,sy]=ws(0,y,xm,xM,ym,yM,W,H);g.fillText(+y.toFixed(1),Math.min(Math.max(ax-4,34),W-4),sy+4);}
+}
+ 
+function pE(g,e,xm,xM,ym,yM,W,H,col,lw=2.2,dash=[]){
+  g.save();g.strokeStyle=col;g.lineWidth=lw;g.setLineDash(dash);g.lineJoin='round';
+  const st=Math.floor(W*2.5);g.beginPath();let on=false;
+  for(let i=0;i<=st;i++){const x=xm+(i/st)*(xM-xm),y=ev(e,x);if(!isFinite(y)||y<ym*5||y>yM*5){on=false;continue;}const[sx,sy]=ws(x,y,xm,xM,ym,yM,W,H);if(!on){g.moveTo(sx,sy);on=true;}else g.lineTo(sx,sy);}
+  g.stroke();g.setLineDash([]);g.restore();
+}
+function pFn(g,fn,xm,xM,ym,yM,W,H,col,lw=2.2,dash=[]){
+  g.save();g.strokeStyle=col;g.lineWidth=lw;g.setLineDash(dash);g.lineJoin='round';
+  const st=Math.floor(W*2.5);g.beginPath();let on=false;
+  for(let i=0;i<=st;i++){const x=xm+(i/st)*(xM-xm),y=fn(x);if(!isFinite(y)||y<ym*5||y>yM*5){on=false;continue;}const[sx,sy]=ws(x,y,xm,xM,ym,yM,W,H);if(!on){g.moveTo(sx,sy);on=true;}else g.lineTo(sx,sy);}
+  g.stroke();g.setLineDash([]);g.restore();
+}
+function dot(g,x,y,xm,xM,ym,yM,W,H,col,r=5,glow=false){
+  if(!isFinite(x)||!isFinite(y))return;
+  const[sx,sy]=ws(x,y,xm,xM,ym,yM,W,H);
+  g.save();if(glow){g.shadowColor=col;g.shadowBlur=12;}
+  g.fillStyle=col;g.strokeStyle='#fff';g.lineWidth=2.5;
+  g.beginPath();g.arc(sx,sy,r,0,Math.PI*2);g.fill();g.stroke();
+  g.shadowBlur=0;g.restore();
+}
+function ring(g,x,y,xm,xM,ym,yM,W,H,col,r=5){
+  if(!isFinite(x)||!isFinite(y))return;
+  const[sx,sy]=ws(x,y,xm,xM,ym,yM,W,H);
+  g.save();g.strokeStyle=col;g.lineWidth=2;g.fillStyle='#fff';
+  g.beginPath();g.arc(sx,sy,r,0,Math.PI*2);g.fill();g.stroke();g.restore();
+}
+ 
+// ── Hover crosshair ───────────────────────────────────────────────────────
+const HS={};
+function drawCH(g,px,W,H,lines){
+  if(!lines||!lines.length)return;
+  g.save();g.strokeStyle='rgba(29,78,216,.18)';g.lineWidth=1;g.setLineDash([4,3]);
+  g.beginPath();g.moveTo(px,0);g.lineTo(px,H);g.stroke();g.setLineDash([]);
+  g.font='10px JetBrains Mono,monospace';
+  const lH=14,pad=7,gap=2;
+  const mw=Math.max(...lines.map(l=>g.measureText(l.t).width));
+  const bw=mw+pad*2,bh=lines.length*(lH+gap)+pad*1.2;
+  let tx=px+10,ty=10;
+  if(tx+bw>W-6)tx=px-bw-10;if(ty+bh>H-6)ty=H-bh-6;
+  g.shadowColor='rgba(29,78,216,.1)';g.shadowBlur=6;
+  g.fillStyle='rgba(255,255,255,.97)';g.strokeStyle='rgba(29,78,216,.15)';g.lineWidth=1;
+  g.fillRect(tx,ty,bw,bh);g.strokeRect(tx,ty,bw,bh);g.shadowBlur=0;
+  g.fillStyle='rgba(29,78,216,.15)';g.fillRect(tx,ty,2.5,bh);
+  g.textAlign='left';g.textBaseline='middle';
+  lines.forEach((l,i)=>{g.fillStyle=l.c||'#1d4ed8';g.fillText(l.t,tx+pad+2,ty+pad*.7+(i+.5)*(lH+gap));});
+  g.textBaseline='alphabetic';g.restore();
+}
+function setupHover(winId,modId,getXBounds,clickSliderId){
+  const win=$(winId);if(!win)return;
+  win.addEventListener('mousemove',e=>{
+    const r=win.getBoundingClientRect(),px=e.clientX-r.left,W=win.clientWidth;
+    const[xm,xM]=getXBounds();HS[modId]={px,wx:xm+(px/W)*(xM-xm)};
+    D[modId]&&D[modId]();
+  });
+  win.addEventListener('mouseleave',()=>{HS[modId]=null;D[modId]&&D[modId]();});
+  if(clickSliderId){
+    win.addEventListener('click',e=>{
+      const r=win.getBoundingClientRect(),px=e.clientX-r.left,W=win.clientWidth;
+      const[xm,xM]=getXBounds(),wx=xm+(px/W)*(xM-xm);
+      const sl=$(clickSliderId);if(!sl)return;
+      sl.value=Math.max(+sl.min,Math.min(+sl.max,wx)).toFixed(2);
+      D[modId]&&D[modId]();
+    });
+  }
+}
+ 
+// ── URL state ─────────────────────────────────────────────────────────────
+function pushState(){
+  const active=document.querySelector('.mod.active')?.id?.replace('m-','')||'limits';
+  const p=new URLSearchParams();p.set('m',active);
+  document.querySelectorAll('input[type=range]').forEach(el=>p.set(el.id,+el.value));
+  document.querySelectorAll('select').forEach(el=>p.set(el.id,el.value));
+  try{history.replaceState(null,'','#'+p.toString());}catch{}
+}
+function loadState(){
+  const hash=location.hash.slice(1);if(!hash)return;
+  const p=new URLSearchParams(hash);
+  p.forEach((val,key)=>{if(key==='m')return;const el=$(key);if(!el)return;if(el.type==='range')el.value=val;else if(el.tagName==='SELECT')el.value=val;});
+  const mod=p.get('m');
+  if(mod){
+    document.querySelectorAll('.mod').forEach(m=>m.classList.remove('active'));
+    document.querySelectorAll('.nv').forEach(n=>n.classList.remove('active'));
+    const modEl=$('m-'+mod);if(modEl)modEl.classList.add('active');
+    document.querySelectorAll('.nv').forEach(n=>{if((n.getAttribute('onclick')||'').includes("'"+mod+"'"))n.classList.add('active');});
+  }
+}
+ 
+// ── Share ─────────────────────────────────────────────────────────────────
+function shareURL(btn){
+  pushState();
+  const url=location.href;
+  const isSandboxed=url.startsWith('about:')||url.includes('blob:');
+  if(isSandboxed){alert('Share links work once deployed!\n\nUpload to GitHub Pages or Netlify, then the Share button will copy a live URL that restores exact module + slider state.');return;}
+  navigator.clipboard.writeText(url).then(()=>{
+    const targets=[btn,$('share-main')].filter(Boolean);
+    targets.forEach(b=>{const was=b.innerHTML;b.innerHTML='\u2713 Copied!';b.classList.add('copied');setTimeout(()=>{b.innerHTML=was;b.classList.remove('copied');},2200);});
+  }).catch(()=>prompt('Copy this link:',url));
+}
+ 
+// ── Visitor counter ───────────────────────────────────────────────────────
+async function fetchVisitorCount(){
+  try{
+    const res=await fetch('https://api.counterapi.dev/v1/calculus-explorer-v1/visits/hit',{signal:AbortSignal.timeout(4000)});
+    if(!res.ok)throw new Error();
+    const data=await res.json();
+    const n=data.count||data.value||0;
+    const el=$('visitor-count');if(el)el.textContent=n.toLocaleString();
+  }catch{
+    try{const k='calc-visits';const n=(parseInt(localStorage.getItem(k)||'0'))+1;localStorage.setItem(k,n);const el=$('visitor-count');if(el)el.textContent=n+' (local)';}catch{}
+  }
+}
+function updateModuleCount(){
+  try{const stats=JSON.parse(localStorage.getItem('calc-mod-stats')||'{}');const u=Object.keys(stats).length;const el=$('session-modules');if(el)el.textContent=u+' / 10';}catch{}
+}
+function trackModule(id){
+  if(id==='about')return;
+  try{const k='calc-mod-stats';const s=JSON.parse(localStorage.getItem(k)||'{}');s[id]=(s[id]||0)+1;localStorage.setItem(k,JSON.stringify(s));updateModuleCount();}catch{}
+}
+ 
+// ── Module switch ─────────────────────────────────────────────────────────
+function go(id,el){
+  document.querySelectorAll('.mod').forEach(m=>m.classList.remove('active'));
+  document.querySelectorAll('.nv').forEach(n=>n.classList.remove('active'));
+  const modEl=$('m-'+id);if(modEl)modEl.classList.add('active');
+  if(el)el.classList.add('active');
+  trackModule(id);
+  if(id==='about'){fetchVisitorCount();updateModuleCount();return;}
+  setTimeout(()=>D[id]&&D[id](),40);
+}
+ 
+const D={};
+ 
+// ── LIMITS ────────────────────────────────────────────────────────────────
+D.limits=function(){
+  const c=iC('limits-win','limits-cv');if(!c)return;const{g,W,H}=c;
+  const e=$('lf').value,a=+$('la').value,d=+$('ld').value;
+  $('la-v').textContent=a.toFixed(2);$('ld-v').textContent=d.toFixed(2);
+  if($('lfl'))$('lfl').textContent='f(x) = '+e;
+  const xm=-4.5,xM=4.5,[ym,yM]=aY(e,xm,xM);
+  g.fillStyle='#fff';g.fillRect(0,0,W,H);dG(g,xm,xM,ym,yM,W,H);
+  const[x1s]=ws(a-d,0,xm,xM,ym,yM,W,H),[x2s]=ws(a+d,0,xm,xM,ym,yM,W,H);
+  g.save();g.fillStyle='rgba(59,130,246,.09)';g.fillRect(x1s,0,x2s-x1s,H);
+  g.strokeStyle='rgba(59,130,246,.35)';g.lineWidth=1;g.setLineDash([4,4]);
+  g.beginPath();g.moveTo(x1s,0);g.lineTo(x1s,H);g.stroke();
+  g.beginPath();g.moveTo(x2s,0);g.lineTo(x2s,H);g.stroke();g.setLineDash([]);g.restore();
+  const[axs]=ws(a,0,xm,xM,ym,yM,W,H);
+  g.save();g.strokeStyle='rgba(29,78,216,.2)';g.lineWidth=1.5;g.setLineDash([5,4]);
+  g.beginPath();g.moveTo(axs,0);g.lineTo(axs,H);g.stroke();g.setLineDash([]);g.restore();
+  pE(g,e,xm,xM,ym,yM,W,H,'#1d4ed8',2.5);
+  const L=ev(e,a-1e-7),R=ev(e,a+1e-7);
+  const ex2=isFinite(L)&&isFinite(R)&&Math.abs(L-R)<.005;
+  if(isFinite(L))ring(g,a,L,xm,xM,ym,yM,W,H,'#1d4ed8',6);
+  g.save();g.fillStyle='#2563eb';g.font='11px JetBrains Mono,monospace';g.textAlign='center';
+  const[lx,ly]=ws(a,ym,xm,xM,ym,yM,W,H);g.fillText('a='+a.toFixed(2),lx,ly-7);g.restore();
+  $('r-la').textContent=f2(a);$('r-ll').textContent=f4(L);$('r-lr').textContent=f4(R);
+  $('r-lL').textContent=ex2?f4(L):'DNE';$('r-lfa').textContent=f4(ev(e,a));
+  const el2=$('r-lex');el2.textContent=ex2?'Yes \u2713':'No \u2717';el2.style.color=ex2?'#1d4ed8':'#93c5fd';
+  const h=HS.limits;if(h){const fy=ev(e,h.wx);drawCH(g,h.px,W,H,[{t:'x = '+h.wx.toFixed(3),c:'#1d4ed8'},{t:'f(x) = '+(isFinite(fy)?fy.toFixed(4):'undef'),c:'#2563eb'}]);}
+};
+ 
+// ── DERIVATIVE ────────────────────────────────────────────────────────────
+let animHRaf=null;
+function animateH(){
+  const btn=$('abt-h');
+  if(animHRaf){cancelAnimationFrame(animHRaf);animHRaf=null;btn.textContent='\u25b6 Animate h\u21920';return;}
+  const sl=$('dh'),start=+sl.value,end=0.01,dur=2200,t0=performance.now();
+  btn.textContent='\u23f9 Stop';
+  function step(now){
+    const t=Math.min((now-t0)/dur,1),ease=1-Math.pow(1-t,3);
+    sl.value=+(start+(end-start)*ease).toFixed(3);D.deriv();
+    if(t<1)animHRaf=requestAnimationFrame(step);
+    else{animHRaf=null;btn.textContent='\u25b6 Animate h\u21920';}
+  }
+  animHRaf=requestAnimationFrame(step);
+}
+D.deriv=function(){
+  const c=iC('deriv-win','deriv-cv');if(!c)return;const{g,W,H}=c;
+  const e=$('df').value,x0=+$('dx0').value,h=+$('dh').value;
+  $('dx0-v').textContent=x0.toFixed(2);$('dh-v').textContent=h.toFixed(2);
+  if($('dfl'))$('dfl').textContent='f(x) = '+e;
+  const xm=-4,xM=4,[ym,yM]=aY(e,xm,xM);
+  g.fillStyle='#fff';g.fillRect(0,0,W,H);dG(g,xm,xM,ym,yM,W,H);
+  const fx0=ev(e,x0),fx0h=ev(e,x0+h),ss=(fx0h-fx0)/h,ts=nd1(e,x0),ext=2.5;
+  const[s1x,s1y]=ws(x0-ext,fx0+ss*(-ext),xm,xM,ym,yM,W,H),[s2x,s2y]=ws(x0+h+ext,fx0+ss*(h+ext),xm,xM,ym,yM,W,H);
+  g.save();g.strokeStyle='#93c5fd';g.lineWidth=2;g.setLineDash([7,4]);g.beginPath();g.moveTo(s1x,s1y);g.lineTo(s2x,s2y);g.stroke();g.setLineDash([]);g.restore();
+  const[t1x,t1y]=ws(x0-ext,fx0+ts*(-ext),xm,xM,ym,yM,W,H),[t2x,t2y]=ws(x0+ext,fx0+ts*ext,xm,xM,ym,yM,W,H);
+  g.save();g.shadowColor='rgba(29,78,216,.2)';g.shadowBlur=8;g.strokeStyle='#1d4ed8';g.lineWidth=2.5;g.beginPath();g.moveTo(t1x,t1y);g.lineTo(t2x,t2y);g.stroke();g.shadowBlur=0;g.restore();
+  if(isFinite(fx0)&&isFinite(fx0h)){
+    const[p1x,p1y]=ws(x0,fx0,xm,xM,ym,yM,W,H),[p2x,p2y]=ws(x0+h,fx0h,xm,xM,ym,yM,W,H);
+    g.save();g.strokeStyle='rgba(147,197,253,.6)';g.lineWidth=1;g.setLineDash([3,3]);g.beginPath();g.moveTo(p1x,p1y);g.lineTo(p2x,p1y);g.lineTo(p2x,p2y);g.stroke();g.setLineDash([]);
+    g.fillStyle='rgba(59,130,246,.7)';g.font='11px JetBrains Mono,monospace';g.textAlign='center';g.fillText('h',(p1x+p2x)/2,p1y+14);g.restore();
+  }
+  pE(g,e,xm,xM,ym,yM,W,H,'#1e40af',2.2);
+  dot(g,x0,fx0,xm,xM,ym,yM,W,H,'#1d4ed8',6,true);dot(g,x0+h,fx0h,xm,xM,ym,yM,W,H,'#60a5fa',5);
+  $('r-dx').textContent=f4(x0);$('r-dfx').textContent=f4(fx0);$('r-dsec').textContent=f4(ss);$('r-dfp').textContent=f4(ts);
+  const h2=HS.deriv;if(h2){const fy=ev(e,h2.wx),sl=nd1(e,h2.wx);drawCH(g,h2.px,W,H,[{t:'x = '+h2.wx.toFixed(3),c:'#1d4ed8'},{t:'f(x)= '+f4(fy),c:'#2563eb'},{t:"f'(x)= "+f4(sl),c:'#60a5fa'}]);}
+};
+ 
+// ── SKETCH ────────────────────────────────────────────────────────────────
+let skSh={f:true,fp:true,fpp:true};
+function skT(k){skSh[k]=!skSh[k];$('sk-t'+k).classList.toggle('active',skSh[k]);D.sketch();}
+D.sketch=function(){
+  const c=iC('sketch-win','sketch-cv');if(!c)return;const{g,W,H}=c;
+  const e=$('skf').value,xv=+$('skx').value;$('skx-v').textContent=xv.toFixed(2);
+  const xm=-4.5,xM=4.5,[ym,yM]=aY(e,xm,xM);
+  g.fillStyle='#fff';g.fillRect(0,0,W,H);dG(g,xm,xM,ym,yM,W,H);
+  const st=Math.floor(W*2.5);
+  if(skSh.fpp){g.save();g.strokeStyle='#bfdbfe';g.lineWidth=1.8;g.setLineDash([3,3]);g.beginPath();let on=false;for(let i=0;i<=st;i++){const x=xm+(i/st)*(xM-xm),y=nd2(e,x);if(!isFinite(y)||y<ym*5||y>yM*5){on=false;continue;}const[sx,sy]=ws(x,y,xm,xM,ym,yM,W,H);if(!on){g.moveTo(sx,sy);on=true;}else g.lineTo(sx,sy);}g.stroke();g.setLineDash([]);g.restore();}
+  if(skSh.fp){g.save();g.strokeStyle='#60a5fa';g.lineWidth=2;g.beginPath();let on=false;for(let i=0;i<=st;i++){const x=xm+(i/st)*(xM-xm),y=nd1(e,x);if(!isFinite(y)||y<ym*5||y>yM*5){on=false;continue;}const[sx,sy]=ws(x,y,xm,xM,ym,yM,W,H);if(!on){g.moveTo(sx,sy);on=true;}else g.lineTo(sx,sy);}g.stroke();g.restore();}
+  if(skSh.f)pE(g,e,xm,xM,ym,yM,W,H,'#1d4ed8',2.5);
+  const fv=ev(e,xv),fpv=nd1(e,xv),fppv=nd2(e,xv);
+  if(skSh.f&&isFinite(fv)){const ex2=1.2,l1=ws(xv-ex2,fv+fpv*(-ex2),xm,xM,ym,yM,W,H),l2=ws(xv+ex2,fv+fpv*ex2,xm,xM,ym,yM,W,H);g.save();g.strokeStyle='rgba(29,78,216,.25)';g.lineWidth=1.5;g.beginPath();g.moveTo(l1[0],l1[1]);g.lineTo(l2[0],l2[1]);g.stroke();g.restore();dot(g,xv,fv,xm,xM,ym,yM,W,H,'#1d4ed8',6,true);}
+  if(skSh.fp&&isFinite(fpv))dot(g,xv,fpv,xm,xM,ym,yM,W,H,'#3b82f6',5);
+  if(skSh.fpp&&isFinite(fppv))dot(g,xv,fppv,xm,xM,ym,yM,W,H,'#93c5fd',5);
+  g.save();g.font='11px JetBrains Mono,monospace';let ly=18;if(skSh.f){g.fillStyle='#1d4ed8';g.fillText('f(x)',12,ly);ly+=16;}if(skSh.fp){g.fillStyle='#60a5fa';g.fillText("f'(x)",12,ly);ly+=16;}if(skSh.fpp){g.fillStyle='#bfdbfe';g.fillText("f''(x)",12,ly);}g.restore();
+  $('r-skx').textContent=f2(xv);$('r-skf').textContent=f4(fv);$('r-skfp').textContent=f4(fpv);$('r-skfpp').textContent=f4(fppv);
+  const h=HS.sketch;if(h){const fy=ev(e,h.wx),fp2=nd1(e,h.wx),fpp2=nd2(e,h.wx);drawCH(g,h.px,W,H,[{t:'x = '+h.wx.toFixed(3),c:'#1d4ed8'},{t:'f  = '+f4(fy),c:'#1d4ed8'},{t:"f' = "+f4(fp2),c:'#60a5fa'},{t:"f''= "+f4(fpp2),c:'#93c5fd'}]);}
+};
+ 
+// ── OPTIM ─────────────────────────────────────────────────────────────────
+D.optim=function(){
+  const c=iC('optim-win','optim-cv');if(!c)return;const{g,W,H}=c;
+  const e=$('opf').value,a=+$('opa').value,b=+$('opb').value;
+  $('opa-v').textContent=a.toFixed(2);$('opb-v').textContent=b.toFixed(2);
+  const xm=a-.5,xM=b+.5,[ym,yM]=aY(e,xm,xM);
+  g.fillStyle='#fff';g.fillRect(0,0,W,H);dG(g,xm,xM,ym,yM,W,H);
+  const[axs]=ws(a,0,xm,xM,ym,yM,W,H),[bxs]=ws(b,0,xm,xM,ym,yM,W,H);
+  g.save();g.fillStyle='rgba(59,130,246,.07)';g.fillRect(axs,0,bxs-axs,H);g.restore();
+  pE(g,e,xm,xM,ym,yM,W,H,'#1e40af',2.2);
+  const cands=[a,b],M=600;
+  for(let i=0;i<M-1;i++){const x1=a+(i/M)*(b-a),x2=a+((i+1)/M)*(b-a);const d1=nd1(e,x1),d2=nd1(e,x2);if(isFinite(d1)&&isFinite(d2)&&d1*d2<0){let lo=x1,hi=x2;for(let j=0;j<40;j++){const m=(lo+hi)/2;nd1(e,lo)*nd1(e,m)<=0?hi=m:lo=m;}cands.push((lo+hi)/2);}}
+  const pts=cands.map(x=>({x,y:ev(e,x)})).filter(p=>isFinite(p.y));if(!pts.length)return;
+  const gmax=pts.reduce((m,p)=>p.y>m.y?p:m,pts[0]),gmin=pts.reduce((m,p)=>p.y<m.y?p:m,pts[0]);
+  cands.filter(cx=>cx>a+1e-4&&cx<b-1e-4).forEach(cx=>dot(g,cx,ev(e,cx),xm,xM,ym,yM,W,H,'#93c5fd',5));
+  dot(g,a,ev(e,a),xm,xM,ym,yM,W,H,'#60a5fa',6);dot(g,b,ev(e,b),xm,xM,ym,yM,W,H,'#60a5fa',6);
+  dot(g,gmax.x,gmax.y,xm,xM,ym,yM,W,H,'#1d4ed8',9,true);
+  const[mx,my]=ws(gmax.x,gmax.y,xm,xM,ym,yM,W,H);g.save();g.fillStyle='#1d4ed8';g.font='11px JetBrains Mono,monospace';g.textAlign='center';g.fillText('max('+gmax.x.toFixed(2)+', '+gmax.y.toFixed(2)+')',mx,my-13);g.restore();
+  dot(g,gmin.x,gmin.y,xm,xM,ym,yM,W,H,'#bfdbfe',8);
+  const[nx,ny]=ws(gmin.x,gmin.y,xm,xM,ym,yM,W,H);g.save();g.fillStyle='#93c5fd';g.font='11px JetBrains Mono,monospace';g.textAlign='center';g.fillText('min('+gmin.x.toFixed(2)+', '+gmin.y.toFixed(2)+')',nx,ny+17);g.restore();
+  $('r-opmax').textContent=gmax.y.toFixed(4);$('r-opmaxx').textContent=gmax.x.toFixed(4);
+  $('r-opmin').textContent=gmin.y.toFixed(4);$('r-opminx').textContent=gmin.x.toFixed(4);
+  const h=HS.optim;if(h){const fy=ev(e,h.wx);drawCH(g,h.px,W,H,[{t:'x = '+h.wx.toFixed(3),c:'#1d4ed8'},{t:'f(x)= '+f4(fy),c:'#2563eb'}]);}
+};
+ 
+// ── RIEMANN ───────────────────────────────────────────────────────────────
+let rmM='left';
+function setRM(m){rmM=m;['left','right','mid','trap'].forEach(id=>$('rm-'+id).classList.toggle('active',id===m));D.riemann();}
+D.riemann=function(){
+  const c=iC('riemann-win','riemann-cv');if(!c)return;const{g,W,H}=c;
+  const e=$('rmf').value,n=+$('rmn').value,a=+$('rma').value,b=+$('rmb').value;
+  $('rmn-v').textContent=n;$('rma-v').textContent=a.toFixed(2);$('rmb-v').textContent=b.toFixed(2);
+  if(a>=b)return;
+  const xm=a-.3,xM=b+.3,[ym,yM]=aY(e,xm,xM);
+  g.fillStyle='#fff';g.fillRect(0,0,W,H);dG(g,xm,xM,ym,yM,W,H);
+  const dx=(b-a)/n,[,zy]=ws(0,0,xm,xM,ym,yM,W,H);let sum=0;
+  for(let i=0;i<n;i++){
+    const xl=a+i*dx,xr=xl+dx;
+    if(rmM==='trap'){const yl=ev(e,xl),yr=ev(e,xr);if(!isFinite(yl)||!isFinite(yr))continue;sum+=(yl+yr)/2*dx;const[slx,sly]=ws(xl,yl,xm,xM,ym,yM,W,H),[srx,sry]=ws(xr,yr,xm,xM,ym,yM,W,H);g.save();g.fillStyle=(yl+yr)/2>=0?'rgba(29,78,216,.18)':'rgba(147,197,253,.28)';g.strokeStyle=(yl+yr)/2>=0?'rgba(29,78,216,.4)':'rgba(147,197,253,.5)';g.lineWidth=.5;g.beginPath();g.moveTo(slx,zy);g.lineTo(slx,sly);g.lineTo(srx,sry);g.lineTo(srx,zy);g.closePath();g.fill();g.stroke();g.restore();}
+    else{const xs=rmM==='left'?xl:rmM==='right'?xr:(xl+xr)/2,y=ev(e,xs);if(!isFinite(y))continue;sum+=y*dx;const[slx]=ws(xl,0,xm,xM,ym,yM,W,H),[srx]=ws(xr,0,xm,xM,ym,yM,W,H),[,ys]=ws(0,y,xm,xM,ym,yM,W,H);g.save();g.fillStyle=y>=0?'rgba(29,78,216,.18)':'rgba(147,197,253,.28)';g.strokeStyle=y>=0?'rgba(29,78,216,.4)':'rgba(147,197,253,.5)';g.lineWidth=.5;g.fillRect(slx,Math.min(zy,ys),srx-slx,Math.abs(zy-ys));g.strokeRect(slx,Math.min(zy,ys),srx-slx,Math.abs(zy-ys));g.restore();}
+  }
+  pE(g,e,xm,xM,ym,yM,W,H,'#1d4ed8',2.5);
+  const ex=trapE(e,a,b);$('r-rmn').textContent=n;$('r-rmsum').textContent=f4(sum);$('r-rmex').textContent=f4(ex);$('r-rmerr').textContent=f4(Math.abs(sum-ex));
+  const h=HS.riemann;if(h){const fy=ev(e,h.wx);drawCH(g,h.px,W,H,[{t:'x = '+h.wx.toFixed(3),c:'#1d4ed8'},{t:'f(x)= '+f4(fy),c:'#2563eb'}]);}
+};
+ 
+// ── INTEGRAL ──────────────────────────────────────────────────────────────
+D.integral=function(){
+  const c=iC('integral-win','integral-cv');if(!c)return;const{g,W,H}=c;
+  const e=$('inf').value,a=+$('ina').value,b=+$('inb').value;
+  $('ina-v').textContent=a.toFixed(2);$('inb-v').textContent=b.toFixed(2);
+  const xm=Math.min(a-1,-4.5),xM=Math.max(b+1,4.5),[ym,yM]=aY(e,xm,xM);
+  g.fillStyle='#fff';g.fillRect(0,0,W,H);dG(g,xm,xM,ym,yM,W,H);
+  if(a<b){
+    const st=600,[,zy]=ws(0,0,xm,xM,ym,yM,W,H);let pos=0,neg=0;
+    for(let i=0;i<st;i++){const x1=a+(i/st)*(b-a),x2=a+((i+1)/st)*(b-a);const y1=ev(e,x1),y2=ev(e,x2);if(!isFinite(y1)||!isFinite(y2))continue;const avg=(y1+y2)/2*(x2-x1);if(avg>0)pos+=avg;else neg+=avg;const[sx1,sy1]=ws(x1,y1,xm,xM,ym,yM,W,H),[sx2,sy2]=ws(x2,y2,xm,xM,ym,yM,W,H);g.save();g.fillStyle=(y1+y2)/2>=0?'rgba(29,78,216,.22)':'rgba(147,197,253,.32)';g.beginPath();g.moveTo(sx1,zy);g.lineTo(sx1,sy1);g.lineTo(sx2,sy2);g.lineTo(sx2,zy);g.closePath();g.fill();g.restore();}
+    $('r-inpos').textContent=f4(pos);$('r-inneg').textContent=f4(neg);$('r-innet').textContent=f4(pos+neg);
+  }
+  pE(g,e,xm,xM,ym,yM,W,H,'#1d4ed8',2.2);
+  const fa=ev(e,a),fb=ev(e,b);
+  if(isFinite(fa))dot(g,a,fa,xm,xM,ym,yM,W,H,'#1d4ed8',5);if(isFinite(fb))dot(g,b,fb,xm,xM,ym,yM,W,H,'#1d4ed8',5);
+  g.save();g.fillStyle='#60a5fa';g.font='13px JetBrains Mono,monospace';g.textAlign='center';
+  const[alx,aly]=ws(a,ym,xm,xM,ym,yM,W,H),[blx,bly]=ws(b,ym,xm,xM,ym,yM,W,H);g.fillText('a',alx,aly-6);g.fillText('b',blx,bly-6);g.restore();
+  const h=HS.integral;if(h){const fy=ev(e,h.wx),cumul=trapE(e,a,h.wx);drawCH(g,h.px,W,H,[{t:'x = '+h.wx.toFixed(3),c:'#1d4ed8'},{t:'f(x)= '+f4(fy),c:'#2563eb'},{t:'\u222b\u2090\u02E3 = '+f4(cumul),c:'#60a5fa'}]);}
+};
+ 
+// ── FTC ───────────────────────────────────────────────────────────────────
+D.ftc=function(){
+  const c=iC('ftc-win','ftc-cv');if(!c)return;const{g,W,H}=c;
+  const e=$('ftcf').value,a=+$('ftca').value,x=+$('ftcx').value;
+  $('ftca-v').textContent=a.toFixed(2);$('ftcx-v').textContent=x.toFixed(2);
+  const xm=-5,xM=7,exX=e.replace(/\bt\b/g,'x'),[ym,yM]=aY(exX,xm,xM);
+  g.fillStyle='#fff';g.fillRect(0,0,W,H);dG(g,xm,xM,ym,yM,W,H);
+  if(Math.abs(x-a)>1e-4){
+    const lo=Math.min(a,x),hi=Math.max(a,x),sign=x>a?1:-1,st=600,[,zy]=ws(0,0,xm,xM,ym,yM,W,H);
+    for(let i=0;i<st;i++){const t1=lo+(i/st)*(hi-lo),t2=lo+((i+1)/st)*(hi-lo);const y1=evt(e,t1),y2=evt(e,t2);if(!isFinite(y1)||!isFinite(y2))continue;const[sx1,sy1]=ws(t1,y1,xm,xM,ym,yM,W,H),[sx2,sy2]=ws(t2,y2,xm,xM,ym,yM,W,H);g.save();g.fillStyle=sign*(y1+y2)/2>=0?'rgba(29,78,216,.22)':'rgba(147,197,253,.3)';g.beginPath();g.moveTo(sx1,zy);g.lineTo(sx1,sy1);g.lineTo(sx2,sy2);g.lineTo(sx2,zy);g.closePath();g.fill();g.restore();}
+  }
+  pFn(g,t=>evt(e,t),xm,xM,ym,yM,W,H,'#1d4ed8',2.5);
+  const fy=evt(e,x);
+  if(isFinite(fy)){dot(g,x,fy,xm,xM,ym,yM,W,H,'#1d4ed8',7,true);const[px2,py2]=ws(x,fy,xm,xM,ym,yM,W,H),[,pzy]=ws(x,0,xm,xM,ym,yM,W,H);g.save();g.strokeStyle='rgba(29,78,216,.3)';g.lineWidth=1.5;g.setLineDash([4,3]);g.beginPath();g.moveTo(px2,py2);g.lineTo(px2,pzy);g.stroke();g.setLineDash([]);g.fillStyle='#2563eb';g.font='11px JetBrains Mono,monospace';g.textAlign='left';g.fillText('x='+x.toFixed(2),px2+7,py2-6);g.restore();}
+  dot(g,a,evt(e,a),xm,xM,ym,yM,W,H,'#93c5fd',5);
+  g.save();g.fillStyle='#93c5fd';g.font='12px JetBrains Mono,monospace';g.textAlign='center';const[alx2,aly2]=ws(a,ym,xm,xM,ym,yM,W,H);g.fillText('a',alx2,aly2-7);g.restore();
+  const Fx=trapT(e,a,x);$('r-ftcx').textContent=f2(x);$('r-ftcFx').textContent=f4(Fx);$('r-ftcfx').textContent=f4(fy);
+  const h=HS.ftc;if(h){const ft=evt(e,h.wx),Fh=trapT(e,a,h.wx);drawCH(g,h.px,W,H,[{t:'x = '+h.wx.toFixed(3),c:'#1d4ed8'},{t:'f(x)= '+f4(ft),c:'#2563eb'},{t:'F(x)= '+f4(Fh),c:'#60a5fa'}]);}
+};
+ 
+// ── TAYLOR ────────────────────────────────────────────────────────────────
+const tayD={
+  sin:{fn:Math.sin,co:(a,k)=>[Math.sin(a),Math.cos(a),-Math.sin(a),-Math.cos(a)][k%4]/fN(k)},
+  cos:{fn:Math.cos,co:(a,k)=>[Math.cos(a),-Math.sin(a),-Math.cos(a),Math.sin(a)][k%4]/fN(k)},
+  exp:{fn:Math.exp,co:(a,k)=>Math.exp(a)/fN(k)},
+  ln1p:{fn:x=>Math.log(1+x),co:(a,k)=>{if(k===0)return Math.log(1+a);return(k%2===1?1:-1)*fN(k-1)/(Math.pow(1+a,k)*fN(k));}},
+  atan:{fn:Math.atan,co:(a,k)=>{const h=5e-3;let s=0;for(let j=0;j<=k;j++){const sg=(k-j)%2===0?1:-1;let b=1;for(let m=0;m<j;m++)b*=(k-m)/(m+1);s+=sg*b*Math.atan(a+j*h);}return s/(Math.pow(h,k)*fN(k));}}
+};
+function evTay(cf,a,x){let r=0,pw=1;for(let k=0;k<cf.length;k++){r+=cf[k]*pw;pw*=(x-a);}return r;}
+function bPolyLaTeX(key,n){
+  function pw(i){return i<=1?'x':'x^{'+i+'}';}
+  var p=[];
+  if(key==='sin'){for(var k=0;2*k+1<=n&&k<6;k++){var i=2*k+1,d=fN(i),neg=k%2===1;p.push((k===0?'':(neg?'-':'+'))+(i===1?'x':'\\frac{'+pw(i)+'}{'+d+'}'));}if(n>=13)p.push('+\\cdots');}
+  else if(key==='cos'){p.push('1');for(var k=1;2*k<=n&&k<6;k++){var i=2*k,d=fN(i),neg=k%2===1;p.push((neg?'-':'+')+('\\frac{'+pw(i)+'}{'+d+'}'));}if(n>=12)p.push('+\\cdots');}
+  else if(key==='exp'){p.push('1+x');for(var k=2;k<=Math.min(n,7);k++)p.push('+\\frac{'+pw(k)+'}{'+fN(k)+'}');if(n>7)p.push('+\\cdots');}
+  else if(key==='ln1p'){for(var k=1;k<=Math.min(n,6);k++){var neg=k%2===0;p.push((k===1?'':(neg?'-':'+'))+(k===1?'x':'\\frac{'+pw(k)+'}{'+k+'}'));}if(n>6)p.push('+\\cdots');}
+  else return 'T_{'+n+'}(x)';
+  return p.join('');
+}
+D.taylor=function(){
+  const c=iC('taylor-win','taylor-cv');if(!c)return;const{g,W,H}=c;
+  const key=$('tayf').value,a=+$('taya').value,n=+$('tayn').value;
+  $('taya-v').textContent=a.toFixed(2);$('tayn-v').textContent=n;
+  const def=tayD[key],cf=[];for(let k=0;k<=n;k++){try{cf.push(def.co(a,k));}catch{cf.push(0);}}
+  const xm=-5,xM=5,ym=-3,yM=3;
+  g.fillStyle='#fff';g.fillRect(0,0,W,H);dG(g,xm,xM,ym,yM,W,H);
+  pFn(g,def.fn,xm,xM,ym,yM,W,H,'#93c5fd',2.5,[7,4]);
+  pFn(g,x=>evTay(cf,a,x),xm,xM,ym,yM,W,H,'#1d4ed8',2.2);
+  dot(g,a,def.fn(a),xm,xM,ym,yM,W,H,'#1d4ed8',6,true);
+  g.save();g.font='11px JetBrains Mono,monospace';g.fillStyle='#93c5fd';g.fillText('f(x)',12,18);g.fillStyle='#1d4ed8';g.fillText('Tn(x)',12,34);g.restore();
+  $('r-taydeg').textContent=n;
+  const polyEl=$('r-taypoly');
+  try{const latex=bPolyLaTeX(key,n);katex.render(latex,polyEl,{throwOnError:false,displayMode:false});}
+  catch{polyEl.textContent='T_'+n+'(x)';}
+  const h=HS.taylor;if(h){const fy=def.fn(h.wx),tn=evTay(cf,a,h.wx);drawCH(g,h.px,W,H,[{t:'x  = '+h.wx.toFixed(3),c:'#1d4ed8'},{t:'f  = '+f4(fy),c:'#93c5fd'},{t:'Tn = '+f4(tn),c:'#1d4ed8'},{t:'|e|= '+f4(Math.abs(fy-tn)),c:'#60a5fa'}]);}
+};
+ 
+// ── VOLUMES ───────────────────────────────────────────────────────────────
+D.volumes=function(){
+  const c=iC('volumes-win','volumes-cv');if(!c)return;const{g,W,H}=c;
+  const e=$('volf').value,a=+$('vola').value,b=+$('volb').value;
+  const xs=Math.max(a,Math.min(b,+$('volx').value));
+  $('vola-v').textContent=a.toFixed(2);$('volb-v').textContent=b.toFixed(2);$('volx-v').textContent=xs.toFixed(2);
+  const xm=-0.4,xM=b+0.6,rawY=aY(e,xm,xM),yM2=Math.max(rawY[1],.5),ym2=-yM2;
+  g.fillStyle='#fff';g.fillRect(0,0,W,H);dG(g,xm,xM,ym2,yM2,W,H);
+  if(a<b){
+    const st=400;g.save();g.fillStyle='rgba(59,130,246,.1)';g.beginPath();let first=true;
+    for(let i=0;i<=st;i++){const x=a+(i/st)*(b-a),y=Math.max(0,ev(e,x));const[sx,sy]=ws(x,y,xm,xM,ym2,yM2,W,H);if(first){g.moveTo(sx,sy);first=false;}else g.lineTo(sx,sy);}
+    for(let i=st;i>=0;i--){const x=a+(i/st)*(b-a),y=-Math.max(0,ev(e,x));const[sx,sy]=ws(x,y,xm,xM,ym2,yM2,W,H);g.lineTo(sx,sy);}
+    g.closePath();g.fill();
+    g.strokeStyle='rgba(59,130,246,.35)';g.lineWidth=1.5;g.beginPath();first=true;
+    for(let i=0;i<=st;i++){const x=a+(i/st)*(b-a),y=Math.max(0,ev(e,x));const[sx,sy]=ws(x,y,xm,xM,ym2,yM2,W,H);if(first){g.moveTo(sx,sy);first=false;}else g.lineTo(sx,sy);}
+    g.stroke();g.beginPath();first=true;
+    for(let i=0;i<=st;i++){const x=a+(i/st)*(b-a),y=-Math.max(0,ev(e,x));const[sx,sy]=ws(x,y,xm,xM,ym2,yM2,W,H);if(first){g.moveTo(sx,sy);first=false;}else g.lineTo(sx,sy);}
+    g.stroke();g.restore();
+    pE(g,e,xm,xM,ym2,yM2,W,H,'#1d4ed8',2.5);pE(g,'-('+e+')',xm,xM,ym2,yM2,W,H,'rgba(29,78,216,.4)',1.5);
+    const r=Math.max(0,ev(e,xs));
+    if(isFinite(r)&&r>0.01){
+      const[ssx]=ws(xs,0,xm,xM,ym2,yM2,W,H),[,syt]=ws(xs,r,xm,xM,ym2,yM2,W,H),[,syb]=ws(xs,-r,xm,xM,ym2,yM2,W,H);
+      const dR=(syb-syt)/2;g.save();g.fillStyle='rgba(96,165,250,.2)';g.shadowColor='rgba(59,130,246,.25)';g.shadowBlur=8;g.strokeStyle='#3b82f6';g.lineWidth=2;
+      g.beginPath();g.ellipse(ssx,(syt+syb)/2,Math.max(1,dR*.26),dR,0,0,Math.PI*2);g.fill();g.stroke();g.shadowBlur=0;
+      const[,zy]=ws(xs,0,xm,xM,ym2,yM2,W,H);g.strokeStyle='rgba(29,78,216,.45)';g.lineWidth=1.5;g.setLineDash([4,3]);g.beginPath();g.moveTo(ssx,zy);g.lineTo(ssx,syt);g.stroke();g.setLineDash([]);
+      g.fillStyle='#2563eb';g.font='11px JetBrains Mono,monospace';g.textAlign='left';g.fillText('r='+r.toFixed(3),ssx+7,(zy+syt)/2);g.restore();
+      $('r-volr').textContent=f4(r);
+    }
+    const vol=Math.PI*trapI(x=>{const y=ev(e,x);return isFinite(y)?y*y:0;},a,b);
+    $('r-volv').textContent=f4(vol)+' units\u00b3';
+  }
+  const h=HS.volumes;if(h){const fy=Math.max(0,ev(e,h.wx));drawCH(g,h.px,W,H,[{t:'x = '+h.wx.toFixed(3),c:'#1d4ed8'},{t:'r = '+f4(fy),c:'#2563eb'},{t:'\u03c0r\u00b2= '+f4(Math.PI*fy*fy),c:'#60a5fa'}]);}
+};
+ 
+// ── SERIES ────────────────────────────────────────────────────────────────
+D.series=function(){
+  const c=iC('series-win','series-cv');if(!c)return;const{g,W,H}=c;
+  const type=$('serf').value,r=+$('serr').value,p=+$('serp').value,N=+$('sern').value;
+  $('serr-v').textContent=r.toFixed(2);$('serp-v').textContent=p.toFixed(2);$('sern-v').textContent=N;
+  $('ser-rg').style.display=type==='geometric'?'':'none';$('ser-pg').style.display=type==='pseries'?'':'none';
+  let sum=0;const sums=[];let conv=null,exact=null;
+  for(let n=1;n<=N;n++){let t=0;if(type==='geometric')t=Math.pow(r,n);else if(type==='pseries')t=1/Math.pow(n,p);else if(type==='harmonic')t=1/n;else if(type==='alternating')t=(n%2===1?1:-1)/n;else if(type==='telescoping')t=1/(n*(n+1));sum+=t;sums.push(sum);}
+  if(type==='geometric'){conv=Math.abs(r)<1;if(conv)exact=r/(1-r);}else if(type==='pseries'){conv=p>1;if(Math.abs(p-2)<.01)exact=Math.PI*Math.PI/6-1;}else if(type==='harmonic')conv=false;else if(type==='alternating'){conv=true;exact=Math.log(2);}else if(type==='telescoping'){conv=true;exact=1;}
+  g.fillStyle='#fff';g.fillRect(0,0,W,H);
+  const mg={t:28,r:24,b:34,l:56},pw=W-mg.l-mg.r,ph=H-mg.t-mg.b;
+  const fin=sums.filter(isFinite);let vMin=Math.min(...fin),vMax=Math.max(...fin);
+  if(exact!==null&&isFinite(exact)){vMin=Math.min(vMin,exact);vMax=Math.max(vMax,exact);}
+  const vP=Math.max((vMax-vMin)*.15,.15);vMin-=vP;vMax+=vP;
+  const sy=v=>mg.t+ph-(v-vMin)/(vMax-vMin)*ph,sx=i=>mg.l+(i/Math.max(N-1,1))*pw;
+  g.strokeStyle='#dbeafe';g.lineWidth=1;for(let i=0;i<=5;i++){const v=vMin+(i/5)*(vMax-vMin),y=sy(v);g.beginPath();g.moveTo(mg.l,y);g.lineTo(mg.l+pw,y);g.stroke();g.fillStyle='#93c5fd';g.font='10px JetBrains Mono,monospace';g.textAlign='right';g.fillText(v.toFixed(2),mg.l-5,y+4);}
+  g.fillStyle='#bfdbfe';g.font='10px JetBrains Mono,monospace';g.textAlign='center';const te=Math.max(1,Math.floor(N/7));for(let n=1;n<=N;n+=te)g.fillText(n,sx(n-1),mg.t+ph+14);g.fillText('n',mg.l+pw/2,mg.t+ph+26);
+  g.strokeStyle='#dbeafe';g.lineWidth=1;g.strokeRect(mg.l,mg.t,pw,ph);
+  if(exact!==null&&isFinite(exact)){const ey=sy(exact);g.save();g.strokeStyle='rgba(96,165,250,.7)';g.lineWidth=1.5;g.setLineDash([6,4]);g.beginPath();g.moveTo(mg.l,ey);g.lineTo(mg.l+pw,ey);g.stroke();g.setLineDash([]);g.fillStyle='#60a5fa';g.font='11px JetBrains Mono,monospace';g.textAlign='left';g.fillText('S='+exact.toFixed(4),mg.l+5,ey-5);g.restore();}
+  g.save();g.strokeStyle='#1d4ed8';g.lineWidth=2;g.lineJoin='round';g.beginPath();for(let i=0;i<sums.length;i++){const v=sums[i];if(!isFinite(v))continue;const x=sx(i),y=sy(Math.max(vMin-vP,Math.min(vMax+vP,v)));if(i===0)g.moveTo(x,y);else g.lineTo(x,y);}g.stroke();g.restore();
+  for(let i=0;i<sums.length;i++){const v=sums[i];if(!isFinite(v))continue;const x=sx(i),y=sy(Math.max(vMin-vP,Math.min(vMax+vP,v)));const dv=!conv&&i>10;g.save();if(!dv){g.shadowColor='rgba(29,78,216,.15)';g.shadowBlur=3;}g.fillStyle=dv?'#93c5fd':'#1d4ed8';g.strokeStyle='#fff';g.lineWidth=1.5;g.beginPath();g.arc(x,y,Math.max(1.5,3.5-N/50),0,Math.PI*2);g.fill();g.stroke();g.shadowBlur=0;g.restore();}
+  const hs2=HS.series;if(hs2){const idx=Math.round((hs2.px-mg.l)/pw*(N-1));if(idx>=0&&idx<sums.length){const sn=sums[idx],x=sx(idx),y=sy(Math.max(vMin-vP,Math.min(vMax+vP,sn)));g.save();g.fillStyle='rgba(29,78,216,.8)';g.strokeStyle='#fff';g.lineWidth=2;g.beginPath();g.arc(x,y,5,0,Math.PI*2);g.fill();g.stroke();g.restore();drawCH(g,hs2.px,W,H,[{t:'n = '+(idx+1),c:'#1d4ed8'},{t:'S_n= '+f4(sn),c:'#2563eb'},{t:exact?'S = '+exact.toFixed(4):(conv?'converges':'diverges'),c:'#60a5fa'}]);}}
+  const last=sums[sums.length-1];$('r-serS').textContent=exact!==null&&isFinite(exact)?exact.toFixed(5)+' (exact)':(isFinite(last)?last.toFixed(5):'\u221e');$('r-serSn').textContent=isFinite(last)?last.toFixed(5):'\u221e';const ce=$('r-serconv');if(conv===true){ce.textContent='Yes \u2713';ce.style.color='#1d4ed8';}else if(conv===false){ce.textContent='Diverges';ce.style.color='#93c5fd';}else{ce.textContent='\u2014';ce.style.color='#bfdbfe';}
+};
+ 
+// ── Keyboard ──────────────────────────────────────────────────────────────
+function setupKeyboard(){
+  document.querySelectorAll('input[type=range]').forEach(sl=>{
+    sl.addEventListener('keydown',e=>{
+      const step=+(sl.step||1);
+      if(e.key==='ArrowLeft'||e.key==='ArrowDown'){e.preventDefault();sl.value=Math.max(+sl.min,+sl.value-step);sl.dispatchEvent(new Event('input'));}
+      else if(e.key==='ArrowRight'||e.key==='ArrowUp'){e.preventDefault();sl.value=Math.min(+sl.max,+sl.value+step);sl.dispatchEvent(new Event('input'));}
+    });
+  });
+}
+ 
+// ── Init ──────────────────────────────────────────────────────────────────
+function initHovers(){
+  setupHover('limits-win','limits',()=>[-4.5,4.5],'la');
+  setupHover('deriv-win','deriv',()=>[-4,4],'dx0');
+  setupHover('sketch-win','sketch',()=>[-4.5,4.5],'skx');
+  setupHover('optim-win','optim',()=>[+$('opa').value-.5,+$('opb').value+.5]);
+  setupHover('riemann-win','riemann',()=>[+$('rma').value-.3,+$('rmb').value+.3]);
+  setupHover('integral-win','integral',()=>[Math.min(+$('ina').value-1,-4.5),Math.max(+$('inb').value+1,4.5)]);
+  setupHover('ftc-win','ftc',()=>[-5,7],'ftcx');
+  setupHover('taylor-win','taylor',()=>[-5,5]);
+  setupHover('volumes-win','volumes',()=>[-0.4,+$('volb').value+.6],'volx');
+  setupHover('series-win','series',()=>[0,1]);
+}
+ 
+let rto;
+window.addEventListener('resize',()=>{clearTimeout(rto);rto=setTimeout(()=>{const a=document.querySelector('.mod.active');if(a){const id=a.id.replace('m-','');D[id]&&D[id]();}},80);});
+ 
+window.addEventListener('DOMContentLoaded',()=>{
+  loadState();
+  initHovers();
+  setupKeyboard();
+  updateModuleCount();
+  const active=document.querySelector('.mod.active');
+  const initId=active?active.id.replace('m-',''):'limits';
+  if(initId==='about'){fetchVisitorCount();updateModuleCount();}
+  else setTimeout(()=>D[initId]&&D[initId](),80);
+  if(typeof renderMathInElement!=='undefined'){
+    renderMathInElement(document.body,{delimiters:[{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}],throwOnError:false});
+  }
+  fetchVisitorCount();
+});
+</script>
+</body>
+</html>
