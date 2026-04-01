@@ -186,103 +186,55 @@ select:hover{border-color:var(--b3)}
 </head>
 <body>
 
-<!-- ══════════════════════════════════════════════════════
-     LANDING PAGE
-══════════════════════════════════════════════════════ -->
-<div id="landing">
-  <svg class="math-bg" viewBox="0 0 1400 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <pattern id="sg" width="44" height="44" patternUnits="userSpaceOnUse">
-        <path d="M 44 0 L 0 0 0 44" fill="none" stroke="#c8d4f0" stroke-width="0.6"/>
-      </pattern>
-      <pattern id="lg" width="220" height="220" patternUnits="userSpaceOnUse">
-        <rect width="220" height="220" fill="url(#sg)"/>
-        <path d="M 220 0 L 0 0 0 220" fill="none" stroke="#b0c0e8" stroke-width="1.2"/>
-      </pattern>
-    </defs>
-    <rect width="100%" height="100%" fill="url(#lg)"/>
-    <!-- Axes -->
-    <line x1="700" y1="0" x2="700" y2="900" stroke="#93c5fd" stroke-width="1.5" opacity=".5"/>
-    <line x1="0" y1="450" x2="1400" y2="450" stroke="#93c5fd" stroke-width="1.5" opacity=".5"/>
-    <!-- Sine wave -->
-    <path d="M 0 450 C 87 360,175 360,262 450 C 349 540,437 540,524 450 C 611 360,699 360,786 450 C 873 540,961 540,1048 450 C 1135 360,1223 360,1310 450 C 1357 494,1400 494,1400 450" fill="none" stroke="rgba(29,78,216,.16)" stroke-width="2.2"/>
-    <!-- Parabola through center -->
-    <path d="M 200 820 Q 700 80 1200 820" fill="none" stroke="rgba(29,78,216,.1)" stroke-width="2"/>
-    <!-- Unit circles -->
-    <circle cx="140" cy="200" r="110" fill="none" stroke="rgba(29,78,216,.09)" stroke-width="1.5"/>
-    <circle cx="1260" cy="700" r="90" fill="none" stroke="rgba(29,78,216,.09)" stroke-width="1.5"/>
-    <!-- Ellipse -->
-    <ellipse cx="700" cy="750" rx="200" ry="80" fill="none" stroke="rgba(29,78,216,.07)" stroke-width="1.5"/>
-    <!-- Math symbols -->
-    <text x="60" y="130" font-family="Georgia,serif" font-size="90" fill="rgba(29,78,216,.08)">∫</text>
-    <text x="1240" y="280" font-family="Georgia,serif" font-size="76" fill="rgba(29,78,216,.08)">Σ</text>
-    <text x="620" y="120" font-family="Georgia,serif" font-size="58" fill="rgba(29,78,216,.09)">π</text>
-    <text x="1080" y="820" font-family="Georgia,serif" font-size="64" fill="rgba(29,78,216,.08)">∂</text>
-    <text x="1310" y="500" font-family="Georgia,serif" font-size="52" fill="rgba(29,78,216,.08)">∞</text>
-    <text x="36" y="600" font-family="Georgia,serif" font-size="48" fill="rgba(29,78,216,.08)">√</text>
-    <text x="320" y="820" font-family="Georgia,serif" font-size="56" fill="rgba(29,78,216,.07)">θ</text>
-    <text x="820" y="860" font-family="Georgia,serif" font-size="54" fill="rgba(29,78,216,.07)">λ</text>
-    <text x="200" y="500" font-family="Georgia,serif" font-size="44" fill="rgba(29,78,216,.07)">e</text>
-    <text x="1150" y="140" font-family="Georgia,serif" font-size="50" fill="rgba(29,78,216,.07)">Δ</text>
-    <text x="520" y="820" font-family="Georgia,serif" font-size="44" fill="rgba(29,78,216,.07)">≈</text>
-    <!-- Small f(x) annotation -->
-    <text x="780" y="100" font-family="Georgia,serif" font-size="28" fill="rgba(29,78,216,.12)" font-style="italic">f(x)</text>
-    <text x="1200" y="430" font-family="Georgia,serif" font-size="24" fill="rgba(29,78,216,.11)" font-style="italic">y = mx+b</text>
-    <text x="60" y="760" font-family="Georgia,serif" font-size="22" fill="rgba(29,78,216,.1)" font-style="italic">A = πr²</text>
-    <!-- Dot product markers on axes -->
-    <circle cx="700" cy="230" r="3" fill="rgba(29,78,216,.18)"/>
-    <circle cx="700" cy="670" r="3" fill="rgba(29,78,216,.18)"/>
-    <circle cx="480" cy="450" r="3" fill="rgba(29,78,216,.18)"/>
-    <circle cx="920" cy="450" r="3" fill="rgba(29,78,216,.18)"/>
-  </svg>
-
-  <div class="landing-inner">
-    <h1 class="landing-title">What Math do you Want<br>to Visualize Today?</h1>
-    <div class="landing-cards">
-      <!-- Card 1: Calculus -->
-      <div class="landing-card" onclick="showSection('section-calculus')">
-        <div class="card-num cn1">01</div>
-        <div class="card-title">Calculus</div>
-        <div class="card-desc">Limits, derivatives, integrals, series &mdash; with 17 interactive IB AA HL modules.</div>
-        <span class="card-tag tag-live">&#9679; Live</span>
-      </div>
-      <!-- Card 2: Business Calculus -->
-      <div class="landing-card disabled">
-        <div class="card-num cn2">02</div>
-        <div class="card-title">Business Calculus</div>
-        <div class="card-desc">Marginal analysis, optimization, revenue &amp; cost functions, present value.</div>
-        <span class="card-tag tag-soon">Coming Soon</span>
-      </div>
-      <!-- Card 3: Linear Algebra -->
-      <div class="landing-card disabled">
-        <div class="card-num cn3">03</div>
-        <div class="card-title">Linear Algebra</div>
-        <div class="card-desc">Vectors, matrices, determinants, eigenvalues &amp; linear transformations.</div>
-        <span class="card-tag tag-soon">Coming Soon</span>
-      </div>
+<div id="section-linalg" class="app-section" style="display:flex">
+<nav class="sb">
+  <div class="sbl" onclick="window.location.href='index.html'" >
+    <div class="slr">
+      <div class="lsy" style="background:linear-gradient(135deg,#0ea5e9,#06b6d4)">&#x1D538;</div>
+      <div class="ltx">Math Explorer<small>Linear Algebra</small></div>
     </div>
-    <div class="landing-credit">Math Explorer &middot; Vyom Krothapalli &middot; Class of 2027</div>
   </div>
+  <div class="sb-home" onclick="window.location.href='index.html'" >&#8592; All Subjects</div>
+  <div class="scl">Vectors &amp; Matrices</div>
+  <div class="nv active" onclick="goStub('linalg','la-vec',this)"><span class="ni">&#x2192;</span><div>Vectors<span class="ns">dot &amp; cross product</span></div></div>
+  <div class="nv" onclick="goStub('linalg','la-mat',this)"><span class="ni">&#x25A6;</span><div>Matrix Operations<span class="ns">multiplication</span></div></div>
+  <div class="nv" onclick="goStub('linalg','la-det',this)"><span class="ni">&#x007C;</span><div>Determinants<span class="ns">area &amp; volume scaling</span></div></div>
+  <div class="nd"></div>
+  <div class="scl">Systems &amp; Transforms</div>
+  <div class="nv" onclick="goStub('linalg','la-sys',this)"><span class="ni">&#x2261;</span><div>Linear Systems<span class="ns">Gaussian elimination</span></div></div>
+  <div class="nv" onclick="goStub('linalg','la-eig',this)"><span class="ni">&#x03BB;</span><div>Eigenvalues<span class="ns">eigenvectors</span></div></div>
+  <div class="nv" onclick="goStub('linalg','la-trans',this)"><span class="ni">&#x21BA;</span><div>Linear Transforms<span class="ns">rotation, scaling</span></div></div>
+  <div class="nd"></div>
+  <div class="scl">Creator</div>
+  <div class="nv" onclick="goStub('linalg','la-about',this)"><span class="ni">&#9998;</span><div>About Creator<span class="ns">Vyom Krothapalli</span></div></div>
+  <div class="sb-foot">Math Explorer &middot; MIT License</div>
+</nav>
+<main class="main" id="linalg-main">
+  <div id="la-vec" class="mod active"><div class="ts"><div class="cb">Linear Algebra &middot; Coming Soon</div><h1 class="pt">Vectors</h1><p class="ptag">Dot product, cross product, and geometric interpretation</p></div><div class="stub-placeholder"><div class="stub-icon">&#x2192;</div><div class="stub-title">Coming Soon</div><div class="stub-sub">Interactive 2D and 3D vector visualizations with dot product, cross product, and projection operations.</div><span class="stub-badge">In Development</span></div></div>
+  <div id="la-mat" class="mod"><div class="ts"><div class="cb">Linear Algebra &middot; Coming Soon</div><h1 class="pt">Matrix Operations</h1><p class="ptag">Multiplication, transpose, and inverses</p></div><div class="stub-placeholder"><div class="stub-icon">&#x25A6;</div><div class="stub-title">Coming Soon</div><div class="stub-sub">Visual matrix multiplication showing how rows meet columns to produce each entry.</div><span class="stub-badge">In Development</span></div></div>
+  <div id="la-det" class="mod"><div class="ts"><div class="cb">Linear Algebra &middot; Coming Soon</div><h1 class="pt">Determinants</h1><p class="ptag">Area and volume scaling factors</p></div><div class="stub-placeholder"><div class="stub-icon">&#x007C;A&#x007C;</div><div class="stub-title">Coming Soon</div><div class="stub-sub">Geometric interpretation of determinants as signed areas and volume scaling factors.</div><span class="stub-badge">In Development</span></div></div>
+  <div id="la-sys" class="mod"><div class="ts"><div class="cb">Linear Algebra &middot; Coming Soon</div><h1 class="pt">Linear Systems</h1><p class="ptag">Gaussian elimination and row reduction</p></div><div class="stub-placeholder"><div class="stub-icon">&#x2261;</div><div class="stub-title">Coming Soon</div><div class="stub-sub">Step-by-step Gaussian elimination with visual row operations and solution sets.</div><span class="stub-badge">In Development</span></div></div>
+  <div id="la-eig" class="mod"><div class="ts"><div class="cb">Linear Algebra &middot; Coming Soon</div><h1 class="pt">Eigenvalues &amp; Eigenvectors</h1><p class="ptag">Directions preserved by linear transformations</p></div><div class="stub-placeholder"><div class="stub-icon">&#x03BB;</div><div class="stub-title">Coming Soon</div><div class="stub-sub">Visualizing eigenvectors as the special directions that linear transformations only stretch, not rotate.</div><span class="stub-badge">In Development</span></div></div>
+  <div id="la-trans" class="mod"><div class="ts"><div class="cb">Linear Algebra &middot; Coming Soon</div><h1 class="pt">Linear Transformations</h1><p class="ptag">Rotation, scaling, shearing, and reflection</p></div><div class="stub-placeholder"><div class="stub-icon">&#x21BA;</div><div class="stub-title">Coming Soon</div><div class="stub-sub">Watch the unit square and standard basis vectors transform under rotation, scaling, shearing, and reflection matrices.</div><span class="stub-badge">In Development</span></div></div>
+  <div id="la-about" class="mod"><div class="ts" style="max-height:none"><div class="cb">Creator &middot; About</div><h1 class="pt">About the Creator</h1><p class="ptag">Vyom Krothapalli &mdash; Class of 2027</p></div><div class="about-wrap"><div class="about-hero"><div class="about-avatar">VK</div><div><div class="about-hero-name">Vyom Krothapalli</div><div class="about-hero-meta">Class of 2027 &middot; Math Explorer Creator</div></div></div><div class="about-grid"><div class="acard"><p class="bio-p">Linear Algebra modules are currently under development. Interactive visualizations for vectors, matrices, eigenvalues, and linear transformations are coming soon.</p><div class="clink" style="margin-top:16px"><div class="clink-icon">&#x1F419;</div><a href="https://github.com/hiccup2367" target="_blank">github.com/hiccup2367</a></div></div><div><div class="acard" style="text-align:center"><div class="acard-title" style="justify-content:center">&#8592; Back to subjects</div><button class="share-big" onclick="window.location.href='index.html'" >&#x1F3E0; Math Explorer Home</button></div></div></div></div></div>
+</main>
+</div><!-- /section-linalg -->
+
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-  const cards = document.querySelectorAll('.landing-card');
-  if(cards[0]) {
-    cards[0].onclick = (e) => { e.stopPropagation(); window.location.href = 'calculus.html'; };
-    cards[0].removeAttribute('onclick');
-  }
-  if(cards[1]) {
-    cards[1].classList.remove('disabled');
-    cards[1].onclick = () => window.location.href = 'business-calculus.html';
-    const tag = cards[1].querySelector('.card-tag');
-    if(tag) { tag.className='card-tag'; tag.innerHTML='&#9679; Live'; tag.style.cssText='background:#f0fdf4;color:#15803d;border:1.5px solid #bbf7d0'; }
-  }
-  if(cards[2]) {
-    cards[2].classList.remove('disabled');
-    cards[2].onclick = () => window.location.href = 'linear-algebra.html';
-    const tag = cards[2].querySelector('.card-tag');
-    if(tag) { tag.className='card-tag tag-soon'; tag.innerHTML='Coming Soon'; }
+const $ = id => document.getElementById(id);
+function goStub(section,modId,navEl){
+  const secEl=$('section-'+section);
+  if(!secEl)return;
+  secEl.querySelectorAll('.mod').forEach(m=>m.classList.remove('active'));
+  const mod=$(modId);if(mod)mod.classList.add('active');
+  secEl.querySelectorAll('.nv').forEach(n=>n.classList.remove('active'));
+  if(navEl)navEl.classList.add('active');
+}
+window.addEventListener('DOMContentLoaded',()=>{
+  if(typeof renderMathInElement!=='undefined'){
+    renderMathInElement(document.body,{delimiters:[{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}],throwOnError:false});
   }
 });
 </script>

@@ -1,0 +1,1334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Math Explorer</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400;1,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.0/math.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/contrib/auto-render.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#f5f7fb;--w:#fff;--b9:#1e3a5f;--b8:#1e40af;--b7:#1d4ed8;--b6:#2563eb;
+  --b5:#3b82f6;--b4:#60a5fa;--b3:#93c5fd;--b2:#bfdbfe;--b1:#dbeafe;--b0:#eff6ff;
+  --tx:#1e2d42;--txm:#4a6080;--txd:#7a94b0;
+}
+html,body{height:100%;font-family:'Source Serif 4',Georgia,serif;background:var(--bg);color:var(--tx)}
+body{overflow:hidden}
+
+/* ── LANDING ─────────────────────────────────────────── */
+#landing{
+  position:fixed;inset:0;z-index:200;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:var(--bg);overflow:hidden;
+}
+.math-bg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.landing-inner{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:52px;padding:30px}
+.landing-title{
+  font-family:'Lora',serif;font-style:italic;font-weight:700;font-size:clamp(26px,4vw,46px);
+  color:var(--b9);text-align:center;line-height:1.25;letter-spacing:-.01em;
+  background:linear-gradient(135deg,var(--b9) 0%,var(--b7) 55%,var(--b5) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  filter:drop-shadow(0 2px 12px rgba(29,78,216,.12));
+}
+.landing-cards{display:flex;gap:26px;flex-wrap:wrap;justify-content:center}
+.landing-card{
+  width:230px;background:var(--w);border-radius:14px;padding:48px 24px 28px;
+  box-shadow:0 4px 22px rgba(29,78,216,.1),0 1px 4px rgba(30,58,95,.06);
+  text-align:center;cursor:pointer;transition:transform .22s,box-shadow .22s;
+  position:relative;margin-top:36px;border:1.5px solid var(--b1);
+}
+.landing-card:hover{transform:translateY(-6px);box-shadow:0 14px 36px rgba(29,78,216,.18);}
+.landing-card.disabled{opacity:.72;cursor:not-allowed;}
+.landing-card.disabled:hover{transform:none;box-shadow:0 4px 22px rgba(29,78,216,.1);}
+.card-num{
+  width:72px;height:72px;border-radius:50%;color:#fff;
+  font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:500;
+  display:flex;align-items:center;justify-content:center;
+  position:absolute;top:-36px;left:50%;transform:translateX(-50%);
+  box-shadow:0 6px 20px rgba(29,78,216,.35);
+}
+.cn1{background:linear-gradient(140deg,#1e3a5f 0%,#1d4ed8 60%,#7c3aed 100%)}
+.cn2{background:linear-gradient(140deg,#1d4ed8 0%,#0ea5e9 100%)}
+.cn3{background:linear-gradient(140deg,#0ea5e9 0%,#06b6d4 100%)}
+.card-title{font-family:'Lora',serif;font-size:17px;font-weight:700;color:var(--b9);margin:8px 0 10px}
+.card-desc{font-family:'Source Serif 4',serif;font-size:12.5px;color:var(--txd);font-style:italic;line-height:1.65}
+.card-tag{
+  display:inline-block;margin-top:12px;
+  font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.12em;
+  text-transform:uppercase;padding:3px 10px;border-radius:20px;
+}
+.tag-live{background:var(--b0);color:var(--b7);border:1.5px solid var(--b2)}
+.tag-soon{background:#f9fafb;color:var(--txd);border:1.5px solid #e5e7eb}
+.landing-credit{
+  font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--b3);margin-top:6px;
+}
+
+/* ── APP SECTIONS ─────────────────────────────────────── */
+.app-section{position:fixed;inset:0;display:none;flex-direction:row}
+.app-section.active{display:flex}
+
+/* ── SIDEBAR ──────────────────────────────────────────── */
+.sb{width:228px;min-width:228px;background:var(--w);border-right:1.5px solid var(--b1);display:flex;flex-direction:column;overflow-y:auto}
+.sb::-webkit-scrollbar{width:3px}.sb::-webkit-scrollbar-thumb{background:var(--b2)}
+.sbl{padding:14px 18px 12px;border-bottom:1.5px solid var(--b1);flex-shrink:0;cursor:pointer}
+.sbl:hover .ltx{color:var(--b7)}
+.slr{display:flex;align-items:center;gap:10px}
+.lsy{width:34px;height:34px;background:var(--b7);color:#fff;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:20px;font-family:'Lora',serif;flex-shrink:0}
+.ltx{font-family:'Lora',serif;font-size:17px;font-weight:700;color:var(--b9);line-height:1.1;transition:color .14s}
+.ltx small{display:block;font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.12em;text-transform:uppercase;color:var(--txd);font-weight:400;margin-top:2px}
+.sb-home{padding:7px 18px;font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--b4);background:var(--b0);border-bottom:1px solid var(--b1);cursor:pointer;display:flex;align-items:center;gap:6px;flex-shrink:0}
+.sb-home:hover{color:var(--b7)}
+.scl{padding:10px 18px 4px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--b3);flex-shrink:0}
+.nv{padding:8px 18px 8px 16px;cursor:pointer;font-size:13px;color:var(--txm);border-left:3px solid transparent;transition:all .14s;display:flex;align-items:center;gap:9px;user-select:none;flex-shrink:0}
+.nv:hover{color:var(--b7);background:var(--b0)}.nv.active{color:var(--b7);border-left-color:var(--b6);background:var(--b0);font-weight:600}
+.nv .ni{font-size:12px;width:17px;text-align:center;flex-shrink:0;font-family:'JetBrains Mono',monospace;color:var(--b3)}.nv.active .ni{color:var(--b4)}
+.nv .ns{font-size:10px;color:var(--txd);font-style:italic;display:block;margin-top:1px}
+.nv.dim{opacity:.5;cursor:default;pointer-events:none}
+.nd{height:1.5px;background:var(--b1);margin:4px 0;flex-shrink:0}
+.sb-foot{padding:8px 18px 14px;font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--b3);text-align:center;letter-spacing:.06em;margin-top:auto;border-top:1px solid var(--b1);flex-shrink:0}
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+
+/* ── MODULE PANELS ────────────────────────────────────── */
+.mod{display:none;flex-direction:column;height:100%;overflow:hidden}.mod.active{display:flex}
+.ts{flex-shrink:0;overflow-y:auto;background:var(--w);border-bottom:1.5px solid var(--b1);padding:22px 34px 18px;max-height:44%}
+.ts::-webkit-scrollbar{width:3px}.ts::-webkit-scrollbar-thumb{background:var(--b2)}
+.cb{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--b4);margin-bottom:7px}
+.pt{font-family:'Lora',serif;font-size:25px;font-weight:700;color:var(--b9);line-height:1.2;margin-bottom:3px}
+.ptag{font-family:'Lora',serif;font-style:italic;font-size:13.5px;color:var(--txd);margin-bottom:14px}
+.pb{display:flex;gap:22px}
+.prose{flex:1;min-width:0}
+.prose p{font-size:13px;line-height:1.78;color:var(--tx);margin-bottom:10px}
+.prose p:last-child{margin-bottom:0}
+.prose b{color:var(--b8);font-weight:600}.prose em{font-style:italic;color:var(--b8)}
+.db{width:218px;min-width:218px;flex-shrink:0;background:var(--b0);border:1.5px solid var(--b2);border-radius:8px;padding:13px 15px;align-self:flex-start}
+.dbt{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--b4);margin-bottom:7px}
+.dbb{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--b8);line-height:1.9}
+.dbb .katex{font-size:.95em}.dbb .katex-display{margin:.2em 0;text-align:left}
+.is{flex:1;min-height:0;display:flex;flex-direction:column;background:var(--bg)}
+.ih{padding:8px 34px;border-bottom:1px solid var(--b1);background:var(--w);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.il{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--b4);display:flex;align-items:center;gap:7px}
+.il::before{content:'';width:16px;height:1.5px;background:var(--b3);display:block}
+.share-mini{padding:4px 11px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.06em;background:var(--b0);border:1.5px solid var(--b2);color:var(--b7);border-radius:4px;cursor:pointer;transition:all .14s;white-space:nowrap}
+.share-mini:hover{background:var(--b7);color:#fff;border-color:var(--b7)}.share-mini.copied{background:#16a34a;border-color:#16a34a;color:#fff}
+.cb2{flex-shrink:0;background:var(--w);border-bottom:1.5px solid var(--b1);padding:9px 34px;display:flex;flex-wrap:wrap;gap:7px 22px;align-items:center}
+.cg{display:flex;flex-direction:column;gap:4px;min-width:120px}
+.cl{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--txd);display:flex;justify-content:space-between}
+.cv{color:var(--b7);font-weight:500;font-size:11px}
+input[type=range]{-webkit-appearance:none;width:100%;height:3px;background:var(--b2);border-radius:2px;outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--b7);border:2px solid #fff;box-shadow:0 0 0 2px var(--b3);cursor:pointer;transition:transform .1s}
+input[type=range]:active::-webkit-slider-thumb{transform:scale(1.2)}
+select{background:#fff;border:1.5px solid var(--b2);color:var(--tx);padding:5px 8px;border-radius:5px;font-family:'Source Serif 4',serif;font-size:12px;cursor:pointer;outline:none}
+select:hover{border-color:var(--b3)}
+.tg{display:flex;gap:3px}
+.tb{padding:4px 10px;font-family:'JetBrains Mono',monospace;font-size:9.5px;background:#fff;border:1.5px solid var(--b2);color:var(--txd);cursor:pointer;border-radius:4px;transition:all .12s;user-select:none}
+.tb:hover{color:var(--b7);border-color:var(--b3)}.tb.active{background:var(--b7);border-color:var(--b7);color:#fff}
+.abt{padding:5px 13px;font-family:'JetBrains Mono',monospace;font-size:9.5px;background:var(--b7);border:none;color:#fff;border-radius:4px;cursor:pointer;transition:background .15s;white-space:nowrap}
+.abt:hover{background:var(--b8)}.abt.running{background:var(--b5)}
+.gw{flex:1;min-height:0;position:relative;margin:14px 34px 0;border:1.5px solid var(--b2);border-radius:8px;background:#fff;overflow:hidden;box-shadow:0 1px 8px rgba(30,64,175,.06);cursor:crosshair}
+.gw:hover{border-color:var(--b3)}
+.gw canvas{position:absolute;inset:0;width:100%;height:100%}
+.gc{position:absolute;top:9px;left:13px;font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--b3);pointer-events:none;z-index:1}
+.gc-right{position:absolute;top:9px;right:13px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--b3);pointer-events:none;z-index:1;font-style:italic}
+.hint{flex-shrink:0;padding:5px 34px;background:linear-gradient(to right,var(--b0),transparent);border-top:1px solid var(--b1);display:flex;align-items:center;gap:8px;min-height:26px}
+.hint-txt{font-size:11.5px;font-style:italic;color:var(--txm);line-height:1.4}
+.rb{flex-shrink:0;padding:7px 34px 11px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.ri{background:#fff;border:1.5px solid var(--b1);border-radius:6px;padding:6px 13px;display:flex;flex-direction:column;min-width:100px}
+.rl{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.09em;text-transform:uppercase;color:var(--txd);margin-bottom:2px}
+.rv{font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:500;color:var(--b7)}
+.ri.hi{border-color:var(--b3);background:var(--b0)}.ri.hi .rv{color:var(--b8)}
+.ri.dm .rv{color:var(--txm);font-size:12px}
+.rl .katex,.rv .katex{font-size:.82em}
+/* Stub / coming soon */
+.stub-placeholder{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:40px;background:var(--bg)}
+.stub-icon{font-size:52px;opacity:.18}
+.stub-title{font-family:'Lora',serif;font-size:22px;font-weight:700;color:var(--b9)}
+.stub-sub{font-family:'Source Serif 4',serif;font-style:italic;font-size:13px;color:var(--txd);text-align:center;max-width:360px;line-height:1.75}
+.stub-badge{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;padding:5px 14px;border-radius:20px;background:var(--b0);border:1.5px solid var(--b2);color:var(--b4)}
+/* About */
+.about-wrap{flex:1;overflow-y:auto;display:flex;flex-direction:column;align-items:center;padding:36px 48px 48px;background:var(--bg)}
+.about-wrap::-webkit-scrollbar{width:4px}.about-wrap::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px}
+.about-hero{display:flex;align-items:center;gap:24px;margin-bottom:28px;width:100%;max-width:820px}
+.about-avatar{width:76px;height:76px;border-radius:50%;background:linear-gradient(135deg,var(--b7),var(--b4));color:#fff;font-family:'Lora',serif;font-weight:700;font-size:26px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 18px rgba(29,78,216,.22)}
+.about-hero-name{font-family:'Lora',serif;font-size:28px;font-weight:700;color:var(--b9);line-height:1.15;margin-bottom:4px}
+.about-hero-meta{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--b4)}
+.about-grid{display:grid;grid-template-columns:1fr 300px;gap:24px;width:100%;max-width:820px}
+.acard{background:var(--w);border:1.5px solid var(--b1);border-radius:10px;padding:24px 26px}
+.acard-title{font-family:'Lora',serif;font-size:15px;font-weight:700;color:var(--b9);margin-bottom:12px;display:flex;align-items:center;gap:7px}
+.bio-p{font-size:13.5px;line-height:1.82;color:var(--tx);margin-bottom:14px}
+.bio-p:last-of-type{margin-bottom:0}
+.stack-row{display:flex;flex-wrap:wrap;gap:5px;margin-top:14px}
+.spill{font-family:'JetBrains Mono',monospace;font-size:9px;padding:3px 9px;background:var(--b0);border:1.5px solid var(--b2);border-radius:20px;color:var(--b7)}
+.stat-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
+.scard{background:var(--b0);border:1.5px solid var(--b2);border-radius:8px;padding:14px 10px;text-align:center}
+.scard-num{font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:500;color:var(--b7);line-height:1}
+.scard-lbl{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--txd);margin-top:5px}
+.clink{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.clink-icon{width:28px;height:28px;background:var(--b0);border:1.5px solid var(--b2);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.clink a{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--b6);text-decoration:none;word-break:break-all}
+.clink a:hover{text-decoration:underline}
+.share-big{width:100%;padding:10px 0;font-family:'JetBrains Mono',monospace;font-size:10.5px;background:var(--b7);border:none;color:#fff;border-radius:6px;cursor:pointer;transition:background .14s;display:flex;align-items:center;justify-content:center;gap:7px;margin-top:16px}
+.share-big:hover{background:var(--b8)}.share-big.copied{background:#16a34a}
+
+/* ── BUSINESS CALCULUS — GREEN THEME ──────────────── */
+#section-bizcalc{
+  --b9:#14532d;--b8:#166534;--b7:#15803d;--b6:#16a34a;
+  --b5:#22c55e;--b4:#4ade80;--b3:#86efac;--b2:#bbf7d0;--b1:#dcfce7;--b0:#f0fdf4;
+  --bg:#f4fcf6;--tx:#1a2e1f;--txm:#3a6b47;--txd:#6a9e76;
+}
+#section-bizcalc input[type=range]::-webkit-slider-thumb{background:var(--b7);box-shadow:0 0 0 2px var(--b3)}
+#section-bizcalc .sb-foot{color:var(--b3);border-top-color:var(--b1)}
+</style>
+</head>
+<body>
+
+<div id="section-bizcalc" class="app-section" style="display:flex">
+<nav class="sb">
+  <div class="sbl" onclick="window.location.href='index.html'" >
+    <div class="slr">
+      <div class="lsy" style="background:linear-gradient(135deg,#166534,#4ade80)">&#x24B7;</div>
+      <div class="ltx">Math Explorer<small>Business Calculus</small></div>
+    </div>
+  </div>
+  <div class="sb-home" onclick="window.location.href='index.html'" >&#8592; All Subjects</div>
+  <div class="scl">Differential Calculus</div>
+  <div class="nv active" onclick="goBC('m-bc-supply',this)"><span class="ni">&#x21CC;</span><div>Supply &amp; Demand<span class="ns">market equilibrium</span></div></div>
+  <div class="nv" onclick="goBC('m-bc-marg',this)"><span class="ni">&#x2202;</span><div>Marginal Analysis<span class="ns">MC &middot; MR &middot; MP</span></div></div>
+  <div class="nv" onclick="goBC('m-bc-elas',this)"><span class="ni">&#x25C6;</span><div>Price Elasticity<span class="ns">elastic &middot; inelastic</span></div></div>
+  <div class="nv" onclick="goBC('m-bc-brev',this)"><span class="ni">&#x2715;</span><div>Break-Even<span class="ns">TR = TC</span></div></div>
+  <div class="nd"></div>
+  <div class="scl">Integral Calculus</div>
+  <div class="nv" onclick="goBC('m-bc-surp',this)"><span class="ni">&#x25B3;</span><div>Consumer Surplus<span class="ns">&int; welfare areas</span></div></div>
+  <div class="nv" onclick="goBC('m-bc-pv',this)"><span class="ni">&#x23F1;</span><div>Present Value<span class="ns">&int; R(t)e&sup1;</span></div></div>
+  <div class="nv" onclick="goBC('m-bc-opt',this)"><span class="ni">&#9650;</span><div>Profit Optimization<span class="ns">MR = MC</span></div></div>
+  <div class="nv" onclick="goBC('m-bc-grow',this)"><span class="ni">e</span><div>Compound Growth<span class="ns">A = Pe^(rt)</span></div></div>
+  <div class="nd"></div>
+  <div class="scl">Creator</div>
+  <div class="nv" onclick="goBC('m-bc-about',this)"><span class="ni">&#9998;</span><div>About Creator<span class="ns">Vyom Krothapalli</span></div></div>
+  <div class="sb-foot">Math Explorer &middot; MIT License</div>
+</nav>
+<main class="main">
+
+<!-- ══ SUPPLY & DEMAND ══ -->
+<div id="m-bc-supply" class="mod active">
+  <div class="ts">
+    <div class="cb">Business Calculus &middot; Chapter 1</div>
+    <h1 class="pt">Supply &amp; Demand</h1>
+    <p class="ptag">Where quantity supplied meets quantity demanded &mdash; the market equilibrium</p>
+    <div class="pb">
+      <div class="prose">
+        <p>In a competitive market, the <b>demand curve</b> \(P_D(q)=a-bq\) shows the highest price consumers will pay for quantity \(q\) (downward sloping &mdash; higher price, less demanded). The <b>supply curve</b> \(P_S(q)=c+dq\) shows the minimum price sellers accept (upward sloping &mdash; higher price, more supplied).</p>
+        <p>The <b>market equilibrium</b> \((q^*,p^*)\) is where these curves intersect: \(a-bq^*=c+dq^*\Rightarrow q^*=\tfrac{a-c}{b+d}\). <b>Consumer surplus</b> (green) is the area between the demand curve and \(p^*\) &mdash; the benefit buyers receive beyond what they pay. <b>Producer surplus</b> (lighter) is the area between \(p^*\) and the supply curve &mdash; seller profit above their minimum acceptable price.</p>
+        <p>Drag any of the four parameters to shift the curves. Notice how supply shocks and demand shifts each change equilibrium price, quantity, and the distribution of surplus.</p>
+      </div>
+      <div class="db"><div class="dbt">Equilibrium</div><div class="dbb">\(P_D(q)=a-bq\)<br>\(P_S(q)=c+dq\)<br><br>\(q^*=\dfrac{a-c}{b+d}\)<br><br>\(p^*=a-b\cdot q^*\)<br><br><span style="color:var(--b4);font-size:9px">CS = &frac12;q*(a&minus;p*)<br>PS = &frac12;q*(p*&minus;c)</span></div></div>
+    </div>
+  </div>
+  <div class="is">
+    <div class="ih"><span class="il">Interactive Visualization &mdash; adjust curves to shift equilibrium</span><button class="share-mini" onclick="shareURL(this)">&#x1F517; Share</button></div>
+    <div class="cb2">
+      <div class="cg" style="min-width:148px"><div class="cl">Demand intercept \(a\) <span class="cv" id="bc_di_v">15.0</span></div><input type="range" id="bc_di" min="8" max="22" step="0.5" value="15" oninput="D.bcsupply()"></div>
+      <div class="cg" style="min-width:148px"><div class="cl">Demand slope \(b\) <span class="cv" id="bc_ds_v">1.50</span></div><input type="range" id="bc_ds" min="0.4" max="3" step="0.1" value="1.5" oninput="D.bcsupply()"></div>
+      <div class="cg" style="min-width:148px"><div class="cl">Supply intercept \(c\) <span class="cv" id="bc_si_v">2.0</span></div><input type="range" id="bc_si" min="0" max="8" step="0.5" value="2" oninput="D.bcsupply()"></div>
+      <div class="cg" style="min-width:148px"><div class="cl">Supply slope \(d\) <span class="cv" id="bc_ss_v">1.00</span></div><input type="range" id="bc_ss" min="0.3" max="3" step="0.1" value="1" oninput="D.bcsupply()"></div>
+    </div>
+    <div class="gw" id="bc-supply-win"><canvas id="bc-supply-cv"></canvas><div class="gc">Demand (dark) &middot; Supply (medium)</div><div class="gc-right">hover to read prices</div></div>
+    <div class="hint"><span class="hint-txt">&#128161; Increase the demand intercept \(a\) (demand shock) &mdash; the equilibrium price <em>and</em> quantity both rise. Increase supply slope \(d\) (supply tightens) &mdash; price rises but quantity falls. These are opposite effects.</span></div>
+    <div class="rb">
+      <div class="ri hi"><div class="rl">Eq. Qty \(q^*\)</div><div class="rv" id="r-bcsd-q">&mdash;</div></div>
+      <div class="ri hi"><div class="rl">Eq. Price \(p^*\)</div><div class="rv" id="r-bcsd-p">&mdash;</div></div>
+      <div class="ri"><div class="rl">Consumer Surplus</div><div class="rv" id="r-bcsd-cs">&mdash;</div></div>
+      <div class="ri"><div class="rl">Producer Surplus</div><div class="rv" id="r-bcsd-ps">&mdash;</div></div>
+      <div class="ri hi"><div class="rl">Total Surplus</div><div class="rv" id="r-bcsd-ts">&mdash;</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MARGINAL ANALYSIS ══ -->
+<div id="m-bc-marg" class="mod">
+  <div class="ts">
+    <div class="cb">Business Calculus &middot; Chapter 2</div>
+    <h1 class="pt">Marginal Analysis</h1>
+    <p class="ptag">The derivative of cost, revenue, and profit &mdash; optimizing at the margin</p>
+    <div class="pb">
+      <div class="prose">
+        <p>In competitive markets a firm is a <b>price taker</b>: total revenue is simply \(TR(q)=P\cdot q\) (a straight line) and marginal revenue \(MR=P\) is constant. The firm chooses output \(q\) to <b>maximize profit</b> \(\pi(q)=TR(q)-TC(q)\), where \(TC(q)\) includes both fixed and variable costs.</p>
+        <p>The optimum satisfies \(\pi'(q)=0\), equivalently <b>\(MR=MC\)</b>: produce another unit only if the revenue it adds exceeds its marginal cost. The shaded gap at any \(q\) between TR and TC visually shows the profit level. Drag the <b>Market Price</b> slider to see how profitability changes as the firm's environment shifts.</p>
+        <p>The <b>green region</b> is economic profit, the <b>orange region</b> is a loss. At the optimum, the TR line and TC curve have equal slopes.</p>
+      </div>
+      <div class="db"><div class="dbt">Profit Condition</div><div class="dbb">\(\pi(q)=TR-TC\)<br><br>Maximize when:<br>\(\pi'(q)=0\)<br>\(\Leftrightarrow MR=MC\)<br><br>\(MR=P\) (competitive)<br>\(MC=TC'(q)\)</div></div>
+    </div>
+  </div>
+  <div class="is">
+    <div class="ih"><span class="il">Interactive Visualization &mdash; hover for values at any quantity</span><button class="share-mini" onclick="shareURL(this)">&#x1F517; Share</button></div>
+    <div class="cb2">
+      <div class="cg"><div class="cl">Cost function</div>
+        <select id="bc_mcp" onchange="D.bcmarg()">
+          <option value="0">TC = 100 + 2q + 0.5q&sup2;</option>
+          <option value="1">TC = 80 + 5q &minus; 0.2q&sup2; + 0.01q&sup3;</option>
+          <option value="2">TC = 60 + 8q (linear)</option>
+          <option value="3">TC = 200 + q + 0.04q&sup3;</option>
+        </select>
+      </div>
+      <div class="cg" style="min-width:170px"><div class="cl">Market price P <span class="cv" id="bc_mp_v">$15.00</span></div><input type="range" id="bc_mp" min="2" max="35" step="0.5" value="15" oninput="D.bcmarg()"></div>
+    </div>
+    <div class="gw" id="bc-marg-win"><canvas id="bc-marg-cv"></canvas><div class="gc">TR (green) &middot; TC (orange) &middot; Profit (shaded)</div><div class="gc-right">hover to read values</div></div>
+    <div class="hint"><span class="hint-txt">&#128161; For the quadratic cost: the TR line pivots upward as you raise P. Below the break-even price the orange loss region never disappears; above it a green profit window opens. The optimal q sits exactly where the TR slope (= P) equals the TC slope (= MC).</span></div>
+    <div class="rb">
+      <div class="ri hi"><div class="rl">Optimal \(q^*\)</div><div class="rv" id="r-bcmg-q">&mdash;</div></div>
+      <div class="ri hi"><div class="rl">Max Profit \(\pi^*\)</div><div class="rv" id="r-bcmg-pi">&mdash;</div></div>
+      <div class="ri"><div class="rl">TR at \(q^*\)</div><div class="rv" id="r-bcmg-tr">&mdash;</div></div>
+      <div class="ri"><div class="rl">TC at \(q^*\)</div><div class="rv" id="r-bcmg-tc">&mdash;</div></div>
+      <div class="ri"><div class="rl">MC at \(q^*\)</div><div class="rv" id="r-bcmg-mc">&mdash;</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PRICE ELASTICITY ══ -->
+<div id="m-bc-elas" class="mod">
+  <div class="ts">
+    <div class="cb">Business Calculus &middot; Chapter 3</div>
+    <h1 class="pt">Price Elasticity of Demand</h1>
+    <p class="ptag">How sensitively quantity responds to a price change</p>
+    <div class="pb">
+      <div class="prose">
+        <p><b>Price elasticity</b> \(E=\tfrac{dQ}{dP}\cdot\tfrac{P}{Q}\) measures the percentage change in quantity demanded per 1% change in price. Because demand slopes downward \(dQ/dP<0\), so \(E\le 0\); we often report \(|E|\). When \(|E|>1\) demand is <b>elastic</b> &mdash; consumers are sensitive and a price rise hurts total revenue. When \(|E|<1\) demand is <b>inelastic</b> &mdash; total revenue rises with price. At \(|E|=1\) (unit elastic) total revenue is maximized.</p>
+        <p>For linear inverse demand \(P=a-bq\): the quantity demanded at price \(P\) is \(q=(a-P)/b\), so \(|E|=P/(a-P)\). At the midpoint price \(P=a/2\) the elasticity is exactly 1. Above that point demand is elastic; below it, inelastic.</p>
+        <p>The demand curve is colored by elasticity: <b>teal = elastic</b>, <b>amber = unit elastic</b>, <b>green = inelastic</b>. Move the price slider and read how elasticity changes.</p>
+      </div>
+      <div class="db"><div class="dbt">Point Elasticity</div><div class="dbb">\(E=\dfrac{dQ}{dP}\cdot\dfrac{P}{Q}\)<br><br>Linear demand:<br>\(|E|=\dfrac{P}{a-P}\)<br><br>\(|E|>1\): elastic<br>\(|E|=1\): unit<br>\(|E|&lt;1\): inelastic<br><br><span style="color:var(--b4);font-size:9px">Revenue max at |E|=1</span></div></div>
+    </div>
+  </div>
+  <div class="is">
+    <div class="ih"><span class="il">Interactive Visualization &mdash; curve colored by elasticity</span><button class="share-mini" onclick="shareURL(this)">&#x1F517; Share</button></div>
+    <div class="cb2">
+      <div class="cg" style="min-width:148px"><div class="cl">Demand intercept \(a\) <span class="cv" id="bc_edi_v">20.0</span></div><input type="range" id="bc_edi" min="10" max="30" step="1" value="20" oninput="D.bcelas()"></div>
+      <div class="cg" style="min-width:148px"><div class="cl">Demand slope \(b\) <span class="cv" id="bc_eds_v">2.00</span></div><input type="range" id="bc_eds" min="0.5" max="4" step="0.1" value="2" oninput="D.bcelas()"></div>
+      <div class="cg" style="min-width:170px"><div class="cl">Price \(P\) <span class="cv" id="bc_ep_v">$10.00</span></div><input type="range" id="bc_ep" min="0.5" max="29" step="0.5" value="10" oninput="D.bcelas()"></div>
+    </div>
+    <div class="gw" id="bc-elas-win"><canvas id="bc-elas-cv"></canvas><div class="gc">Demand colored: teal=elastic &middot; amber=unit &middot; green=inelastic</div><div class="gc-right">hover to read elasticity</div></div>
+    <div class="hint"><span class="hint-txt">&#128161; Slide the price to the midpoint a/2 &mdash; elasticity = 1 exactly. Above: a price rise loses more revenue than it gains per unit (elastic). Below: a price rise gains more than it loses (inelastic). Revenue is maximized at the amber point.</span></div>
+    <div class="rb">
+      <div class="ri"><div class="rl">Price \(P\)</div><div class="rv" id="r-bcel-p">&mdash;</div></div>
+      <div class="ri"><div class="rl">Qty \(q=(a-P)/b\)</div><div class="rv" id="r-bcel-q">&mdash;</div></div>
+      <div class="ri hi"><div class="rl">Elasticity \(|E|\)</div><div class="rv" id="r-bcel-e">&mdash;</div></div>
+      <div class="ri hi"><div class="rl">Verdict</div><div class="rv" id="r-bcel-v">&mdash;</div></div>
+      <div class="ri"><div class="rl">Total Revenue \(P\cdot q\)</div><div class="rv" id="r-bcel-tr">&mdash;</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ BREAK-EVEN ══ -->
+<div id="m-bc-brev" class="mod">
+  <div class="ts">
+    <div class="cb">Business Calculus &middot; Chapter 4</div>
+    <h1 class="pt">Break-Even Analysis</h1>
+    <p class="ptag">The quantity where total revenue exactly covers total cost</p>
+    <div class="pb">
+      <div class="prose">
+        <p>Every firm pays <b>fixed costs</b> \(FC\) regardless of output (rent, equipment, salary). Beyond that, each unit costs an additional <b>variable cost</b> \(vc\) per unit, so \(TC(q)=FC+vc\cdot q\). Total revenue is simply \(TR(q)=P\cdot q\).</p>
+        <p>The <b>break-even quantity</b> is where \(TR=TC\): \(P\cdot q=FC+vc\cdot q\Rightarrow q_{BE}=\tfrac{FC}{P-vc}\). The denominator \(P-vc\) is the <b>contribution margin</b> &mdash; each unit sold contributes this amount toward covering fixed costs. If the contribution margin is zero or negative, break-even is impossible.</p>
+        <p>Drag the <b>current quantity</b> slider to simulate your production level. The green region is profit, the orange region is loss. The margin of safety shows how far you are from break-even.</p>
+      </div>
+      <div class="db"><div class="dbt">Break-Even</div><div class="dbb">\(TC=FC+vc\cdot q\)<br>\(TR=P\cdot q\)<br><br>\(q_{BE}=\dfrac{FC}{P-vc}\)<br><br>Contribution:<br>\(CM=P-vc\)<br><br>Profit:<br>\(\pi=(P-vc)q-FC\)</div></div>
+    </div>
+  </div>
+  <div class="is">
+    <div class="ih"><span class="il">Interactive Visualization &mdash; drag sliders to change cost structure</span><button class="share-mini" onclick="shareURL(this)">&#x1F517; Share</button></div>
+    <div class="cb2">
+      <div class="cg" style="min-width:150px"><div class="cl">Selling price \(P\) <span class="cv" id="bc_bp_v">$15.00</span></div><input type="range" id="bc_bp" min="3" max="40" step="0.5" value="15" oninput="D.bcbrev()"></div>
+      <div class="cg" style="min-width:150px"><div class="cl">Variable cost/unit \(vc\) <span class="cv" id="bc_bv_v">$8.00</span></div><input type="range" id="bc_bv" min="1" max="38" step="0.5" value="8" oninput="D.bcbrev()"></div>
+      <div class="cg" style="min-width:150px"><div class="cl">Fixed cost \(FC\) <span class="cv" id="bc_bf_v">$200</span></div><input type="range" id="bc_bf" min="50" max="1200" step="25" value="200" oninput="D.bcbrev()"></div>
+      <div class="cg" style="min-width:155px"><div class="cl">Current qty \(q\) <span class="cv" id="bc_bq_v">40</span></div><input type="range" id="bc_bq" min="0" max="150" step="1" value="40" oninput="D.bcbrev()"></div>
+    </div>
+    <div class="gw" id="bc-brev-win"><canvas id="bc-brev-cv"></canvas><div class="gc">TR (green) &middot; TC (orange) &middot; Break-even (&#9679;)</div><div class="gc-right">hover to read profit/loss</div></div>
+    <div class="hint"><span class="hint-txt">&#128161; Try raising the fixed cost by $500 while keeping price and VC constant &mdash; the break-even point jumps right (you need more sales). Now raise the price by $5 instead &mdash; the TR line steepens and break-even drops. Contribution margin is the key lever.</span></div>
+    <div class="rb">
+      <div class="ri"><div class="rl">Contribution Margin</div><div class="rv" id="r-bcbv-cm">&mdash;</div></div>
+      <div class="ri hi"><div class="rl">Break-Even Qty</div><div class="rv" id="r-bcbv-be">&mdash;</div></div>
+      <div class="ri hi"><div class="rl">Profit at q</div><div class="rv" id="r-bcbv-pi">&mdash;</div></div>
+      <div class="ri"><div class="rl">Margin of Safety</div><div class="rv" id="r-bcbv-mos">&mdash;</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ CONSUMER/PRODUCER SURPLUS ══ -->
+<div id="m-bc-surp" class="mod">
+  <div class="ts">
+    <div class="cb">Business Calculus &middot; Chapter 5</div>
+    <h1 class="pt">Consumer &amp; Producer Surplus</h1>
+    <p class="ptag">Welfare areas and the deadweight loss from price controls</p>
+    <div class="pb">
+      <div class="prose">
+        <p>At equilibrium price \(p^*\), every transaction is <b>mutually beneficial</b>: consumers pay less than their maximum willingness \(P_D(q)\) and producers receive more than their minimum acceptable \(P_S(q)\). The <b>consumer surplus</b> \(CS=\int_0^{q^*}[P_D(q)-p]\,dq\) and <b>producer surplus</b> \(PS=\int_0^{q^*}[p-P_S(q)]\,dq\) quantify these gains.</p>
+        <p>When a government sets a <b>price floor</b> (above equilibrium) or <b>price ceiling</b> (below it), the quantity traded changes and total surplus shrinks. The lost surplus is the <b>deadweight loss</b> (DWL) &mdash; value destroyed by the intervention. Drag the regulated price and watch DWL emerge as you move away from equilibrium.</p>
+      </div>
+      <div class="db"><div class="dbt">Surplus Areas</div><div class="dbb">\(CS=\int_0^{q_T}[P_D-p]\,dq\)<br><br>\(PS=\int_0^{q_T}[p-P_S]\,dq\)<br><br>\(DWL=TS^*-CS-PS\)<br><br><span style="color:var(--b4);font-size:9px">q_T = min(q_D, q_S)<br>DWL=0 at eq. price</span></div></div>
+    </div>
+  </div>
+  <div class="is">
+    <div class="ih"><span class="il">Interactive Visualization &mdash; drag price to create/remove deadweight loss</span><button class="share-mini" onclick="shareURL(this)">&#x1F517; Share</button></div>
+    <div class="cb2">
+      <div class="cg" style="min-width:148px"><div class="cl">Demand intercept \(a\) <span class="cv" id="bc_gdi_v">16.0</span></div><input type="range" id="bc_gdi" min="8" max="22" step="1" value="16" oninput="D.bcsurp()"></div>
+      <div class="cg" style="min-width:148px"><div class="cl">Supply intercept \(c\) <span class="cv" id="bc_gsi_v">2.0</span></div><input type="range" id="bc_gsi" min="0" max="6" step="0.5" value="2" oninput="D.bcsurp()"></div>
+      <div class="cg" style="min-width:190px"><div class="cl">Regulated price <span class="cv" id="bc_gp_v">$6.00</span></div><input type="range" id="bc_gp" min="0.5" max="18" step="0.25" value="6" oninput="D.bcsurp()"></div>
+    </div>
+    <div class="gw" id="bc-surp-win"><canvas id="bc-surp-cv"></canvas><div class="gc">CS (dark green) &middot; PS (medium) &middot; DWL (red)</div><div class="gc-right">hover to read prices</div></div>
+    <div class="hint"><span class="hint-txt">&#128161; Start at equilibrium (DWL = 0). Slide the price up to create a price floor (minimum wage analog) &mdash; red DWL triangle appears. Slide it below equilibrium for a price ceiling &mdash; DWL appears on the other side. Total surplus is always highest at equilibrium.</span></div>
+    <div class="rb">
+      <div class="ri"><div class="rl">Eq. price \(p^*\)</div><div class="rv" id="r-bcsp-peq">&mdash;</div></div>
+      <div class="ri"><div class="rl">Consumer Surplus</div><div class="rv" id="r-bcsp-cs">&mdash;</div></div>
+      <div class="ri"><div class="rl">Producer Surplus</div><div class="rv" id="r-bcsp-ps">&mdash;</div></div>
+      <div class="ri hi"><div class="rl">Deadweight Loss</div><div class="rv" id="r-bcsp-dwl">&mdash;</div></div>
+      <div class="ri hi"><div class="rl">Total Surplus</div><div class="rv" id="r-bcsp-ts">&mdash;</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PRESENT VALUE ══ -->
+<div id="m-bc-pv" class="mod">
+  <div class="ts">
+    <div class="cb">Business Calculus &middot; Chapter 6</div>
+    <h1 class="pt">Present Value of an Income Stream</h1>
+    <p class="ptag">Discounting future cash flows back to today &mdash; \(PV=\int_0^T R(t)e^{-rt}\,dt\)</p>
+    <div class="pb">
+      <div class="prose">
+        <p>Money received in the future is worth less than money today because of the <b>opportunity cost of capital</b>: a dollar today can be invested at rate \(r\) to become \(e^{r\cdot t}\) dollars in \(t\) years. Conversely, a dollar received at time \(t\) is worth only \(e^{-rt}\) dollars today.</p>
+        <p>The <b>present value</b> of a continuous income stream \(R(t)\) over horizon \(T\) is \(PV=\int_0^T R(t)e^{-rt}\,dt\). The solid dark green curve is \(R(t)\) (the actual income); the dashed lighter curve is \(R(t)e^{-rt}\) (the discounted value). The shaded area under the discounted curve is the PV. Raising \(r\) compresses the discounted curve downward &mdash; future income shrinks in present-value terms.</p>
+      </div>
+      <div class="db"><div class="dbt">Present Value</div><div class="dbb">\(PV=\displaystyle\int_0^T R(t)e^{-rt}\,dt\)<br><br>Constant \(R\):<br>\(PV=\dfrac{R}{r}(1-e^{-rT})\)<br><br>Growing \(R=R_0 e^{gt}\):<br>\(PV=\dfrac{R_0}{r-g}(1-e^{-(r-g)T})\)<br><br><span style="color:var(--b4);font-size:9px">As T&#8594;&#8734;: PV&#8594;R/r</span></div></div>
+    </div>
+  </div>
+  <div class="is">
+    <div class="ih"><span class="il">Interactive Visualization &mdash; solid = R(t), dashed = discounted</span><button class="share-mini" onclick="shareURL(this)">&#x1F517; Share</button></div>
+    <div class="cb2">
+      <div class="cg"><div class="cl">Income stream \(R(t)\)</div>
+        <select id="bc_pvt" onchange="D.bcpv()">
+          <option value="0">Constant R = R&#8320;</option>
+          <option value="1">Growing: R = R&#8320;&middot;e^(0.05t)</option>
+          <option value="2">Declining: R = R&#8320;&middot;e^(&minus;0.08t)</option>
+          <option value="3">Linear: R = R&#8320; + 20t</option>
+        </select>
+      </div>
+      <div class="cg" style="min-width:140px"><div class="cl">Base income \(R_0\) <span class="cv" id="bc_pvR_v">$200</span></div><input type="range" id="bc_pvR" min="50" max="800" step="25" value="200" oninput="D.bcpv()"></div>
+      <div class="cg" style="min-width:148px"><div class="cl">Discount rate \(r\) <span class="cv" id="bc_pvr_v">8%</span></div><input type="range" id="bc_pvr" min="1" max="25" step="1" value="8" oninput="D.bcpv()"></div>
+      <div class="cg" style="min-width:148px"><div class="cl">Horizon \(T\) (years) <span class="cv" id="bc_pvT_v">10</span></div><input type="range" id="bc_pvT" min="1" max="25" step="1" value="10" oninput="D.bcpv()"></div>
+    </div>
+    <div class="gw" id="bc-pv-win"><canvas id="bc-pv-cv"></canvas><div class="gc">R(t) (solid) &middot; R(t)e^(&minus;rt) (dashed) &middot; PV = shaded area</div><div class="gc-right">hover to read values</div></div>
+    <div class="hint"><span class="hint-txt">&#128161; Set r=15% and compare the shaded area (PV) vs the undiscounted total. Raise T: notice PV grows slowly past year 15 &mdash; distant cash flows are nearly worthless at high discount rates. Now set r=2% &mdash; far-future income matters much more.</span></div>
+    <div class="rb">
+      <div class="ri hi"><div class="rl">Present Value (PV)</div><div class="rv" id="r-bcpv-pv">&mdash;</div></div>
+      <div class="ri"><div class="rl">Undiscounted Total</div><div class="rv" id="r-bcpv-ud">&mdash;</div></div>
+      <div class="ri"><div class="rl">Discount (\$)</div><div class="rv" id="r-bcpv-disc">&mdash;</div></div>
+      <div class="ri"><div class="rl">Discount Factor at T</div><div class="rv" id="r-bcpv-df">&mdash;</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PROFIT OPTIMIZATION ══ -->
+<div id="m-bc-opt" class="mod">
+  <div class="ts">
+    <div class="cb">Business Calculus &middot; Chapter 7</div>
+    <h1 class="pt">Profit Optimization</h1>
+    <p class="ptag">Maximizing profit where marginal revenue equals marginal cost</p>
+    <div class="pb">
+      <div class="prose">
+        <p>For a <b>competitive firm</b> the market price \(P\) is fixed, so \(MR=P\) (horizontal). The firm maximizes profit by choosing \(q^*\) where \(MC(q^*)=P\). The <b>profit rectangle</b> has width \(q^*\) and height \(P-ATC(q^*)\); its area is economic profit (green) or loss (orange).</p>
+        <p>For a <b>monopolist</b> with inverse demand \(P=a-bq\), total revenue is \(TR=aq-bq^2\) so \(MR=a-2bq\) (slopes twice as steeply as demand). The monopolist chooses \(q^*\) where \(MR=MC\), then reads the price \(p^*=a-bq^*\) off the demand curve. The gap between demand and MR curves shows the monopoly's market power.</p>
+        <p>Toggle between market structures and observe how equilibrium quantity, price, and profit differ &mdash; monopoly always produces less and charges more than the competitive outcome.</p>
+      </div>
+      <div class="db"><div class="dbt">MR = MC Rule</div><div class="dbb">Competitive:<br>\(MR=P\) (horiz.)<br>\(MC=TC'(q)\)<br><br>Monopoly:<br>\(MR=a-2bq\)<br>\(P=a-bq^*\)<br><br>Profit:<br>\(\pi=(P-ATC)q^*\)</div></div>
+    </div>
+  </div>
+  <div class="is">
+    <div class="ih"><span class="il">Interactive Visualization &mdash; MR and MC curves</span><button class="share-mini" onclick="shareURL(this)">&#x1F517; Share</button></div>
+    <div class="cb2">
+      <div class="cg"><div class="cl">Market structure</div>
+        <select id="bc_om" onchange="D.bcopt()">
+          <option value="comp">Competitive firm</option>
+          <option value="mono">Monopoly</option>
+        </select>
+      </div>
+      <div class="cg"><div class="cl">Cost function</div>
+        <select id="bc_oc" onchange="D.bcopt()">
+          <option value="0">TC = 100 + 2q + 0.5q&sup2;</option>
+          <option value="1">TC = 60 + 8q + 0.1q&sup2;</option>
+          <option value="2">TC = 150 + q + 0.03q&sup3;</option>
+        </select>
+      </div>
+      <div class="cg" style="min-width:165px"><div class="cl" id="bc_om_lbl">Market price P <span class="cv" id="bc_op_v">$18.00</span></div><input type="range" id="bc_op" min="3" max="35" step="0.5" value="18" oninput="D.bcopt()"></div>
+    </div>
+    <div class="gw" id="bc-opt-win"><canvas id="bc-opt-cv"></canvas><div class="gc" id="bc-opt-gc">MR (green) &middot; MC (orange) &middot; Profit rectangle</div><div class="gc-right">hover to read values</div></div>
+    <div class="hint"><span class="hint-txt">&#128161; Switch to Monopoly: the MR line now slopes down (steeper than demand), so optimal quantity is lower than competitive. The monopoly price read off the demand curve is higher, but total surplus is reduced &mdash; that gap is deadweight loss.</span></div>
+    <div class="rb">
+      <div class="ri hi"><div class="rl">Optimal \(q^*\)</div><div class="rv" id="r-bcop-q">&mdash;</div></div>
+      <div class="ri hi"><div class="rl">Price \(P^*\)</div><div class="rv" id="r-bcop-p">&mdash;</div></div>
+      <div class="ri hi"><div class="rl">Max Profit \(\pi^*\)</div><div class="rv" id="r-bcop-pi">&mdash;</div></div>
+      <div class="ri"><div class="rl">ATC at \(q^*\)</div><div class="rv" id="r-bcop-atc">&mdash;</div></div>
+      <div class="ri"><div class="rl">MC at \(q^*\)</div><div class="rv" id="r-bcop-mc">&mdash;</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ COMPOUND GROWTH ══ -->
+<div id="m-bc-grow" class="mod">
+  <div class="ts">
+    <div class="cb">Business Calculus &middot; Chapter 8</div>
+    <h1 class="pt">Compound Growth &amp; Continuous Compounding</h1>
+    <p class="ptag">As compounding frequency grows without bound, discrete growth converges to \(A=Pe^{rt}\)</p>
+    <div class="pb">
+      <div class="prose">
+        <p>If \(P\) dollars are invested at annual rate \(r\) compounded \(n\) times per year, after \(t\) years the balance is \(A_n(t)=P\!\left(1+\tfrac{r}{n}\right)^{nt}\). As \(n\to\infty\), this converges to the <b>continuously compounded</b> formula \(A(t)=Pe^{rt}\) &mdash; because \(\lim_{n\to\infty}\left(1+\tfrac{r}{n}\right)^n=e^r\).</p>
+        <p>The graph shows all four compounding frequencies simultaneously. The differences are largest at high interest rates and long time horizons. The <b>effective annual rate</b> (EAR) for frequency \(n\) is \((1+r/n)^n-1\); for continuous compounding it is \(e^r-1\).</p>
+        <p>The present value formula reverses this: \(PV=Fe^{-rT}\) discounts future value \(F\) back to today. This is the foundation of Module 6.</p>
+      </div>
+      <div class="db"><div class="dbt">Compounding</div><div class="dbb">Discrete (n/yr):<br>\(A=P\!\left(1+\dfrac{r}{n}\right)^{nt}\)<br><br>Continuous:<br>\(A=Pe^{rt}\)<br><br>EAR:<br>\(e^r-1\) (continuous)<br><br><span style="color:var(--b4);font-size:9px">Limit: \(\left(1+\frac{r}{n}\right)^n\to e^r\)</span></div></div>
+    </div>
+  </div>
+  <div class="is">
+    <div class="ih"><span class="il">Interactive Visualization &mdash; four compounding frequencies + continuous</span><button class="share-mini" onclick="shareURL(this)">&#x1F517; Share</button></div>
+    <div class="cb2">
+      <div class="cg" style="min-width:155px"><div class="cl">Principal \(P\) <span class="cv" id="bc_gP_v">$1,000</span></div><input type="range" id="bc_gP" min="100" max="10000" step="100" value="1000" oninput="D.bcgrow()"></div>
+      <div class="cg" style="min-width:155px"><div class="cl">Annual rate \(r\) <span class="cv" id="bc_gr_v">8%</span></div><input type="range" id="bc_gr" min="1" max="25" step="1" value="8" oninput="D.bcgrow()"></div>
+      <div class="cg" style="min-width:155px"><div class="cl">Time horizon \(T\) <span class="cv" id="bc_gT_v">20 yrs</span></div><input type="range" id="bc_gT" min="1" max="40" step="1" value="20" oninput="D.bcgrow()"></div>
+    </div>
+    <div class="gw" id="bc-grow-win"><canvas id="bc-grow-cv"></canvas><div class="gc">Annual &middot; Quarterly &middot; Monthly &middot; Daily &middot; Continuous</div><div class="gc-right">hover to compare amounts</div></div>
+    <div class="hint"><span class="hint-txt">&#128161; Set r=20% and T=30 years &mdash; the gap between annual and continuous compounding becomes dramatic. At normal rates (r=5%) the difference between monthly and continuous is almost invisible. The key insight: continuous compounding gives the mathematical upper bound.</span></div>
+    <div class="rb">
+      <div class="ri hi"><div class="rl">Continuous A(T)</div><div class="rv" id="r-bcgr-cont">&mdash;</div></div>
+      <div class="ri"><div class="rl">Monthly A(T)</div><div class="rv" id="r-bcgr-mo">&mdash;</div></div>
+      <div class="ri"><div class="rl">Annual A(T)</div><div class="rv" id="r-bcgr-ann">&mdash;</div></div>
+      <div class="ri"><div class="rl">EAR (continuous)</div><div class="rv" id="r-bcgr-ear">&mdash;</div></div>
+      <div class="ri hi"><div class="rl">Gain vs Annual</div><div class="rv" id="r-bcgr-diff">&mdash;</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ABOUT (BC) ══ -->
+<div id="m-bc-about" class="mod">
+  <div class="ts" style="max-height:none;flex-shrink:0">
+    <div class="cb">Creator &middot; About Business Calculus</div>
+    <h1 class="pt">About the Creator</h1>
+    <p class="ptag">Vyom Krothapalli &mdash; Class of 2027</p>
+  </div>
+  <div class="about-wrap">
+    <div class="about-hero">
+      <div class="about-avatar" style="background:linear-gradient(135deg,#15803d,#4ade80)">VK</div>
+      <div>
+        <div class="about-hero-name">Vyom Krothapalli</div>
+        <div class="about-hero-meta" style="color:#4ade80">Class of 2027 &middot; Math Explorer &middot; Business Calculus</div>
+      </div>
+    </div>
+    <div class="about-grid">
+      <div class="acard">
+        <div class="acard-title">&#x1F4C8; Business Calculus</div>
+        <p class="bio-p">Business Calculus applies the tools of differential and integral calculus to economic decision-making: firms optimize profit, markets reach equilibrium, investors discount future cash flows, and policies create or destroy welfare. These 8 interactive modules cover the standard Business Calculus curriculum with live visualizations.</p>
+        <p class="bio-p">This subject is fundamentally about <b>thinking at the margin</b>: every business decision, from pricing to investment to hiring, is best analyzed by asking what happens to costs, revenues, and profits when you change the decision variable by one small unit.</p>
+        <div class="acard-title" style="margin-top:22px">&#x2699;&#xFE0F; Built With</div>
+        <div class="stack-row">
+          <span class="spill" style="border-color:#bbf7d0;color:#15803d">Vanilla JS</span><span class="spill" style="border-color:#bbf7d0;color:#15803d">HTML5 Canvas</span><span class="spill" style="border-color:#bbf7d0;color:#15803d">KaTeX</span><span class="spill" style="border-color:#bbf7d0;color:#15803d">math.js</span>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:20px">
+        <div class="acard">
+          <div class="acard-title">&#x1F4AC; Get in Touch</div>
+          <div class="clink"><div class="clink-icon">&#x2709;</div><a href="mailto:hiccup2367@gmail.com">hiccup2367@gmail.com</a></div>
+          <div class="clink"><div class="clink-icon">&#x1F419;</div><a href="https://github.com/hiccup2367" target="_blank" rel="noopener">github.com/hiccup2367</a></div>
+        </div>
+        <div class="acard" style="text-align:center">
+          <div class="acard-title" style="justify-content:center">&#x1F3E0; All Subjects</div>
+          <p style="font-size:12px;color:var(--txd);line-height:1.6;margin-bottom:0">Return to Math Explorer to explore Calculus or Linear Algebra.</p>
+          <button class="share-big" onclick="window.location.href='index.html'"  style="background:#15803d;margin-top:12px">&#8592; Math Explorer Home</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+</div><!-- /section-bizcalc -->
+
+</main>
+</div>
+
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+
+function showLanding(){window.location.href='index.html';
+  $('landing').style.display='flex';
+  document.querySelectorAll('.app-section').forEach(s=>{s.classList.remove('active');s.style.display='none';});
+}
+function showSection(id){
+  $('landing').style.display='none';
+  document.querySelectorAll('.app-section').forEach(s=>{s.classList.remove('active');s.style.display='none';});
+  const el=$(id);if(!el)return;
+  el.style.display='flex';el.classList.add('active');
+  if(id==='section-calculus')setTimeout(()=>D.limits&&D.limits(),60);
+}
+function goStub(section,modId,navEl){
+  const secEl=$(('section-'+section));
+  if(!secEl)return;
+  secEl.querySelectorAll('.mod').forEach(m=>m.classList.remove('active'));
+  const mod=$(modId);if(mod)mod.classList.add('active');
+  secEl.querySelectorAll('.nv').forEach(n=>n.classList.remove('active'));
+  if(navEl)navEl.classList.add('active');
+}
+
+// Math helpers
+function ev(e,x){try{return math.evaluate(e,{x});}catch{return NaN;}}
+function evt(e,t){try{return math.evaluate(e,{t});}catch{return NaN;}}
+function evxy(e,x,y){try{return math.evaluate(e,{x,y});}catch{return NaN;}}
+function nd1(e,x,h=1e-6){return(ev(e,x+h)-ev(e,x-h))/(2*h);}
+function nd2(e,x,h=1e-4){return(ev(e,x+h)-2*ev(e,x)+ev(e,x-h))/(h*h);}
+function trapI(fn,a,b,n=1200){if(!isFinite(a)||!isFinite(b)||a>=b)return 0;const h=(b-a)/n;let s=0;for(let i=0;i<n;i++){const x1=a+i*h,x2=x1+h,y1=fn(x1),y2=fn(x2);if(isFinite(y1)&&isFinite(y2))s+=(y1+y2)*.5*h;}return s;}
+function trapE(e,a,b){return trapI(x=>ev(e,x),a,b);}
+function trapT(e,a,b){return trapI(t=>evt(e,t),a,b);}
+function f4(v){return isFinite(v)?v.toFixed(4):'—';}
+function f2(v){return isFinite(v)?v.toFixed(2):'—';}
+function fN(n){let r=1;for(let i=2;i<=n;i++)r*=i;return r;}
+function clamp(v,lo,hi){return Math.max(lo,Math.min(hi,v));}
+
+// Canvas
+function iC(wId,cId){
+  const w=$(wId),c=$(cId);if(!w||!c)return null;
+  const W=w.clientWidth,H=w.clientHeight;if(W<1||H<1)return null;
+  const d=window.devicePixelRatio||1;c.width=W*d;c.height=H*d;c.style.width=W+'px';c.style.height=H+'px';
+  const g=c.getContext('2d');g.scale(d,d);return{g,W,H};
+}
+function ws(x,y,xm,xM,ym,yM,W,H){return[((x-xm)/(xM-xm))*W,H-((y-ym)/(yM-ym))*H];}
+function nt(r){const p=Math.pow(10,Math.floor(Math.log10(r/6)));const f=r/6/p;return(f<1.5?1:f<3.5?2:f<7.5?5:10)*p;}
+function aY(e,xm,xM){let mn=Infinity,mx=-Infinity;for(let i=0;i<=400;i++){const x=xm+(i/400)*(xM-xm),y=ev(e,x);if(isFinite(y)){mn=Math.min(mn,y);mx=Math.max(mx,y);}}if(!isFinite(mn))return[-3,3];const p=Math.max((mx-mn)*.18,.5);return[Math.max(mn-p,-25),Math.min(mx+p,25)];}
+function dG(g,xm,xM,ym,yM,W,H){
+  const xs=nt(xM-xm),ys=nt(yM-ym);
+  g.strokeStyle='#dbeafe';g.lineWidth=1;
+  for(let x=Math.ceil(xm/xs)*xs;x<=xM+1e-9;x+=xs){const[sx]=ws(x,0,xm,xM,ym,yM,W,H);g.beginPath();g.moveTo(sx,0);g.lineTo(sx,H);g.stroke();}
+  for(let y=Math.ceil(ym/ys)*ys;y<=yM+1e-9;y+=ys){const[,sy]=ws(0,y,xm,xM,ym,yM,W,H);g.beginPath();g.moveTo(0,sy);g.lineTo(W,sy);g.stroke();}
+  g.strokeStyle='#93c5fd';g.lineWidth=1.5;
+  if(ym<=0&&yM>=0){const[,sy]=ws(0,0,xm,xM,ym,yM,W,H);g.beginPath();g.moveTo(0,sy);g.lineTo(W,sy);g.stroke();}
+  if(xm<=0&&xM>=0){const[sx]=ws(0,0,xm,xM,ym,yM,W,H);g.beginPath();g.moveTo(sx,0);g.lineTo(sx,H);g.stroke();}
+  g.fillStyle='#bfdbfe';g.font='9.5px JetBrains Mono,monospace';
+  const[,ay]=ws(0,0,xm,xM,ym,yM,W,H);g.textAlign='center';
+  for(let x=Math.ceil(xm/xs)*xs;x<=xM+1e-9;x+=xs){if(Math.abs(x)<xs*.01)continue;const[sx]=ws(x,0,xm,xM,ym,yM,W,H);g.fillText(+x.toFixed(1),sx,Math.min(Math.max(ay+12,11),H-3));}
+  const[ax]=ws(0,0,xm,xM,ym,yM,W,H);g.textAlign='right';
+  for(let y=Math.ceil(ym/ys)*ys;y<=yM+1e-9;y+=ys){if(Math.abs(y)<ys*.01)continue;const[,sy]=ws(0,y,xm,xM,ym,yM,W,H);g.fillText(+y.toFixed(1),Math.min(Math.max(ax-4,34),W-4),sy+4);}
+}
+function pFn(g,fn,xm,xM,ym,yM,W,H,col,lw=2.2,dash=[]){
+  g.save();g.strokeStyle=col;g.lineWidth=lw;g.setLineDash(dash);g.lineJoin='round';
+  const st=Math.floor(W*2.5);g.beginPath();let on=false;
+  for(let i=0;i<=st;i++){const x=xm+(i/st)*(xM-xm),y=fn(x);if(!isFinite(y)||y<ym*5||y>yM*5){on=false;continue;}const[sx,sy]=ws(x,y,xm,xM,ym,yM,W,H);if(!on){g.moveTo(sx,sy);on=true;}else g.lineTo(sx,sy);}
+  g.stroke();g.setLineDash([]);g.restore();
+}
+function pE(g,e,xm,xM,ym,yM,W,H,col,lw=2.2,dash=[]){pFn(g,x=>ev(e,x),xm,xM,ym,yM,W,H,col,lw,dash);}
+function dot(g,x,y,xm,xM,ym,yM,W,H,col,r=5,glow=false){
+  if(!isFinite(x)||!isFinite(y))return;
+  const[sx,sy]=ws(x,y,xm,xM,ym,yM,W,H);
+  g.save();if(glow){g.shadowColor=col;g.shadowBlur=12;}
+  g.fillStyle=col;g.strokeStyle='#fff';g.lineWidth=2.5;g.beginPath();g.arc(sx,sy,r,0,Math.PI*2);g.fill();g.stroke();g.shadowBlur=0;g.restore();
+}
+function ring(g,x,y,xm,xM,ym,yM,W,H,col,r=5){
+  if(!isFinite(x)||!isFinite(y))return;const[sx,sy]=ws(x,y,xm,xM,ym,yM,W,H);
+  g.save();g.strokeStyle=col;g.lineWidth=2;g.fillStyle='#fff';g.beginPath();g.arc(sx,sy,r,0,Math.PI*2);g.fill();g.stroke();g.restore();
+}
+const HS={};
+function drawCH(g,px,W,H,lines){
+  if(!lines||!lines.length)return;
+  g.save();g.strokeStyle='rgba(29,78,216,.18)';g.lineWidth=1;g.setLineDash([4,3]);
+  g.beginPath();g.moveTo(px,0);g.lineTo(px,H);g.stroke();g.setLineDash([]);
+  g.font='10px JetBrains Mono,monospace';
+  const lH=14,pad=7,gap=2,mw=Math.max(...lines.map(l=>g.measureText(l.t).width));
+  const bw=mw+pad*2,bh=lines.length*(lH+gap)+pad*1.2;
+  let tx=px+10,ty=10;if(tx+bw>W-6)tx=px-bw-10;if(ty+bh>H-6)ty=H-bh-6;
+  g.shadowColor='rgba(29,78,216,.1)';g.shadowBlur=6;g.fillStyle='rgba(255,255,255,.97)';g.strokeStyle='rgba(29,78,216,.15)';g.lineWidth=1;
+  g.fillRect(tx,ty,bw,bh);g.strokeRect(tx,ty,bw,bh);g.shadowBlur=0;
+  g.fillStyle='rgba(29,78,216,.15)';g.fillRect(tx,ty,2.5,bh);
+  g.textAlign='left';g.textBaseline='middle';
+  lines.forEach((l,i)=>{g.fillStyle=l.c||'#1d4ed8';g.fillText(l.t,tx+pad+2,ty+pad*.7+(i+.5)*(lH+gap));});
+  g.textBaseline='alphabetic';g.restore();
+}
+function setupHover(winId,modId,getXBounds,clickSliderId){
+  const win=$(winId);if(!win)return;
+  win.addEventListener('mousemove',e=>{
+    const r=win.getBoundingClientRect(),px=e.clientX-r.left,W=win.clientWidth;
+    const[xm,xM]=getXBounds();HS[modId]={px,wx:xm+(px/W)*(xM-xm)};D[modId]&&D[modId]();
+  });
+  win.addEventListener('mouseleave',()=>{HS[modId]=null;D[modId]&&D[modId]();});
+  if(clickSliderId){win.addEventListener('click',e=>{const r=win.getBoundingClientRect(),px=e.clientX-r.left,W=win.clientWidth;const[xm,xM]=getXBounds(),wx=xm+(px/W)*(xM-xm);const sl=$(clickSliderId);if(!sl)return;sl.value=Math.max(+sl.min,Math.min(+sl.max,wx)).toFixed(2);D[modId]&&D[modId]();});}
+}
+function shareURL(btn){
+  const url=location.href;
+  if(url.startsWith('about:')||url.includes('blob:')){alert('Share links work once deployed to GitHub Pages or Netlify.');return;}
+  navigator.clipboard.writeText(url).then(()=>{[btn,$('share-main')].filter(Boolean).forEach(b=>{const was=b.innerHTML;b.innerHTML='✓ Copied!';b.classList.add('copied');setTimeout(()=>{b.innerHTML=was;b.classList.remove('copied');},2200);});}).catch(()=>prompt('Copy this link:',url));
+}
+async function fetchVisitorCount(){
+  try{const res=await fetch('https://api.counterapi.dev/v1/math-explorer-v1/visits/hit',{signal:AbortSignal.timeout(4000)});if(!res.ok)throw new Error();const data=await res.json();const n=data.count||data.value||0;const el=$('visitor-count');if(el)el.textContent=n.toLocaleString();}
+  catch{try{const k='me-visits';const n=(parseInt(localStorage.getItem(k)||'0'))+1;localStorage.setItem(k,n);const el=$('visitor-count');if(el)el.textContent=n+' (local)';}catch{}}
+}
+function updateModuleCount(){try{const stats=JSON.parse(localStorage.getItem('me-mod-stats')||'{}');const u=Object.keys(stats).length;const el=$('session-modules');if(el)el.textContent=u+' / 17';}catch{}}
+function trackModule(id){if(id==='about')return;try{const k='me-mod-stats';const s=JSON.parse(localStorage.getItem(k)||'{}');s[id]=(s[id]||0)+1;localStorage.setItem(k,JSON.stringify(s));updateModuleCount();}catch{}}
+function go(id,el){
+  document.querySelectorAll('#section-calculus .mod').forEach(m=>m.classList.remove('active'));
+  document.querySelectorAll('#section-calculus .nv').forEach(n=>n.classList.remove('active'));
+  const modEl=$('m-'+id);if(modEl)modEl.classList.add('active');
+  if(el)el.classList.add('active');
+  trackModule(id);
+  if(id==='about'){fetchVisitorCount();updateModuleCount();return;}
+  setTimeout(()=>D[id]&&D[id](),40);
+}
+
+// BUSINESS CALCULUS — Navigation + Drawing Functions
+// ══════════════════════════════════════════════════════════════════════════
+
+function goBC(modId, navEl) {
+  const sec = $('section-bizcalc');
+  if(!sec) return;
+  sec.querySelectorAll('.mod').forEach(m => m.classList.remove('active'));
+  sec.querySelectorAll('.nv').forEach(n => n.classList.remove('active'));
+  const mod = $(modId); if(mod) mod.classList.add('active');
+  if(navEl) navEl.classList.add('active');
+  const fnKey = modId.replace('m-bc-', 'bc').replace('-','');
+  if(D[fnKey]) setTimeout(() => D[fnKey](), 40);
+}
+
+// Green color constants for BC canvas drawing
+const G = {
+  dark:'#166534', main:'#15803d', med:'#16a34a', light:'#4ade80',
+  pale:'#86efac', faint:'#bbf7d0',
+  fill1: opacity => `rgba(21,128,61,${opacity})`,
+  fill2: opacity => `rgba(22,163,74,${opacity})`,
+  cost: '#b45309', costF: opacity => `rgba(180,83,9,${opacity})`,
+  loss: opacity => `rgba(234,88,12,${opacity})`,
+  dwl:  opacity => `rgba(220,38,38,${opacity})`,
+};
+const GCH = (g,px,W,H,lines) => drawCH(g,px,W,H,lines.map(l=>({...l,c:l.c||G.main})));
+
+// ══ SUPPLY & DEMAND ═══════════════════════════════════════════════════════
+D.bcsupply = function() {
+  const c = iC('bc-supply-win','bc-supply-cv'); if(!c) return;
+  const {g,W,H} = c;
+  const di=+$('bc_di').value, ds=+$('bc_ds').value;
+  const si=+$('bc_si').value, ss=+$('bc_ss').value;
+  $('bc_di_v').textContent=di.toFixed(1); $('bc_ds_v').textContent=ds.toFixed(2);
+  $('bc_si_v').textContent=si.toFixed(1); $('bc_ss_v').textContent=ss.toFixed(2);
+  // Equilibrium: di - ds*q = si + ss*q → q* = (di-si)/(ds+ss)
+  const qStar = Math.max(0,(di-si)/(ds+ss));
+  const pStar = di - ds*qStar;
+  const qMax = di/ds * 1.15;
+  const pMax = di * 1.08;
+  // world coords: x=quantity, y=price
+  const xm=0, xM=qMax, ym=0, yM=pMax;
+  g.fillStyle='#fff'; g.fillRect(0,0,W,H);
+  dG(g,xm,xM,ym,yM,W,H);
+
+  if(qStar>0 && pStar>0) {
+    // Consumer Surplus fill (above p*, below demand, left of q*)
+    const st=200;
+    g.save(); g.fillStyle=G.fill1(.22); g.beginPath();
+    const [sx0,sy0]=ws(0,di,xm,xM,ym,yM,W,H), [sqst,spst]=ws(qStar,pStar,xm,xM,ym,yM,W,H);
+    const [,spY]=ws(0,pStar,xm,xM,ym,yM,W,H);
+    g.moveTo(sx0,sy0);
+    for(let i=0;i<=st;i++){const q=i/st*qStar; const p=di-ds*q; const [x2,y2]=ws(q,p,xm,xM,ym,yM,W,H); g.lineTo(x2,y2);}
+    g.lineTo(sqst,spY); g.lineTo(sx0,spY); g.closePath(); g.fill(); g.restore();
+
+    // Producer Surplus fill (below p*, above supply, left of q*)
+    g.save(); g.fillStyle=G.fill2(.14); g.beginPath();
+    const [ss0,ssi]=ws(0,si,xm,xM,ym,yM,W,H);
+    g.moveTo(ss0,spY); // start at left at p*
+    for(let i=0;i<=st;i++){const q=i/st*qStar; const p=si+ss*q; const [x2,y2]=ws(q,p,xm,xM,ym,yM,W,H); g.lineTo(x2,y2);}
+    g.lineTo(sqst,sqst===sqst?spY:spY); // bottom-right = eq qty at p*
+    g.closePath(); g.fill(); g.restore();
+  }
+
+  // Demand curve
+  pFn(g, q=>di-ds*q, xm,xM,ym,yM,W,H, G.main, 2.5);
+  // Supply curve
+  pFn(g, q=>si+ss*q, xm,xM,ym,yM,W,H, G.med, 2, [7,4]);
+
+  // Equilibrium point + lines
+  if(qStar>0 && pStar>0 && pStar<=pMax) {
+    const [sx,sy]=ws(qStar,pStar,xm,xM,ym,yM,W,H);
+    g.save();g.strokeStyle=G.fill1(.35);g.lineWidth=1.5;g.setLineDash([5,3]);
+    g.beginPath();g.moveTo(sx,sy);g.lineTo(sx,H);g.stroke();
+    g.beginPath();g.moveTo(sx,sy);g.lineTo(0,sy);g.stroke();
+    g.setLineDash([]);g.restore();
+    dot(g,qStar,pStar,xm,xM,ym,yM,W,H,G.dark,8,true);
+    g.save();g.font='bold 11px JetBrains Mono,monospace';g.fillStyle=G.dark;g.textAlign='left';
+    g.fillText('p* = '+pStar.toFixed(2),sx+8,sy-6);
+    g.fillText('q* = '+qStar.toFixed(2),sx+8,sy+14);g.restore();
+  }
+
+  // Labels for curves
+  g.save();g.font='10px JetBrains Mono,monospace';
+  const qLbl=qMax*.8; const [dlx,dly]=ws(qLbl,di-ds*qLbl,xm,xM,ym,yM,W,H);
+  g.fillStyle=G.dark;g.textAlign='left';g.fillText('Demand',dlx+4,dly-6);
+  const [slx,sly]=ws(qLbl,si+ss*qLbl,xm,xM,ym,yM,W,H);
+  g.fillStyle=G.med;g.fillText('Supply',slx+4,sly+14);g.restore();
+
+  // Readouts
+  const CS = qStar>0&&pStar>0 ? 0.5*qStar*(di-pStar) : 0;
+  const PS = qStar>0&&pStar>0 ? 0.5*qStar*(pStar-si) : 0;
+  $('r-bcsd-q').textContent = qStar.toFixed(3);
+  $('r-bcsd-p').textContent = '$'+pStar.toFixed(2);
+  $('r-bcsd-cs').textContent = '$'+CS.toFixed(2);
+  $('r-bcsd-ps').textContent = '$'+PS.toFixed(2);
+  $('r-bcsd-ts').textContent = '$'+(CS+PS).toFixed(2);
+
+  const hv=HS.bcsupply;
+  if(hv){const q=hv.wx; const dp=di-ds*q, sp=si+ss*q; GCH(g,hv.px,W,H,[{t:'q = '+q.toFixed(2)},{t:'P_D= $'+dp.toFixed(2)},{t:'P_S= $'+sp.toFixed(2)}]);}
+};
+
+// ══ MARGINAL ANALYSIS ═════════════════════════════════════════════════════
+const BC_TC = [
+  q => 100 + 2*q + 0.5*q*q,        // quadratic
+  q => 80 + 5*q - 0.2*q*q + 0.01*q*q*q, // cubic S-shaped
+  q => 60 + 8*q,                    // linear (constant MC)
+  q => 200 + q + 0.04*q*q*q,        // cubic high FC
+];
+D.bcmarg = function() {
+  const c = iC('bc-marg-win','bc-marg-cv'); if(!c) return;
+  const {g,W,H} = c;
+  const ci = +$('bc_mcp').value, P = +$('bc_mp').value;
+  $('bc_mp_v').textContent = '$'+P.toFixed(2);
+  const TC = BC_TC[ci];
+  const qMax = 30, xm=0, xM=qMax;
+  let trMax=P*qMax, tcMax=TC(qMax);
+  const ym=0, yM=Math.max(trMax,tcMax)*1.1;
+  g.fillStyle='#fff'; g.fillRect(0,0,W,H); dG(g,xm,xM,ym,yM,W,H);
+
+  // Shade profit / loss between TR and TC
+  const st=400, [,zy]=ws(0,0,xm,xM,ym,yM,W,H);
+  for(let i=0;i<st;i++){
+    const q1=i/st*qMax, q2=(i+1)/st*qMax;
+    const tr1=P*q1,tc1=TC(q1),tr2=P*q2,tc2=TC(q2);
+    if(!isFinite(tc1)||!isFinite(tc2))continue;
+    const profit=(tr1+tr2)/2-(tc1+tc2)/2;
+    const [sx1,sty1]=ws(q1,Math.max(tr1,tc1),xm,xM,ym,yM,W,H);
+    const [sx2,sty2]=ws(q2,Math.max(tr2,tc2),xm,xM,ym,yM,W,H);
+    const [,sby1]=ws(q1,Math.min(tr1,tc1),xm,xM,ym,yM,W,H);
+    const [,sby2]=ws(q2,Math.min(tr2,tc2),xm,xM,ym,yM,W,H);
+    g.save();
+    g.fillStyle = profit>=0 ? G.fill1(.18) : G.loss(.14);
+    g.beginPath();g.moveTo(sx1,sty1);g.lineTo(sx2,sty2);g.lineTo(sx2,sby2);g.lineTo(sx1,sby1);g.closePath();g.fill();
+    g.restore();
+  }
+
+  // TC curve
+  pFn(g, q=>{const v=TC(q);return isFinite(v)&&v<=yM*5?v:NaN;}, xm,xM,ym,yM,W,H, G.cost, 2.5);
+  // TR line
+  pFn(g, q=>P*q, xm,xM,ym,yM,W,H, G.main, 2.5);
+
+  // Find optimal q where π'=0 (scan for max profit)
+  let bestPi=-Infinity, bestQ=0;
+  for(let i=0;i<=600;i++){const q=i/600*qMax;const pi=P*q-TC(q);if(isFinite(pi)&&pi>bestPi){bestPi=pi;bestQ=q;}}
+
+  // Mark optimal
+  const trO=P*bestQ, tcO=TC(bestQ);
+  if(isFinite(tcO)){
+    const [ox,oty]=ws(bestQ,Math.max(trO,tcO),xm,xM,ym,yM,W,H),[,oby]=ws(bestQ,Math.min(trO,tcO),xm,xM,ym,yM,W,H);
+    g.save();g.strokeStyle=G.fill1(.55);g.lineWidth=1.5;g.setLineDash([4,3]);g.beginPath();g.moveTo(ox,0);g.lineTo(ox,H);g.stroke();g.setLineDash([]);
+    g.font='bold 11px JetBrains Mono,monospace';g.fillStyle=bestPi>=0?G.dark:G.cost;
+    g.textAlign='left';g.fillText('q* = '+bestQ.toFixed(1),ox+5,18);g.restore();
+    dot(g,bestQ,trO,xm,xM,ym,yM,W,H,G.main,6,true);
+    dot(g,bestQ,tcO,xm,xM,ym,yM,W,H,G.cost,6,true);
+  }
+
+  const MC_at_opt = (TC(bestQ+0.01)-TC(bestQ-0.01))/0.02;
+  $('r-bcmg-q').textContent = bestQ.toFixed(2);
+  $('r-bcmg-pi').textContent = '$'+bestPi.toFixed(2);
+  $('r-bcmg-tr').textContent = '$'+trO.toFixed(2);
+  $('r-bcmg-tc').textContent = '$'+TC(bestQ).toFixed(2);
+  $('r-bcmg-mc').textContent = '$'+MC_at_opt.toFixed(2);
+
+  const hv=HS.bcmarg;
+  if(hv){const q=Math.max(0,Math.min(qMax,hv.wx));const tr=P*q,tc=TC(q),pi=tr-tc;const mc=(TC(q+.01)-TC(q-.01))/.02;
+    GCH(g,hv.px,W,H,[{t:'q  = '+q.toFixed(2)},{t:'TR = $'+tr.toFixed(2),c:G.main},{t:'TC = $'+tc.toFixed(2),c:G.cost},{t:'π  = $'+pi.toFixed(2),c:pi>=0?G.dark:G.cost},{t:'MC = $'+mc.toFixed(2),c:G.med}]);}
+};
+
+// ══ PRICE ELASTICITY ══════════════════════════════════════════════════════
+D.bcelas = function() {
+  const c = iC('bc-elas-win','bc-elas-cv'); if(!c) return;
+  const {g,W,H} = c;
+  const a=+$('bc_edi').value, b=+$('bc_eds').value, P=+$('bc_ep').value;
+  $('bc_edi_v').textContent=a.toFixed(1); $('bc_eds_v').textContent=b.toFixed(2);
+  $('bc_ep_v').textContent='$'+P.toFixed(2);
+  const qMax = a/b; const pMax = a*1.05;
+  const xm=0, xM=qMax*1.1, ym=0, yM=pMax;
+  g.fillStyle='#fff'; g.fillRect(0,0,W,H); dG(g,xm,xM,ym,yM,W,H);
+
+  // Draw demand curve colored by elasticity segment by segment
+  const segs=300;
+  for(let i=0;i<segs;i++){
+    const q1=i/segs*qMax, q2=(i+1)/segs*qMax;
+    const p1=a-b*q1, p2=a-b*q2;
+    if(p1<0||p2<0)continue;
+    const pMid=(p1+p2)/2, qMid=(q1+q2)/2;
+    const E = qMid>0 ? Math.abs(pMid/(a-pMid)) : 999;
+    // Color: E>1 teal, E=1 amber, E<1 green
+    let col;
+    if(E>2) col='#0891b2';
+    else if(E>1.5) col='#0ea5e9';
+    else if(E>1.1) col='#0284c7';
+    else if(E>0.9) col='#d97706';
+    else if(E>0.5) col='#16a34a';
+    else col='#15803d';
+    const [sx1,sy1]=ws(q1,p1,xm,xM,ym,yM,W,H),[sx2,sy2]=ws(q2,p2,xm,xM,ym,yM,W,H);
+    g.save();g.strokeStyle=col;g.lineWidth=3;g.beginPath();g.moveTo(sx1,sy1);g.lineTo(sx2,sy2);g.stroke();g.restore();
+  }
+
+  // Revenue curve (TR = P*q = p*(a-p)/b — draw as dotted secondary)
+  // Show total revenue separately doesn't fit, skip for clarity
+
+  // Selected price marker
+  if(P>0 && P<a){
+    const q_at_P=(a-P)/b;
+    const [px,py]=ws(q_at_P,P,xm,xM,ym,yM,W,H);
+    const [,zy]=ws(0,0,xm,xM,ym,yM,W,H);
+    g.save();g.strokeStyle=G.fill1(.4);g.lineWidth=1.5;g.setLineDash([5,3]);
+    g.beginPath();g.moveTo(0,py);g.lineTo(px,py);g.stroke();
+    g.beginPath();g.moveTo(px,py);g.lineTo(px,zy);g.stroke();
+    g.setLineDash([]);g.restore();
+    dot(g,q_at_P,P,xm,xM,ym,yM,W,H,G.dark,7,true);
+
+    const E=Math.abs(P/(a-P));
+    const verdict = E>1.05?'Elastic':E<0.95?'Inelastic':'Unit Elastic';
+    const vcol = E>1.05?'#0891b2':E<0.95?G.dark:'#d97706';
+    g.save();g.font='bold 12px JetBrains Mono,monospace';g.fillStyle=vcol;g.textAlign='left';
+    g.fillText('|E|='+E.toFixed(2)+' — '+verdict,px+8,py-8);g.restore();
+
+    const TR=P*q_at_P;
+    $('r-bcel-p').textContent='$'+P.toFixed(2);
+    $('r-bcel-q').textContent=q_at_P.toFixed(3);
+    $('r-bcel-e').textContent=E.toFixed(4);
+    const ev=$('r-bcel-v'); ev.textContent=verdict; ev.style.color=vcol;
+    $('r-bcel-tr').textContent='$'+TR.toFixed(2);
+  }
+
+  // Unit elastic point marker
+  const pUnit=a/2, qUnit=a/(2*b);
+  if(pUnit>0&&pUnit<pMax){
+    const [ux,uy]=ws(qUnit,pUnit,xm,xM,ym,yM,W,H);
+    g.save();g.fillStyle='#d97706';g.font='10px JetBrains Mono,monospace';g.textAlign='center';
+    g.fillText('Unit elastic (P=a/2)',ux,uy-14);g.restore();
+    ring(g,qUnit,pUnit,xm,xM,ym,yM,W,H,'#d97706',5);
+  }
+
+  // Legend
+  g.save();g.font='9px JetBrains Mono,monospace';
+  g.fillStyle='#0891b2';g.fillText('■ Elastic (|E|>1)',8,16);
+  g.fillStyle='#d97706';g.fillText('■ Unit (|E|=1)',8,28);
+  g.fillStyle=G.dark;g.fillText('■ Inelastic (|E|<1)',8,40);g.restore();
+
+  const hv=HS.bcelas;
+  if(hv&&hv.wx>=0&&hv.wx<=qMax){const q=hv.wx;const p=a-b*q;if(p>0){const E2=Math.abs(p/(a-p));GCH(g,hv.px,W,H,[{t:'q  = '+q.toFixed(3)},{t:'P  = $'+p.toFixed(2)},{t:'|E|= '+E2.toFixed(4)},{t:'TR = $'+(p*q).toFixed(2)}]);}}
+};
+
+// ══ BREAK-EVEN ════════════════════════════════════════════════════════════
+D.bcbrev = function() {
+  const c = iC('bc-brev-win','bc-brev-cv'); if(!c) return;
+  const {g,W,H} = c;
+  const P=+$('bc_bp').value, vc=+$('bc_bv').value, FC=+$('bc_bf').value, curQ=+$('bc_bq').value;
+  $('bc_bp_v').textContent='$'+P.toFixed(2); $('bc_bv_v').textContent='$'+vc.toFixed(2);
+  $('bc_bf_v').textContent='$'+FC.toFixed(0); $('bc_bq_v').textContent=curQ.toFixed(0);
+  const CM=P-vc;
+  const qMax=150, xm=0, xM=qMax;
+  const yMax=Math.max(P*qMax,FC+vc*qMax)*1.05;
+  const ym=0, yM=yMax;
+  g.fillStyle='#fff'; g.fillRect(0,0,W,H); dG(g,xm,xM,ym,yM,W,H);
+
+  const qBE = CM>0 ? FC/CM : null;
+
+  // Shade profit/loss regions
+  if(qBE!==null && qBE>=0 && qBE<=qMax){
+    // Loss region (left of BE)
+    const [bex,bey]=ws(qBE,P*qBE,xm,xM,ym,yM,W,H),[,fcy]=ws(0,FC,xm,xM,ym,yM,W,H);
+    const [x0]=ws(0,0,xm,xM,ym,yM,W,H);
+    g.save();g.fillStyle=G.loss(.12);
+    g.fillRect(x0,bey,bex-x0,H-bey);
+    // Profit region (right of BE)
+    g.fillStyle=G.fill1(.12);
+    g.fillRect(bex,0,W-bex,H);g.restore();
+  } else if(CM<=0){
+    const [x0]=ws(0,0,xm,xM,ym,yM,W,H);
+    g.save();g.fillStyle=G.loss(.12);g.fillRect(x0,0,W-x0,H);g.restore();
+  } else {
+    // All profit (BE before chart starts)
+    g.save();g.fillStyle=G.fill1(.12);g.fillRect(0,0,W,H);g.restore();
+  }
+
+  // FC horizontal line
+  const [,fcy]=ws(0,FC,xm,xM,ym,yM,W,H);
+  g.save();g.strokeStyle='rgba(180,83,9,.35)';g.lineWidth=1;g.setLineDash([3,4]);
+  g.beginPath();g.moveTo(0,fcy);g.lineTo(W,fcy);g.stroke();g.setLineDash([]);
+  g.font='9px JetBrains Mono,monospace';g.fillStyle=G.cost;g.textAlign='left';g.fillText('FC=$'+FC,4,fcy-4);g.restore();
+
+  // TC line
+  pFn(g, q=>FC+vc*q, xm,xM,ym,yM,W,H, G.cost, 2.5);
+  // TR line
+  pFn(g, q=>P*q, xm,xM,ym,yM,W,H, G.main, 2.5);
+
+  // Break-even dot
+  if(qBE!==null && qBE>=0 && qBE<=qMax){
+    dot(g,qBE,P*qBE,xm,xM,ym,yM,W,H,G.dark,9,true);
+    const [bx,by]=ws(qBE,P*qBE,xm,xM,ym,yM,W,H);
+    g.save();g.font='bold 11px JetBrains Mono,monospace';g.fillStyle=G.dark;
+    g.textAlign=bx>W*0.7?'right':'left';
+    g.fillText('BE: q='+qBE.toFixed(1),bx+(bx>W*.7?-8:8),by-8);g.restore();
+  }
+
+  // Current quantity marker
+  if(curQ>0&&curQ<=qMax){
+    const [cqx]=ws(curQ,0,xm,xM,ym,yM,W,H);
+    const piCur=(P-vc)*curQ-FC;
+    g.save();g.strokeStyle=G.fill1(.6);g.lineWidth=2;g.setLineDash([6,3]);
+    g.beginPath();g.moveTo(cqx,0);g.lineTo(cqx,H);g.stroke();g.setLineDash([]);
+    g.font='bold 11px JetBrains Mono,monospace';g.fillStyle=piCur>=0?G.dark:G.cost;
+    g.textAlign='center';g.fillText('q='+curQ,cqx,H-8);g.restore();
+  }
+
+  const piCur=(P-vc)*curQ-FC;
+  const mos = qBE!==null && curQ>qBE ? curQ-qBE : null;
+  $('r-bcbv-cm').textContent='$'+CM.toFixed(2)+'/unit';
+  $('r-bcbv-be').textContent=qBE!==null?qBE.toFixed(1)+' units':(CM<=0?'Impossible':'—');
+  $('r-bcbv-pi').textContent='$'+piCur.toFixed(2);
+  $('r-bcbv-mos').textContent=mos!==null?mos.toFixed(1)+' units above BE':CM<=0?'N/A':'Not yet at BE';
+
+  const hv=HS.bcbrev;
+  if(hv){const q=Math.max(0,Math.min(qMax,hv.wx));const tr=P*q,tc=FC+vc*q,pi=tr-tc;
+    GCH(g,hv.px,W,H,[{t:'q  = '+q.toFixed(1)},{t:'TR = $'+tr.toFixed(2),c:G.main},{t:'TC = $'+tc.toFixed(2),c:G.cost},{t:'π  = $'+pi.toFixed(2),c:pi>=0?G.dark:G.cost}]);}
+};
+
+// ══ CONSUMER/PRODUCER SURPLUS ════════════════════════════════════════════
+D.bcsurp = function() {
+  const c = iC('bc-surp-win','bc-surp-cv'); if(!c) return;
+  const {g,W,H} = c;
+  const di=+$('bc_gdi').value, si=+$('bc_gsi').value, P=+$('bc_gp').value;
+  const ds=1.5, ss=1.0; // fixed slopes for clarity
+  $('bc_gdi_v').textContent=di.toFixed(1); $('bc_gsi_v').textContent=si.toFixed(1);
+  $('bc_gp_v').textContent='$'+P.toFixed(2);
+  // Eq: di-ds*q = si+ss*q → q* = (di-si)/(ds+ss)
+  const qEq=(di-si)/(ds+ss), pEq=di-ds*qEq;
+  const qMax=di/ds*1.15, pMax=di*1.08;
+  const xm=0,xM=qMax,ym=0,yM=pMax;
+  g.fillStyle='#fff'; g.fillRect(0,0,W,H); dG(g,xm,xM,ym,yM,W,H);
+
+  // Compute traded quantity at regulated price P
+  const qD=Math.max(0,(di-P)/ds); // demand qty
+  const qS=Math.max(0,(P-si)/ss); // supply qty
+  const qT=P>pEq ? qD : qD; // for price floor (P>pEq) → supply>demand, traded=qD; for ceiling → demand>supply, traded=qS
+  const qTraded = P>pEq ? Math.min(qD,qS) : Math.max(0,Math.min(qD,qS));
+
+  // CS: area above P, below demand, from 0 to qTraded
+  if(qTraded>0 && P<di) {
+    g.save();g.fillStyle=G.fill1(.25);g.beginPath();
+    const [sx0,sdm]=ws(0,di,xm,xM,ym,yM,W,H),[,spy]=ws(0,P,xm,xM,ym,yM,W,H);
+    const [sqt]=ws(qTraded,0,xm,xM,ym,yM,W,H);
+    g.moveTo(sx0,sdm);
+    const st=100;
+    for(let i=0;i<=st;i++){const q=i/st*qTraded;const [x2,y2]=ws(q,di-ds*q,xm,xM,ym,yM,W,H);g.lineTo(x2,y2);}
+    g.lineTo(sqt,spy);g.lineTo(sx0,spy);g.closePath();g.fill();g.restore();
+  }
+
+  // PS: area below P, above supply, from 0 to qTraded
+  if(qTraded>0 && P>si){
+    g.save();g.fillStyle=G.fill2(.15);g.beginPath();
+    const [,spy]=ws(0,P,xm,xM,ym,yM,W,H);
+    const [sx0,ssi]=ws(0,si,xm,xM,ym,yM,W,H);
+    const [sqt]=ws(qTraded,0,xm,xM,ym,yM,W,H);
+    g.moveTo(sx0,spy);
+    const st=100;
+    for(let i=0;i<=st;i++){const q=i/st*qTraded;const [x2,y2]=ws(q,si+ss*q,xm,xM,ym,yM,W,H);g.lineTo(x2,y2);}
+    g.lineTo(sqt,spy);g.closePath();g.fill();g.restore();
+  }
+
+  // DWL triangle
+  if(Math.abs(P-pEq)>0.05 && qEq>0){
+    g.save();g.fillStyle='rgba(220,38,38,.22)';g.beginPath();
+    const [sqt,spT]=ws(qTraded,P,xm,xM,ym,yM,W,H);
+    const [sqe,spe]=ws(qEq,pEq,xm,xM,ym,yM,W,H);
+    // For price floor (P>pEq): DWL triangle has vertices at (qTraded,P_demand), (qTraded,P_supply), (qEq,pEq)
+    // Simplified: triangle (qTraded,P_demand@qT), (qTraded,P_supply@qT), (qEq,pEq)
+    const pDemandAtQT=di-ds*qTraded, pSupplyAtQT=si+ss*qTraded;
+    const [,sdtop]=ws(qTraded,pDemandAtQT,xm,xM,ym,yM,W,H);
+    const [,sdbot]=ws(qTraded,pSupplyAtQT,xm,xM,ym,yM,W,H);
+    g.moveTo(sqt,sdtop);g.lineTo(sqe,spe);g.lineTo(sqt,sdbot);g.closePath();g.fill();
+    g.strokeStyle='rgba(220,38,38,.5)';g.lineWidth=1.5;g.stroke();g.restore();
+    // DWL label
+    const [dlx,dly]=ws((qTraded+qEq)/2,pEq,xm,xM,ym,yM,W,H);
+    g.save();g.font='bold 10px JetBrains Mono,monospace';g.fillStyle='#dc2626';g.textAlign='center';g.fillText('DWL',dlx,dly-6);g.restore();
+  }
+
+  // Curves
+  pFn(g,q=>di-ds*q,xm,xM,ym,yM,W,H,G.main,2.5);
+  pFn(g,q=>si+ss*q,xm,xM,ym,yM,W,H,G.med,2,[7,4]);
+
+  // Regulated price line
+  const [,spy]=ws(0,P,xm,xM,ym,yM,W,H);
+  g.save();g.strokeStyle=G.fill1(.6);g.lineWidth=2;
+  g.beginPath();g.moveTo(0,spy);g.lineTo(W,spy);g.stroke();
+  g.font='10px JetBrains Mono,monospace';g.fillStyle=G.dark;
+  g.textAlign='left';g.fillText('P = $'+P.toFixed(2),4,spy-5);
+  if(Math.abs(P-pEq)>0.2){
+    g.fillStyle=P>pEq?'#7f1d1d':'#1a2e1f';
+    g.fillText(P>pEq?'(Price Floor)':'(Price Ceiling)',4,spy+13);
+  }g.restore();
+
+  // Equilibrium point
+  if(qEq>0&&pEq>0){dot(g,qEq,pEq,xm,xM,ym,yM,W,H,G.dark,7,true);}
+
+  // Numerical surplus calculations
+  const CS_num=qTraded>0&&P<di?(di-P)*qTraded-ds*qTraded*qTraded/2:0;
+  const PS_num=qTraded>0&&P>si?(P-si)*qTraded-ss*qTraded*qTraded/2:0;
+  const TS_eq = qEq>0?(di-pEq)*qEq/2+(pEq-si)*qEq/2:0;
+  const DWL=Math.max(0,TS_eq-CS_num-PS_num);
+
+  $('r-bcsp-peq').textContent='$'+pEq.toFixed(2);
+  $('r-bcsp-cs').textContent='$'+Math.max(0,CS_num).toFixed(2);
+  $('r-bcsp-ps').textContent='$'+Math.max(0,PS_num).toFixed(2);
+  $('r-bcsp-dwl').textContent='$'+DWL.toFixed(2);
+  $('r-bcsp-ts').textContent='$'+(CS_num+PS_num).toFixed(2);
+
+  const hv=HS.bcsurp;
+  if(hv){const q=hv.wx;const dp=di-ds*q,sp=si+ss*q;GCH(g,hv.px,W,H,[{t:'q   = '+q.toFixed(2)},{t:'P_D = $'+dp.toFixed(2),c:G.main},{t:'P_S = $'+sp.toFixed(2),c:G.med}]);}
+};
+
+// ══ PRESENT VALUE ════════════════════════════════════════════════════════
+D.bcpv = function() {
+  const c = iC('bc-pv-win','bc-pv-cv'); if(!c) return;
+  const {g,W,H} = c;
+  const type=+$('bc_pvt').value, R0=+$('bc_pvR').value, r=+$('bc_pvr').value/100, T=+$('bc_pvT').value;
+  $('bc_pvR_v').textContent='$'+R0; $('bc_pvr_v').textContent=(r*100).toFixed(0)+'%'; $('bc_pvT_v').textContent=T;
+  const Rfn=t=>{
+    if(type===0)return R0;
+    if(type===1)return R0*Math.exp(0.05*t);
+    if(type===2)return R0*Math.exp(-0.08*t);
+    if(type===3)return R0+20*t;
+    return R0;
+  };
+  const discFn=t=>Rfn(t)*Math.exp(-r*t);
+  const xm=0,xM=T;
+  let maxR=0;for(let i=0;i<=100;i++){const t=i/100*T;maxR=Math.max(maxR,Rfn(t));}
+  const ym=0,yM=maxR*1.12;
+  g.fillStyle='#fff';g.fillRect(0,0,W,H);dG(g,xm,xM,ym,yM,W,H);
+
+  // Shade PV area (under discounted curve)
+  const st=400,[,zy]=ws(0,0,xm,xM,ym,yM,W,H);
+  g.save();g.fillStyle=G.fill1(.2);g.beginPath();
+  g.moveTo(ws(0,0,xm,xM,ym,yM,W,H)[0],zy);
+  for(let i=0;i<=st;i++){const t=i/st*T;const [x,y]=ws(t,discFn(t),xm,xM,ym,yM,W,H);g.lineTo(x,y);}
+  g.lineTo(ws(T,0,xm,xM,ym,yM,W,H)[0],zy);g.closePath();g.fill();g.restore();
+
+  // Draw R(t) (solid, dark green)
+  pFn(g,t=>Rfn(t),xm,xM,ym,yM,W,H,G.dark,2.5);
+  // Draw discounted R(t) (dashed, medium green)
+  pFn(g,t=>discFn(t),xm,xM,ym,yM,W,H,G.med,2,[7,4]);
+
+  // Compute PV and undiscounted total numerically
+  const PV=trapI(t=>discFn(t),0,T);
+  const UD=trapI(t=>Rfn(t),0,T);
+  const DF=Math.exp(-r*T);
+
+  // Labels
+  g.save();g.font='10px JetBrains Mono,monospace';
+  g.fillStyle=G.dark;g.textAlign='left';g.fillText('R(t) income stream',8,16);
+  g.fillStyle=G.med;g.fillText('R(t)·e⁻ʳᵗ discounted',8,30);g.restore();
+
+  // Annotate PV
+  const midT=T/2;const [mx,my]=ws(midT,discFn(midT)/2,xm,xM,ym,yM,W,H);
+  g.save();g.font='bold 11px JetBrains Mono,monospace';g.fillStyle=G.fill1(.7);g.textAlign='center';
+  g.fillText('PV = $'+PV.toFixed(0),mx,my);g.restore();
+
+  $('r-bcpv-pv').textContent='$'+PV.toFixed(2);
+  $('r-bcpv-ud').textContent='$'+UD.toFixed(2);
+  $('r-bcpv-disc').textContent='$'+(UD-PV).toFixed(2);
+  $('r-bcpv-df').textContent=DF.toFixed(4);
+
+  const hv=HS.bcpv;
+  if(hv&&hv.wx>=0&&hv.wx<=T){const t=hv.wx;const Rv=Rfn(t),dv=discFn(t);
+    GCH(g,hv.px,W,H,[{t:'t   = '+t.toFixed(2)+' yrs'},{t:'R(t)= $'+Rv.toFixed(2),c:G.dark},{t:'disc= $'+dv.toFixed(2),c:G.med}]);}
+};
+
+// ══ PROFIT OPTIMIZATION ══════════════════════════════════════════════════
+const BC_TC2 = [
+  q => 100 + 2*q + 0.5*q*q,
+  q => 60 + 8*q + 0.1*q*q,
+  q => 150 + q + 0.03*q*q*q,
+];
+D.bcopt = function() {
+  const c = iC('bc-opt-win','bc-opt-cv'); if(!c) return;
+  const {g,W,H} = c;
+  const mkt=$('bc_om').value, ci=+$('bc_oc').value, P=+$('bc_op').value;
+  $('bc_op_v').textContent='$'+P.toFixed(2);
+  // Update label based on market structure
+  const lbl=$('bc_om_lbl');
+  if(lbl)lbl.innerHTML=mkt==='comp'?'Market price P <span class="cv" id="bc_op_v">$'+P.toFixed(2)+'</span>':'Demand intercept a <span class="cv" id="bc_op_v">$'+P.toFixed(2)+'</span>';
+  const gcLbl=$('bc-opt-gc');
+  if(gcLbl)gcLbl.textContent=mkt==='comp'?'MR = P (green horiz.) · MC (orange) · Profit rect.':'MR curve (green) · MC (orange) · Demand (dashed) · Profit rect.';
+
+  const TC=BC_TC2[ci];
+  const MC=q=>(TC(q+.005)-TC(q-.005))/.01;
+  const ATC=q=>q>0?TC(q)/q:null;
+  const qMax=40, xm=0, xM=qMax;
+
+  // MR function
+  let MRfn, Pfn;
+  if(mkt==='comp'){
+    MRfn=q=>P; // constant MR
+    Pfn=q=>P;
+  } else {
+    // Monopoly: inverse demand P=a-bq (a=slider value, b=0.8)
+    const a=P, bSlope=0.8;
+    MRfn=q=>a-2*bSlope*q; // MR for monopoly
+    Pfn=q=>Math.max(0,a-bSlope*q);
+  }
+
+  // Auto-scale y
+  let yTop=0;for(let i=1;i<=qMax;i++){yTop=Math.max(yTop,MC(i),Pfn(i),ATC(i)||0);}yTop=Math.min(yTop*1.15,200);
+  const ym=0, yM=yTop;
+  g.fillStyle='#fff';g.fillRect(0,0,W,H);dG(g,xm,xM,ym,yM,W,H);
+
+  // Find q* where MR=MC (scan for min |MR-MC|, then refine)
+  let bestDiff=Infinity, bestQ=0;
+  for(let i=1;i<=qMax*10;i++){const q=i/(10);const diff=Math.abs(MRfn(q)-MC(q));if(diff<bestDiff&&MRfn(q)>=0){bestDiff=diff;bestQ=q;}}
+  const qStar=Math.max(0.5,Math.min(qMax*.9,bestQ));
+  const pStar=Pfn(qStar);
+  const atcStar=ATC(qStar)||0;
+  const piStar=(pStar-atcStar)*qStar;
+
+  // Profit rectangle
+  if(pStar>0&&atcStar>0&&qStar>0){
+    const [rx1,ryt]=ws(0,pStar,xm,xM,ym,yM,W,H);
+    const [rx2,ryb]=ws(qStar,atcStar,xm,xM,ym,yM,W,H);
+    g.save();g.fillStyle=piStar>=0?G.fill1(.22):G.loss(.15);
+    g.fillRect(rx1,Math.min(ryt,ryb),rx2-rx1,Math.abs(ryt-ryb));
+    g.strokeStyle=piStar>=0?G.fill1(.5):'rgba(234,88,12,.4)';g.lineWidth=1.5;
+    g.strokeRect(rx1,Math.min(ryt,ryb),rx2-rx1,Math.abs(ryt-ryb));g.restore();
+  }
+
+  // Draw demand/MR curves
+  if(mkt==='mono'){
+    pFn(g,q=>Pfn(q),xm,xM,ym,yM,W,H,G.main,2,[8,4]); // demand (dashed)
+    pFn(g,q=>MRfn(q),xm,xM,ym,yM,W,H,G.med,2.5); // MR (solid)
+  } else {
+    pFn(g,q=>MRfn(q),xm,xM,ym,yM,W,H,G.main,2.5); // MR = P horizontal
+  }
+  // ATC
+  pFn(g,q=>q>0?ATC(q):null,xm,xM,ym,yM,W,H,'#0891b2',1.5,[4,3]);
+  // MC
+  pFn(g,q=>MC(q),xm,xM,ym,yM,W,H,G.cost,2.5);
+
+  // MR=MC intersection dot
+  dot(g,qStar,MC(qStar),xm,xM,ym,yM,W,H,G.dark,8,true);
+  const [ix,iy]=ws(qStar,MC(qStar),xm,xM,ym,yM,W,H);
+  g.save();g.font='bold 10px JetBrains Mono,monospace';g.fillStyle=G.dark;g.textAlign='center';
+  g.fillText('MR = MC',ix,iy-12);g.restore();
+
+  // Legends
+  g.save();g.font='9px JetBrains Mono,monospace';
+  g.fillStyle=G.cost;g.textAlign='left';g.fillText('MC',W-28,16);
+  g.fillStyle='#0891b2';g.fillText('ATC',W-36,28);
+  g.fillStyle=G.main;g.fillText(mkt==='comp'?'MR=P':'MR',W-28,40);g.restore();
+
+  $('r-bcop-q').textContent=qStar.toFixed(2);
+  $('r-bcop-p').textContent='$'+pStar.toFixed(2);
+  $('r-bcop-pi').textContent='$'+piStar.toFixed(2);
+  $('r-bcop-atc').textContent='$'+atcStar.toFixed(2);
+  $('r-bcop-mc').textContent='$'+MC(qStar).toFixed(2);
+
+  const hv=HS.bcopt;
+  if(hv){const q=Math.max(.1,Math.min(qMax,hv.wx));const mr=MRfn(q),mc=MC(q),p2=Pfn(q),atc2=ATC(q)||0;
+    GCH(g,hv.px,W,H,[{t:'q   = '+q.toFixed(2)},{t:'MR  = $'+mr.toFixed(2),c:G.main},{t:'MC  = $'+mc.toFixed(2),c:G.cost},{t:'P   = $'+p2.toFixed(2),c:G.med},{t:'ATC = $'+atc2.toFixed(2),c:'#0891b2'}]);}
+};
+
+// ══ COMPOUND GROWTH ═══════════════════════════════════════════════════════
+D.bcgrow = function() {
+  const c = iC('bc-grow-win','bc-grow-cv'); if(!c) return;
+  const {g,W,H} = c;
+  const P=+$('bc_gP').value, r=+$('bc_gr').value/100, T=+$('bc_gT').value;
+  $('bc_gP_v').textContent='$'+P.toLocaleString(); $('bc_gr_v').textContent=(r*100).toFixed(0)+'%'; $('bc_gT_v').textContent=T+' yrs';
+  const xm=0,xM=T,ym=0,yM=P*Math.exp(r*T)*1.08;
+  g.fillStyle='#fff';g.fillRect(0,0,W,H);dG(g,xm,xM,ym,yM,W,H);
+
+  const freqs=[{n:1,col:'#bbf7d0',lw:1.5,dash:[6,4],lbl:'Annual'},{n:4,col:'#86efac',lw:1.5,dash:[5,3],lbl:'Quarterly'},{n:12,col:'#4ade80',lw:2,dash:[],lbl:'Monthly'},{n:365,col:'#16a34a',lw:2,dash:[],lbl:'Daily'},{n:Infinity,col:'#14532d',lw:2.5,dash:[],lbl:'Continuous'}];
+  for(const {n,col,lw,dash,lbl} of freqs){
+    const fn=n===Infinity?t=>P*Math.exp(r*t):t=>P*Math.pow(1+r/n,n*t);
+    pFn(g,fn,xm,xM,ym,yM,W,H,col,lw,dash);
+  }
+
+  // Final values
+  const contFinal=P*Math.exp(r*T), moFinal=P*Math.pow(1+r/12,12*T), annFinal=P*Math.pow(1+r,T);
+  const EAR=Math.exp(r)-1;
+  const diff=contFinal-annFinal;
+
+  // Dot at T for continuous
+  dot(g,T,contFinal,xm,xM,ym,yM,W,H,'#14532d',7,true);
+  const [fx,fy]=ws(T,contFinal,xm,xM,ym,yM,W,H);
+  g.save();g.font='bold 11px JetBrains Mono,monospace';g.fillStyle='#14532d';g.textAlign='right';
+  g.fillText('$'+contFinal.toFixed(0),fx-6,fy-7);g.restore();
+
+  // Legend
+  g.save();g.font='9.5px JetBrains Mono,monospace';
+  const leg=freqs.slice().reverse();
+  leg.forEach((f,i)=>{g.fillStyle=f.col;g.fillText('▬ '+f.lbl,8,16+i*14);});g.restore();
+
+  $('r-bcgr-cont').textContent='$'+contFinal.toFixed(2);
+  $('r-bcgr-mo').textContent='$'+moFinal.toFixed(2);
+  $('r-bcgr-ann').textContent='$'+annFinal.toFixed(2);
+  $('r-bcgr-ear').textContent=(EAR*100).toFixed(3)+'%';
+  $('r-bcgr-diff').textContent='$'+diff.toFixed(2);
+
+  const hv=HS.bcgrow;
+  if(hv&&hv.wx>=0&&hv.wx<=T){const t=hv.wx;
+    const cv=P*Math.exp(r*t),mv=P*Math.pow(1+r/12,12*t),av=P*Math.pow(1+r,t);
+    GCH(g,hv.px,W,H,[{t:'t    = '+t.toFixed(2)+' yrs'},{t:'Cont = $'+cv.toFixed(2),c:'#14532d'},{t:'Mo   = $'+mv.toFixed(2),c:'#16a34a'},{t:'Ann  = $'+av.toFixed(2),c:'#86efac'}]);}
+};
+
+
+function initHovers() {
+  setupHover('bc-supply-win','bcsupply',()=>[0,Math.max(+$('bc_di').value/+$('bc_ds').value,10)*1.15]);
+  setupHover('bc-marg-win','bcmarg',()=>[0,30]);
+  setupHover('bc-elas-win','bcelas',()=>[0,+$('bc_edi').value/+$('bc_eds').value*1.1]);
+  setupHover('bc-brev-win','bcbrev',()=>[0,150]);
+  setupHover('bc-surp-win','bcsurp',()=>[0,Math.max(+$('bc_gdi').value/1.5,12)*1.15]);
+  setupHover('bc-pv-win','bcpv',()=>[0,+$('bc_pvT').value]);
+  setupHover('bc-opt-win','bcopt',()=>[0,40]);
+  setupHover('bc-grow-win','bcgrow',()=>[0,+$('bc_gT').value]);
+}
+function goBC(modId,navEl){
+  const sec=$('section-bizcalc');if(!sec)return;
+  sec.querySelectorAll('.mod').forEach(m=>m.classList.remove('active'));
+  const mod=$(modId);if(mod)mod.classList.add('active');
+  sec.querySelectorAll('.nv').forEach(n=>n.classList.remove('active'));
+  if(navEl)navEl.classList.add('active');
+  const fnKey=modId.replace('m-bc-','bc').replace('-','');
+  if(D[fnKey])setTimeout(()=>D[fnKey](),40);
+}
+function setupKeyboard(){
+  document.querySelectorAll('input[type=range]').forEach(sl=>{
+    sl.addEventListener('keydown',e=>{
+      const step=+(sl.step||1);
+      if(e.key==='ArrowLeft'||e.key==='ArrowDown'){e.preventDefault();sl.value=Math.max(+sl.min,+sl.value-step);sl.dispatchEvent(new Event('input'));}
+      else if(e.key==='ArrowRight'||e.key==='ArrowUp'){e.preventDefault();sl.value=Math.min(+sl.max,+sl.value+step);sl.dispatchEvent(new Event('input'));}
+    });
+  });
+}
+let rto;
+window.addEventListener('resize',()=>{clearTimeout(rto);rto=setTimeout(()=>{
+  const ab=document.querySelector('#section-bizcalc .mod.active');
+  if(ab){const fnKey=ab.id.replace('m-bc-','bc').replace('-','');D[fnKey]&&D[fnKey]();}
+},80);});
+
+window.addEventListener('DOMContentLoaded',()=>{
+  initHovers();
+  setupKeyboard();
+  setTimeout(()=>D.bcsupply&&D.bcsupply(),60);
+  if(typeof renderMathInElement!=='undefined'){
+    renderMathInElement(document.body,{delimiters:[{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}],throwOnError:false});
+  }
+});
+</script>
+</body>
+</html>
