@@ -239,28 +239,27 @@ select:hover{border-color:var(--b3)}
   <div class="landing-inner">
     <h1 class="landing-title">What Math do you Want<br>to Visualize Today?</h1>
     <div class="landing-cards">
-      <!-- Card 1: Calculus -->
-      <div class="landing-card" onclick="showSection('section-calculus')">
-        <div class="card-num cn1">01</div>
-        <div class="card-title">Calculus</div>
-        <div class="card-desc">Limits, derivatives, integrals, series &mdash; with 17 interactive IB AA HL modules.</div>
-        <span class="card-tag tag-live">&#9679; Live</span>
-      </div>
-      <!-- Card 2: Business Calculus -->
-      <div class="landing-card disabled">
-        <div class="card-num cn2">02</div>
-        <div class="card-title">Business Calculus</div>
-        <div class="card-desc">Marginal analysis, optimization, revenue &amp; cost functions, present value.</div>
-        <span class="card-tag tag-soon">Coming Soon</span>
-      </div>
-      <!-- Card 3: Linear Algebra -->
-      <div class="landing-card disabled">
-        <div class="card-num cn3">03</div>
-        <div class="card-title">Linear Algebra</div>
-        <div class="card-desc">Vectors, matrices, determinants, eigenvalues &amp; linear transformations.</div>
-        <span class="card-tag tag-soon">Coming Soon</span>
-      </div>
-    </div>
+  <div class="landing-card" id="card-calculus">
+    <div class="card-num cn1">01</div>
+    <div class="card-title">Calculus</div>
+    <div class="card-desc">Limits, derivatives, integrals, series — with 17 interactive IB AA HL modules.</div>
+    <span class="card-tag tag-live">● Live</span>
+  </div>
+
+  <div class="landing-card" id="card-bizcalc">
+    <div class="card-num cn2">02</div>
+    <div class="card-title">Business Calculus</div>
+    <div class="card-desc">Marginal analysis, optimization, revenue & cost functions, present value.</div>
+    <span class="card-tag tag-live">● Live</span>
+  </div>
+
+  <div class="landing-card" id="card-linalg">
+    <div class="card-num cn3">03</div>
+    <div class="card-title">Linear Algebra</div>
+    <div class="card-desc">Vectors, matrices, determinants, eigenvalues & linear transformations.</div>
+    <span class="card-tag tag-soon">Coming Soon</span>
+  </div>
+  </div>
     <div class="landing-credit">Math Explorer &middot; Vyom Krothapalli &middot; Class of 2027</div>
   </div>
 </div>
@@ -284,6 +283,34 @@ document.addEventListener('DOMContentLoaded', () => {
     const tag = cards[2].querySelector('.card-tag');
     if(tag) { tag.className='card-tag tag-soon'; tag.innerHTML='Coming Soon'; }
   }
+});
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  
+  // 1. Link the Calculus card to calculus.html
+  const calcCard = document.getElementById('card-calculus');
+  if (calcCard) {
+    calcCard.onclick = () => {
+      window.location.href = 'calculus.html'; 
+    };
+  }
+
+  // 2. Link the Business Calculus card
+  const bizCard = document.getElementById('card-bizcalc');
+  if (bizCard) {
+    bizCard.onclick = () => {
+      window.location.href = 'business-calculus.html';
+    };
+  }
+
+  // 3. Link the Linear Algebra card
+  const linCard = document.getElementById('card-linalg');
+  if (linCard) {
+    linCard.onclick = () => {
+      window.location.href = 'linear-algebra.html';
+    };
+  }
+
 });
 </script>
 </body>
