@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Math Explorer</title>
+<title>Math Explorer — Linear Algebra</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.9/katex.min.css">
 <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400;1,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.11.0/math.min.js"></script>
@@ -18,61 +18,8 @@
 }
 html,body{height:100%;font-family:'Source Serif 4',Georgia,serif;background:var(--bg);color:var(--tx)}
 body{overflow:hidden}
-
-/* ── LANDING ─────────────────────────────────────────── */
-#landing{
-  position:fixed;inset:0;z-index:200;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  background:var(--bg);overflow:hidden;
-}
-.math-bg{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
-.landing-inner{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:52px;padding:30px}
-.landing-title{
-  font-family:'Lora',serif;font-style:italic;font-weight:700;font-size:clamp(26px,4vw,46px);
-  color:var(--b9);text-align:center;line-height:1.25;letter-spacing:-.01em;
-  background:linear-gradient(135deg,var(--b9) 0%,var(--b7) 55%,var(--b5) 100%);
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-  filter:drop-shadow(0 2px 12px rgba(29,78,216,.12));
-}
-.landing-cards{display:flex;gap:26px;flex-wrap:wrap;justify-content:center}
-.landing-card{
-  width:230px;background:var(--w);border-radius:14px;padding:48px 24px 28px;
-  box-shadow:0 4px 22px rgba(29,78,216,.1),0 1px 4px rgba(30,58,95,.06);
-  text-align:center;cursor:pointer;transition:transform .22s,box-shadow .22s;
-  position:relative;margin-top:36px;border:1.5px solid var(--b1);
-}
-.landing-card:hover{transform:translateY(-6px);box-shadow:0 14px 36px rgba(29,78,216,.18);}
-.landing-card.disabled{opacity:.72;cursor:not-allowed;}
-.landing-card.disabled:hover{transform:none;box-shadow:0 4px 22px rgba(29,78,216,.1);}
-.card-num{
-  width:72px;height:72px;border-radius:50%;color:#fff;
-  font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:500;
-  display:flex;align-items:center;justify-content:center;
-  position:absolute;top:-36px;left:50%;transform:translateX(-50%);
-  box-shadow:0 6px 20px rgba(29,78,216,.35);
-}
-.cn1{background:linear-gradient(140deg,#1e3a5f 0%,#1d4ed8 60%,#7c3aed 100%)}
-.cn2{background:linear-gradient(140deg,#1d4ed8 0%,#0ea5e9 100%)}
-.cn3{background:linear-gradient(140deg,#0ea5e9 0%,#06b6d4 100%)}
-.card-title{font-family:'Lora',serif;font-size:17px;font-weight:700;color:var(--b9);margin:8px 0 10px}
-.card-desc{font-family:'Source Serif 4',serif;font-size:12.5px;color:var(--txd);font-style:italic;line-height:1.65}
-.card-tag{
-  display:inline-block;margin-top:12px;
-  font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.12em;
-  text-transform:uppercase;padding:3px 10px;border-radius:20px;
-}
-.tag-live{background:var(--b0);color:var(--b7);border:1.5px solid var(--b2)}
-.tag-soon{background:#f9fafb;color:var(--txd);border:1.5px solid #e5e7eb}
-.landing-credit{
-  font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.1em;
-  text-transform:uppercase;color:var(--b3);margin-top:6px;
-}
-
-/* ── APP SECTIONS ─────────────────────────────────────── */
 .app-section{position:fixed;inset:0;display:none;flex-direction:row}
 .app-section.active{display:flex}
-
-/* ── SIDEBAR ──────────────────────────────────────────── */
 .sb{width:228px;min-width:228px;background:var(--w);border-right:1.5px solid var(--b1);display:flex;flex-direction:column;overflow-y:auto}
 .sb::-webkit-scrollbar{width:3px}.sb::-webkit-scrollbar-thumb{background:var(--b2)}
 .sbl{padding:14px 18px 12px;border-bottom:1.5px solid var(--b1);flex-shrink:0;cursor:pointer}
@@ -88,12 +35,9 @@ body{overflow:hidden}
 .nv:hover{color:var(--b7);background:var(--b0)}.nv.active{color:var(--b7);border-left-color:var(--b6);background:var(--b0);font-weight:600}
 .nv .ni{font-size:12px;width:17px;text-align:center;flex-shrink:0;font-family:'JetBrains Mono',monospace;color:var(--b3)}.nv.active .ni{color:var(--b4)}
 .nv .ns{font-size:10px;color:var(--txd);font-style:italic;display:block;margin-top:1px}
-.nv.dim{opacity:.5;cursor:default;pointer-events:none}
 .nd{height:1.5px;background:var(--b1);margin:4px 0;flex-shrink:0}
 .sb-foot{padding:8px 18px 14px;font-family:'JetBrains Mono',monospace;font-size:8px;color:var(--b3);text-align:center;letter-spacing:.06em;margin-top:auto;border-top:1px solid var(--b1);flex-shrink:0}
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
-
-/* ── MODULE PANELS ────────────────────────────────────── */
 .mod{display:none;flex-direction:column;height:100%;overflow:hidden}.mod.active{display:flex}
 .ts{flex-shrink:0;overflow-y:auto;background:var(--w);border-bottom:1.5px solid var(--b1);padding:22px 34px 18px;max-height:44%}
 .ts::-webkit-scrollbar{width:3px}.ts::-webkit-scrollbar-thumb{background:var(--b2)}
@@ -116,44 +60,27 @@ body{overflow:hidden}
 .share-mini{padding:4px 11px;font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.06em;background:var(--b0);border:1.5px solid var(--b2);color:var(--b7);border-radius:4px;cursor:pointer;transition:all .14s;white-space:nowrap}
 .share-mini:hover{background:var(--b7);color:#fff;border-color:var(--b7)}.share-mini.copied{background:#16a34a;border-color:#16a34a;color:#fff}
 .cb2{flex-shrink:0;background:var(--w);border-bottom:1.5px solid var(--b1);padding:9px 34px;display:flex;flex-wrap:wrap;gap:7px 22px;align-items:center}
-.cg{display:flex;flex-direction:column;gap:4px;min-width:120px}
+.cg{display:flex;flex-direction:column;gap:4px;min-width:110px}
 .cl{font-family:'JetBrains Mono',monospace;font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--txd);display:flex;justify-content:space-between}
 .cv{color:var(--b7);font-weight:500;font-size:11px}
 input[type=range]{-webkit-appearance:none;width:100%;height:3px;background:var(--b2);border-radius:2px;outline:none;cursor:pointer}
 input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--b7);border:2px solid #fff;box-shadow:0 0 0 2px var(--b3);cursor:pointer;transition:transform .1s}
 input[type=range]:active::-webkit-slider-thumb{transform:scale(1.2)}
-select{background:#fff;border:1.5px solid var(--b2);color:var(--tx);padding:5px 8px;border-radius:5px;font-family:'Source Serif 4',serif;font-size:12px;cursor:pointer;outline:none}
-select:hover{border-color:var(--b3)}
-.tg{display:flex;gap:3px}
-.tb{padding:4px 10px;font-family:'JetBrains Mono',monospace;font-size:9.5px;background:#fff;border:1.5px solid var(--b2);color:var(--txd);cursor:pointer;border-radius:4px;transition:all .12s;user-select:none}
-.tb:hover{color:var(--b7);border-color:var(--b3)}.tb.active{background:var(--b7);border-color:var(--b7);color:#fff}
-.abt{padding:5px 13px;font-family:'JetBrains Mono',monospace;font-size:9.5px;background:var(--b7);border:none;color:#fff;border-radius:4px;cursor:pointer;transition:background .15s;white-space:nowrap}
-.abt:hover{background:var(--b8)}.abt.running{background:var(--b5)}
-.gw{flex:1;min-height:0;position:relative;margin:14px 34px 0;border:1.5px solid var(--b2);border-radius:8px;background:#fff;overflow:hidden;box-shadow:0 1px 8px rgba(30,64,175,.06);cursor:crosshair}
+.gw{flex:1;min-height:0;position:relative;margin:14px 34px 0;border:1.5px solid var(--b2);border-radius:8px;background:#fff;overflow:hidden;box-shadow:0 1px 8px rgba(153,27,27,.05);cursor:crosshair}
 .gw:hover{border-color:var(--b3)}
 .gw canvas{position:absolute;inset:0;width:100%;height:100%}
 .gc{position:absolute;top:9px;left:13px;font-family:'JetBrains Mono',monospace;font-size:9.5px;color:var(--b3);pointer-events:none;z-index:1}
-.gc-right{position:absolute;top:9px;right:13px;font-family:'JetBrains Mono',monospace;font-size:9px;color:var(--b3);pointer-events:none;z-index:1;font-style:italic}
 .hint{flex-shrink:0;padding:5px 34px;background:linear-gradient(to right,var(--b0),transparent);border-top:1px solid var(--b1);display:flex;align-items:center;gap:8px;min-height:26px}
 .hint-txt{font-size:11.5px;font-style:italic;color:var(--txm);line-height:1.4}
 .rb{flex-shrink:0;padding:7px 34px 11px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .ri{background:#fff;border:1.5px solid var(--b1);border-radius:6px;padding:6px 13px;display:flex;flex-direction:column;min-width:100px}
 .rl{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.09em;text-transform:uppercase;color:var(--txd);margin-bottom:2px}
-.rv{font-family:'JetBrains Mono',monospace;font-size:15px;font-weight:500;color:var(--b7)}
+.rv{font-family:'JetBrains Mono',monospace;font-size:14px;font-weight:500;color:var(--b7)}
 .ri.hi{border-color:var(--b3);background:var(--b0)}.ri.hi .rv{color:var(--b8)}
-.ri.dm .rv{color:var(--txm);font-size:12px}
-.rl .katex,.rv .katex{font-size:.82em}
-/* Stub / coming soon */
-.stub-placeholder{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:40px;background:var(--bg)}
-.stub-icon{font-size:52px;opacity:.18}
-.stub-title{font-family:'Lora',serif;font-size:22px;font-weight:700;color:var(--b9)}
-.stub-sub{font-family:'Source Serif 4',serif;font-style:italic;font-size:13px;color:var(--txd);text-align:center;max-width:360px;line-height:1.75}
-.stub-badge{font-family:'JetBrains Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;padding:5px 14px;border-radius:20px;background:var(--b0);border:1.5px solid var(--b2);color:var(--b4)}
-/* About */
 .about-wrap{flex:1;overflow-y:auto;display:flex;flex-direction:column;align-items:center;padding:36px 48px 48px;background:var(--bg)}
 .about-wrap::-webkit-scrollbar{width:4px}.about-wrap::-webkit-scrollbar-thumb{background:var(--b2);border-radius:2px}
 .about-hero{display:flex;align-items:center;gap:24px;margin-bottom:28px;width:100%;max-width:820px}
-.about-avatar{width:76px;height:76px;border-radius:50%;background:linear-gradient(135deg,var(--b7),var(--b4));color:#fff;font-family:'Lora',serif;font-weight:700;font-size:26px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 18px rgba(29,78,216,.22)}
+.about-avatar{width:76px;height:76px;border-radius:50%;background:linear-gradient(135deg,var(--b7),var(--b4));color:#fff;font-family:'Lora',serif;font-weight:700;font-size:26px;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 18px rgba(153,27,27,.22)}
 .about-hero-name{font-family:'Lora',serif;font-size:28px;font-weight:700;color:var(--b9);line-height:1.15;margin-bottom:4px}
 .about-hero-meta{font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--b4)}
 .about-grid{display:grid;grid-template-columns:1fr 300px;gap:24px;width:100%;max-width:820px}
@@ -161,81 +88,536 @@ select:hover{border-color:var(--b3)}
 .acard-title{font-family:'Lora',serif;font-size:15px;font-weight:700;color:var(--b9);margin-bottom:12px;display:flex;align-items:center;gap:7px}
 .bio-p{font-size:13.5px;line-height:1.82;color:var(--tx);margin-bottom:14px}
 .bio-p:last-of-type{margin-bottom:0}
-.stack-row{display:flex;flex-wrap:wrap;gap:5px;margin-top:14px}
-.spill{font-family:'JetBrains Mono',monospace;font-size:9px;padding:3px 9px;background:var(--b0);border:1.5px solid var(--b2);border-radius:20px;color:var(--b7)}
-.stat-2{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px}
-.scard{background:var(--b0);border:1.5px solid var(--b2);border-radius:8px;padding:14px 10px;text-align:center}
-.scard-num{font-family:'JetBrains Mono',monospace;font-size:26px;font-weight:500;color:var(--b7);line-height:1}
-.scard-lbl{font-family:'JetBrains Mono',monospace;font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--txd);margin-top:5px}
 .clink{display:flex;align-items:center;gap:10px;margin-bottom:10px}
 .clink-icon{width:28px;height:28px;background:var(--b0);border:1.5px solid var(--b2);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
 .clink a{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--b6);text-decoration:none;word-break:break-all}
 .clink a:hover{text-decoration:underline}
-.share-big{width:100%;padding:10px 0;font-family:'JetBrains Mono',monospace;font-size:10.5px;background:var(--b7);border:none;color:#fff;border-radius:6px;cursor:pointer;transition:background .14s;display:flex;align-items:center;justify-content:center;gap:7px;margin-top:16px}
-.share-big:hover{background:var(--b8)}.share-big.copied{background:#16a34a}
-
-/* ── BUSINESS CALCULUS — GREEN THEME ──────────────── */
-#section-bizcalc{
-  --b9:#14532d;--b8:#166534;--b7:#15803d;--b6:#16a34a;
-  --b5:#22c55e;--b4:#4ade80;--b3:#86efac;--b2:#bbf7d0;--b1:#dcfce7;--b0:#f0fdf4;
-  --bg:#f4fcf6;--tx:#1a2e1f;--txm:#3a6b47;--txd:#6a9e76;
+.share-big{width:100%;padding:10px 0;font-family:'JetBrains Mono',monospace;font-size:10.5px;background:var(--b7);border:none;color:#fff;border-radius:6px;cursor:pointer;transition:background .14s;display:flex;align-items:center;justify-content:center;gap:7px;margin-top:10px}
+.share-big:hover{background:var(--b8)}
+/* LINEAR ALGEBRA DARK RED THEME */
+#section-linalg{
+  --b9:#3b0a0a;--b8:#7f1d1d;--b7:#991b1b;--b6:#b91c1c;
+  --b5:#dc2626;--b4:#ef4444;--b3:#fca5a5;--b2:#fecaca;--b1:#fee2e2;--b0:#fef2f2;
+  --bg:#fdf9f9;--tx:#1c0505;--txm:#5a2020;--txd:#9a6060;
 }
-#section-bizcalc input[type=range]::-webkit-slider-thumb{background:var(--b7);box-shadow:0 0 0 2px var(--b3)}
-#section-bizcalc .sb-foot{color:var(--b3);border-top-color:var(--b1)}
+#section-linalg input[type=range]{background:var(--b2)}
+#section-linalg input[type=range]::-webkit-slider-thumb{background:var(--b7);box-shadow:0 0 0 2px var(--b3)}
+#section-linalg .sb-foot{color:var(--b3);border-top-color:var(--b1)}
 </style>
 </head>
 <body>
-
 <div id="section-linalg" class="app-section" style="display:flex">
 <nav class="sb">
-  <div class="sbl" onclick="window.location.href='index.html'" >
+  <div class="sbl" onclick="window.location.href='index.html'">
     <div class="slr">
-      <div class="lsy" style="background:linear-gradient(135deg,#0ea5e9,#06b6d4)">&#x1D538;</div>
+      <div class="lsy" style="background:linear-gradient(135deg,#7f1d1d,#dc2626);font-size:15px">&#x1D538;</div>
       <div class="ltx">Math Explorer<small>Linear Algebra</small></div>
     </div>
   </div>
-  <div class="sb-home" onclick="window.location.href='index.html'" >&#8592; All Subjects</div>
-  <div class="scl">Vectors &amp; Matrices</div>
-  <div class="nv active" onclick="goStub('linalg','la-vec',this)"><span class="ni">&#x2192;</span><div>Vectors<span class="ns">dot &amp; cross product</span></div></div>
-  <div class="nv" onclick="goStub('linalg','la-mat',this)"><span class="ni">&#x25A6;</span><div>Matrix Operations<span class="ns">multiplication</span></div></div>
-  <div class="nv" onclick="goStub('linalg','la-det',this)"><span class="ni">&#x007C;</span><div>Determinants<span class="ns">area &amp; volume scaling</span></div></div>
+  <div class="sb-home" onclick="window.location.href='index.html'">&#8592; All Subjects</div>
+  <div class="scl">Vectors &amp; Space</div>
+  <div class="nv active" onclick="go('vec',this)"><span class="ni">&#x2192;</span><div>Vectors<span class="ns">dot product &amp; angle</span></div></div>
+  <div class="nv" onclick="go('mat',this)"><span class="ni">&#x25A6;</span><div>Matrix &times; Vector<span class="ns">Mv transformation</span></div></div>
+  <div class="nv" onclick="go('det',this)"><span class="ni">|A|</span><div>Determinants<span class="ns">signed area</span></div></div>
   <div class="nd"></div>
   <div class="scl">Systems &amp; Transforms</div>
-  <div class="nv" onclick="goStub('linalg','la-sys',this)"><span class="ni">&#x2261;</span><div>Linear Systems<span class="ns">Gaussian elimination</span></div></div>
-  <div class="nv" onclick="goStub('linalg','la-eig',this)"><span class="ni">&#x03BB;</span><div>Eigenvalues<span class="ns">eigenvectors</span></div></div>
-  <div class="nv" onclick="goStub('linalg','la-trans',this)"><span class="ni">&#x21BA;</span><div>Linear Transforms<span class="ns">rotation, scaling</span></div></div>
+  <div class="nv" onclick="go('sys',this)"><span class="ni">&#x2261;</span><div>Linear Systems<span class="ns">Ax = b</span></div></div>
+  <div class="nv" onclick="go('eig',this)"><span class="ni">&#x03BB;</span><div>Eigenvalues<span class="ns">eigenvector directions</span></div></div>
+  <div class="nv" onclick="go('trans',this)"><span class="ni">&#x21BA;</span><div>Linear Transforms<span class="ns">grid deformation</span></div></div>
   <div class="nd"></div>
   <div class="scl">Creator</div>
-  <div class="nv" onclick="goStub('linalg','la-about',this)"><span class="ni">&#9998;</span><div>About Creator<span class="ns">Vyom Krothapalli</span></div></div>
+  <div class="nv" onclick="go('about',this)"><span class="ni">&#9998;</span><div>About Creator<span class="ns">Vyom Krothapalli</span></div></div>
   <div class="sb-foot">Math Explorer &middot; MIT License</div>
 </nav>
-<main class="main" id="linalg-main">
-  <div id="la-vec" class="mod active"><div class="ts"><div class="cb">Linear Algebra &middot; Coming Soon</div><h1 class="pt">Vectors</h1><p class="ptag">Dot product, cross product, and geometric interpretation</p></div><div class="stub-placeholder"><div class="stub-icon">&#x2192;</div><div class="stub-title">Coming Soon</div><div class="stub-sub">Interactive 2D and 3D vector visualizations with dot product, cross product, and projection operations.</div><span class="stub-badge">In Development</span></div></div>
-  <div id="la-mat" class="mod"><div class="ts"><div class="cb">Linear Algebra &middot; Coming Soon</div><h1 class="pt">Matrix Operations</h1><p class="ptag">Multiplication, transpose, and inverses</p></div><div class="stub-placeholder"><div class="stub-icon">&#x25A6;</div><div class="stub-title">Coming Soon</div><div class="stub-sub">Visual matrix multiplication showing how rows meet columns to produce each entry.</div><span class="stub-badge">In Development</span></div></div>
-  <div id="la-det" class="mod"><div class="ts"><div class="cb">Linear Algebra &middot; Coming Soon</div><h1 class="pt">Determinants</h1><p class="ptag">Area and volume scaling factors</p></div><div class="stub-placeholder"><div class="stub-icon">&#x007C;A&#x007C;</div><div class="stub-title">Coming Soon</div><div class="stub-sub">Geometric interpretation of determinants as signed areas and volume scaling factors.</div><span class="stub-badge">In Development</span></div></div>
-  <div id="la-sys" class="mod"><div class="ts"><div class="cb">Linear Algebra &middot; Coming Soon</div><h1 class="pt">Linear Systems</h1><p class="ptag">Gaussian elimination and row reduction</p></div><div class="stub-placeholder"><div class="stub-icon">&#x2261;</div><div class="stub-title">Coming Soon</div><div class="stub-sub">Step-by-step Gaussian elimination with visual row operations and solution sets.</div><span class="stub-badge">In Development</span></div></div>
-  <div id="la-eig" class="mod"><div class="ts"><div class="cb">Linear Algebra &middot; Coming Soon</div><h1 class="pt">Eigenvalues &amp; Eigenvectors</h1><p class="ptag">Directions preserved by linear transformations</p></div><div class="stub-placeholder"><div class="stub-icon">&#x03BB;</div><div class="stub-title">Coming Soon</div><div class="stub-sub">Visualizing eigenvectors as the special directions that linear transformations only stretch, not rotate.</div><span class="stub-badge">In Development</span></div></div>
-  <div id="la-trans" class="mod"><div class="ts"><div class="cb">Linear Algebra &middot; Coming Soon</div><h1 class="pt">Linear Transformations</h1><p class="ptag">Rotation, scaling, shearing, and reflection</p></div><div class="stub-placeholder"><div class="stub-icon">&#x21BA;</div><div class="stub-title">Coming Soon</div><div class="stub-sub">Watch the unit square and standard basis vectors transform under rotation, scaling, shearing, and reflection matrices.</div><span class="stub-badge">In Development</span></div></div>
-  <div id="la-about" class="mod"><div class="ts" style="max-height:none"><div class="cb">Creator &middot; About</div><h1 class="pt">About the Creator</h1><p class="ptag">Vyom Krothapalli &mdash; Class of 2027</p></div><div class="about-wrap"><div class="about-hero"><div class="about-avatar">VK</div><div><div class="about-hero-name">Vyom Krothapalli</div><div class="about-hero-meta">Class of 2027 &middot; Math Explorer Creator</div></div></div><div class="about-grid"><div class="acard"><p class="bio-p">Linear Algebra modules are currently under development. Interactive visualizations for vectors, matrices, eigenvalues, and linear transformations are coming soon.</p><div class="clink" style="margin-top:16px"><div class="clink-icon">&#x1F419;</div><a href="https://github.com/hiccup2367" target="_blank">github.com/hiccup2367</a></div></div><div><div class="acard" style="text-align:center"><div class="acard-title" style="justify-content:center">&#8592; Back to subjects</div><button class="share-big" onclick="window.location.href='index.html'" >&#x1F3E0; Math Explorer Home</button></div></div></div></div></div>
-</main>
-</div><!-- /section-linalg -->
+<main class="main">
 
+<!-- MODULE 1: VECTORS -->
+<div id="la-vec" class="mod active">
+  <div class="ts">
+    <div class="cb">Linear Algebra &middot; Chapter 1</div>
+    <h1 class="pt">Vectors</h1>
+    <p class="ptag">Direction and magnitude, dot product and angle</p>
+    <div class="pb">
+      <div class="prose">
+        <p>A vector is just an arrow. It has a direction and a length, and that's the whole definition. Put two in the same plane, and a number called the <b>dot product</b> tells you how much they agree: multiply matching components and add them up. If both point roughly the same way, you get a positive number. Perpendicular vectors give exactly zero. Pointing opposite ways gives a negative.</p>
+        <p>This matters because the same quantity equals \(|\mathbf{u}||\mathbf{v}|\cos\theta\), which is why the dot product appears in nearly every formula involving angles. Drag the sliders to adjust <b>u</b> and <b>v</b> and watch the angle update live.</p>
+      </div>
+      <div class="db"><div class="dbt">Key Formulas</div><div class="dbb">\(\mathbf{u}\cdot\mathbf{v}=u_xv_x+u_yv_y\)<br><br>\(|\mathbf{u}|=\sqrt{u_x^2+u_y^2}\)<br><br>\(\theta=\arccos\!\dfrac{\mathbf{u}\cdot\mathbf{v}}{|\mathbf{u}||\mathbf{v}|}\)</div></div>
+    </div>
+  </div>
+  <div class="is">
+    <div class="ih"><span class="il">Adjust u and v with the sliders</span><button class="share-mini" onclick="shareURL(this)">&#x1F517; Share</button></div>
+    <div class="cb2">
+      <div class="cg"><div class="cl">u<sub>x</sub> <span class="cv" id="v-ux-l">2.0</span></div><input type="range" id="v-ux" min="-4" max="4" step="0.1" value="2" oninput="D.vec()"></div>
+      <div class="cg"><div class="cl">u<sub>y</sub> <span class="cv" id="v-uy-l">1.0</span></div><input type="range" id="v-uy" min="-4" max="4" step="0.1" value="1" oninput="D.vec()"></div>
+      <div class="cg"><div class="cl">v<sub>x</sub> <span class="cv" id="v-vx-l">-1.0</span></div><input type="range" id="v-vx" min="-4" max="4" step="0.1" value="-1" oninput="D.vec()"></div>
+      <div class="cg"><div class="cl">v<sub>y</sub> <span class="cv" id="v-vy-l">3.0</span></div><input type="range" id="v-vy" min="-4" max="4" step="0.1" value="3" oninput="D.vec()"></div>
+    </div>
+    <div class="gw" id="vec-win"><canvas id="vec-cv"></canvas><div class="gc">u (dark red) &middot; v (light red)</div></div>
+    <div class="hint"><span class="hint-txt">&#128161; Set u=(1,0) and v=(0,1): the dot product hits exactly 0, confirming perpendicularity. Make them parallel to see the dot product reach |u||v|.</span></div>
+    <div class="rb">
+      <div class="ri"><div class="rl">|u|</div><div class="rv" id="r-umag">--</div></div>
+      <div class="ri"><div class="rl">|v|</div><div class="rv" id="r-vmag">--</div></div>
+      <div class="ri hi"><div class="rl">u &middot; v</div><div class="rv" id="r-dot">--</div></div>
+      <div class="ri hi"><div class="rl">Angle</div><div class="rv" id="r-angle">--</div></div>
+    </div>
+  </div>
 </div>
 
+<!-- MODULE 2: MATRIX x VECTOR -->
+<div id="la-mat" class="mod">
+  <div class="ts">
+    <div class="cb">Linear Algebra &middot; Chapter 2</div>
+    <h1 class="pt">Matrix &times; Vector</h1>
+    <p class="ptag">How a 2&times;2 matrix moves a vector through the plane</p>
+    <div class="pb">
+      <div class="prose">
+        <p>A 2&times;2 matrix transforms a vector by mixing its components. The first column tells you where the x-axis unit vector lands after the transformation. The second column tells you where the y-axis unit vector lands. Everything else follows by linearity: scale the columns and add them.</p>
+        <p>The <b>light arrow</b> is your input vector \(\mathbf{v}\). The <b>dark arrow</b> is \(M\mathbf{v}\). Four numbers produce stretching, shearing, reflection, and rotation. Set a=0, b=-1, c=1, d=0 and you get a 90&deg; counterclockwise rotation.</p>
+      </div>
+      <div class="db"><div class="dbt">Matrix Action</div><div class="dbb">\(\begin{pmatrix}a&b\\c&d\end{pmatrix}\begin{pmatrix}x\\y\end{pmatrix}=\begin{pmatrix}ax{+}by\\cx{+}dy\end{pmatrix}\)</div></div>
+    </div>
+  </div>
+  <div class="is">
+    <div class="ih"><span class="il">Adjust the matrix and input vector</span><button class="share-mini" onclick="shareURL(this)">&#x1F517; Share</button></div>
+    <div class="cb2">
+      <div class="cg"><div class="cl">a <span class="cv" id="m-a-l">2.0</span></div><input type="range" id="m-a" min="-3" max="3" step="0.1" value="2" oninput="D.mat()"></div>
+      <div class="cg"><div class="cl">b <span class="cv" id="m-b-l">1.0</span></div><input type="range" id="m-b" min="-3" max="3" step="0.1" value="1" oninput="D.mat()"></div>
+      <div class="cg"><div class="cl">c <span class="cv" id="m-c-l">0.0</span></div><input type="range" id="m-c" min="-3" max="3" step="0.1" value="0" oninput="D.mat()"></div>
+      <div class="cg"><div class="cl">d <span class="cv" id="m-d-l">2.0</span></div><input type="range" id="m-d" min="-3" max="3" step="0.1" value="2" oninput="D.mat()"></div>
+      <div class="cg"><div class="cl">v<sub>x</sub> <span class="cv" id="m-vx-l">1.0</span></div><input type="range" id="m-vx" min="-3" max="3" step="0.1" value="1" oninput="D.mat()"></div>
+      <div class="cg"><div class="cl">v<sub>y</sub> <span class="cv" id="m-vy-l">1.0</span></div><input type="range" id="m-vy" min="-3" max="3" step="0.1" value="1" oninput="D.mat()"></div>
+    </div>
+    <div class="gw" id="mat-win"><canvas id="mat-cv"></canvas><div class="gc">v (light) &middot; Mv (dark)</div></div>
+    <div class="hint"><span class="hint-txt">&#128161; For a 90&deg; rotation: set a=0, b=-1, c=1, d=0. The vector length stays fixed; only the direction changes. The determinant holds at 1.</span></div>
+    <div class="rb">
+      <div class="ri"><div class="rl">Mv<sub>x</sub></div><div class="rv" id="r-tx">--</div></div>
+      <div class="ri"><div class="rl">Mv<sub>y</sub></div><div class="rv" id="r-ty">--</div></div>
+      <div class="ri hi"><div class="rl">det(M)</div><div class="rv" id="r-mdet">--</div></div>
+      <div class="ri"><div class="rl">|Mv|/|v|</div><div class="rv" id="r-stretch">--</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODULE 3: DETERMINANTS -->
+<div id="la-det" class="mod">
+  <div class="ts">
+    <div class="cb">Linear Algebra &middot; Chapter 3</div>
+    <h1 class="pt">Determinants</h1>
+    <p class="ptag">The signed area of the column parallelogram</p>
+    <div class="pb">
+      <div class="prose">
+        <p>The determinant of a 2&times;2 matrix has a concrete geometric meaning: it's the <b>signed area</b> of the parallelogram formed by the two column vectors. Positive means the columns go counterclockwise from each other. Negative means clockwise. Zero means they're collinear and the parallelogram has collapsed to a line.</p>
+        <p>Adjust the four entries and watch the parallelogram change. When the columns are nearly parallel, the area shrinks toward zero. This is also when the matrix becomes singular: no inverse exists, and linear systems it produces either have no solution or infinitely many.</p>
+      </div>
+      <div class="db"><div class="dbt">Formula</div><div class="dbb">\(\det\!\begin{pmatrix}a&b\\c&d\end{pmatrix}=ad-bc\)<br><br><span style="font-size:9px;color:var(--b3)">columns: (a,c) and (b,d)</span></div></div>
+    </div>
+  </div>
+  <div class="is">
+    <div class="ih"><span class="il">Watch the parallelogram scale and flip</span><button class="share-mini" onclick="shareURL(this)">&#x1F517; Share</button></div>
+    <div class="cb2">
+      <div class="cg"><div class="cl">a <span class="cv" id="d-a-l">2.0</span></div><input type="range" id="d-a" min="-3" max="3" step="0.1" value="2" oninput="D.det()"></div>
+      <div class="cg"><div class="cl">b <span class="cv" id="d-b-l">1.0</span></div><input type="range" id="d-b" min="-3" max="3" step="0.1" value="1" oninput="D.det()"></div>
+      <div class="cg"><div class="cl">c <span class="cv" id="d-c-l">1.0</span></div><input type="range" id="d-c" min="-3" max="3" step="0.1" value="1" oninput="D.det()"></div>
+      <div class="cg"><div class="cl">d <span class="cv" id="d-d-l">2.0</span></div><input type="range" id="d-d" min="-3" max="3" step="0.1" value="2" oninput="D.det()"></div>
+    </div>
+    <div class="gw" id="det-win"><canvas id="det-cv"></canvas><div class="gc">col&#x2081; (dark) &middot; col&#x2082; (red)</div></div>
+    <div class="hint"><span class="hint-txt">&#128161; Set b=a and d=c to make both columns identical. The parallelogram collapses to a line and the determinant reaches zero. Swap b and d to flip the sign.</span></div>
+    <div class="rb">
+      <div class="ri hi"><div class="rl">det(A)</div><div class="rv" id="r-det-val">--</div></div>
+      <div class="ri"><div class="rl">Orientation</div><div class="rv" id="r-det-sign" style="font-size:10px">--</div></div>
+      <div class="ri"><div class="rl">col&#x2081;</div><div class="rv" id="r-det-c1" style="font-size:11px">--</div></div>
+      <div class="ri"><div class="rl">col&#x2082;</div><div class="rv" id="r-det-c2" style="font-size:11px">--</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODULE 4: LINEAR SYSTEMS -->
+<div id="la-sys" class="mod">
+  <div class="ts">
+    <div class="cb">Linear Algebra &middot; Chapter 4</div>
+    <h1 class="pt">Linear Systems</h1>
+    <p class="ptag">Two equations, two lines, one intersection</p>
+    <div class="pb">
+      <div class="prose">
+        <p>A 2&times;2 linear system is two lines. The solution is the point where they cross. Three outcomes are possible: one intersection (unique solution), parallel lines that never meet (no solution), or the same line where every point satisfies both equations (infinitely many solutions).</p>
+        <p>Adjust the coefficients using the sliders. Each equation is \(a_ix + b_iy = c_i\). The <b>determinant</b> of the coefficient matrix tells you immediately which case applies: nonzero means a unique crossing exists, zero means something has gone wrong geometrically.</p>
+      </div>
+      <div class="db"><div class="dbt">Cramer's Rule</div><div class="dbb">\(x=\dfrac{c_1b_2-c_2b_1}{a_1b_2-a_2b_1}\)<br><br>\(y=\dfrac{a_1c_2-a_2c_1}{a_1b_2-a_2b_1}\)</div></div>
+    </div>
+  </div>
+  <div class="is">
+    <div class="ih"><span class="il">Watch the intersection point move</span><button class="share-mini" onclick="shareURL(this)">&#x1F517; Share</button></div>
+    <div class="cb2">
+      <div class="cg"><div class="cl">a&#x2081; <span class="cv" id="s-a1-l">2.0</span></div><input type="range" id="s-a1" min="-3" max="3" step="0.1" value="2" oninput="D.sys()"></div>
+      <div class="cg"><div class="cl">b&#x2081; <span class="cv" id="s-b1-l">1.0</span></div><input type="range" id="s-b1" min="-3" max="3" step="0.1" value="1" oninput="D.sys()"></div>
+      <div class="cg"><div class="cl">c&#x2081; <span class="cv" id="s-c1-l">3.0</span></div><input type="range" id="s-c1" min="-6" max="6" step="0.1" value="3" oninput="D.sys()"></div>
+      <div class="cg"><div class="cl">a&#x2082; <span class="cv" id="s-a2-l">1.0</span></div><input type="range" id="s-a2" min="-3" max="3" step="0.1" value="1" oninput="D.sys()"></div>
+      <div class="cg"><div class="cl">b&#x2082; <span class="cv" id="s-b2-l">-1.0</span></div><input type="range" id="s-b2" min="-3" max="3" step="0.1" value="-1" oninput="D.sys()"></div>
+      <div class="cg"><div class="cl">c&#x2082; <span class="cv" id="s-c2-l">1.0</span></div><input type="range" id="s-c2" min="-6" max="6" step="0.1" value="1" oninput="D.sys()"></div>
+    </div>
+    <div class="gw" id="sys-win"><canvas id="sys-cv"></canvas><div class="gc">line 1 (dark) &middot; line 2 (light red)</div></div>
+    <div class="hint"><span class="hint-txt">&#128161; Set a&#x2081;=2, b&#x2081;=1 and a&#x2082;=4, b&#x2082;=2 to make the lines parallel. The determinant drops to zero and the intersection disappears.</span></div>
+    <div class="rb">
+      <div class="ri"><div class="rl">x</div><div class="rv" id="r-sol-x">--</div></div>
+      <div class="ri"><div class="rl">y</div><div class="rv" id="r-sol-y">--</div></div>
+      <div class="ri"><div class="rl">det(A)</div><div class="rv" id="r-sol-det">--</div></div>
+      <div class="ri hi"><div class="rl">Status</div><div class="rv" id="r-sol-status" style="font-size:10px">--</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODULE 5: EIGENVALUES -->
+<div id="la-eig" class="mod">
+  <div class="ts">
+    <div class="cb">Linear Algebra &middot; Chapter 5</div>
+    <h1 class="pt">Eigenvalues &amp; Eigenvectors</h1>
+    <p class="ptag">The directions a transformation leaves unchanged</p>
+    <div class="pb">
+      <div class="prose">
+        <p>When a matrix transforms a vector, most vectors get rotated in the process. <b>Eigenvectors</b> don't. They only stretch or flip, staying on the same line through the origin. The stretch factor is the <b>eigenvalue</b>. A negative eigenvalue means the vector reverses direction rather than just scaling.</p>
+        <p>The faint circle is the unit circle. The light ellipse shows where the unit circle maps under the transformation. The dark lines are the eigenvector directions. Try a=0, b=-1, c=1, d=0 for a pure rotation where no real eigenvectors exist at all.</p>
+      </div>
+      <div class="db"><div class="dbt">Characteristic Equation</div><div class="dbb">\(\det(A-\lambda I)=0\)<br><br>\(\lambda^2-(a{+}d)\lambda\)<br>\(+(ad-bc)=0\)<br><br><span style="font-size:9px;color:var(--b3)">&Delta;&lt;0 means complex &lambda;</span></div></div>
+    </div>
+  </div>
+  <div class="is">
+    <div class="ih"><span class="il">Eigenvector directions update live</span><button class="share-mini" onclick="shareURL(this)">&#x1F517; Share</button></div>
+    <div class="cb2">
+      <div class="cg"><div class="cl">a <span class="cv" id="e-a-l">3.0</span></div><input type="range" id="e-a" min="-3" max="3" step="0.1" value="3" oninput="D.eig()"></div>
+      <div class="cg"><div class="cl">b <span class="cv" id="e-b-l">1.0</span></div><input type="range" id="e-b" min="-3" max="3" step="0.1" value="1" oninput="D.eig()"></div>
+      <div class="cg"><div class="cl">c <span class="cv" id="e-c-l">1.0</span></div><input type="range" id="e-c" min="-3" max="3" step="0.1" value="1" oninput="D.eig()"></div>
+      <div class="cg"><div class="cl">d <span class="cv" id="e-d-l">3.0</span></div><input type="range" id="e-d" min="-3" max="3" step="0.1" value="3" oninput="D.eig()"></div>
+    </div>
+    <div class="gw" id="eig-win"><canvas id="eig-cv"></canvas><div class="gc">unit circle (faint) &middot; image ellipse &middot; eigenvectors</div></div>
+    <div class="hint"><span class="hint-txt">&#128161; Try a=2, b=0, c=0, d=3: diagonal matrix, eigenvectors align with coordinate axes. Try a=0, b=-1, c=1, d=0: pure rotation, eigenvalues go complex.</span></div>
+    <div class="rb">
+      <div class="ri hi"><div class="rl">&lambda;&#x2081;</div><div class="rv" id="r-l1" style="font-size:12px">--</div></div>
+      <div class="ri hi"><div class="rl">&lambda;&#x2082;</div><div class="rv" id="r-l2" style="font-size:12px">--</div></div>
+      <div class="ri"><div class="rl">v&#x2081;</div><div class="rv" id="r-evec1" style="font-size:11px">--</div></div>
+      <div class="ri"><div class="rl">v&#x2082;</div><div class="rv" id="r-evec2" style="font-size:11px">--</div></div>
+      <div class="ri"><div class="rl">Type</div><div class="rv" id="r-eigtype" style="font-size:10px">--</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODULE 6: LINEAR TRANSFORMATIONS -->
+<div id="la-trans" class="mod">
+  <div class="ts">
+    <div class="cb">Linear Algebra &middot; Chapter 6</div>
+    <h1 class="pt">Linear Transformations</h1>
+    <p class="ptag">How a matrix deforms the entire coordinate plane</p>
+    <div class="pb">
+      <div class="prose">
+        <p>A 2&times;2 matrix deforms the whole plane at once. Three things always remain true: straight lines stay straight, evenly spaced parallel lines stay evenly spaced, and the origin stays fixed. Those three constraints define a linear transformation.</p>
+        <p>The faint grid shows the original coordinate system. The colored grid shows where every point ends up after the transformation. The shaded <b>unit square</b> shows how area has scaled; its area is always \(|\det(A)|\). When the determinant is negative, the transformation flips orientation like a reflection.</p>
+      </div>
+      <div class="db"><div class="dbt">Column Interpretation</div><div class="dbb">\(A\mathbf{e}_1=\text{col}_1(A)\)<br>\(A\mathbf{e}_2=\text{col}_2(A)\)<br><br><span style="font-size:9px;color:var(--b3)">columns = where the<br>basis vectors land</span></div></div>
+    </div>
+  </div>
+  <div class="is">
+    <div class="ih"><span class="il">Watch the grid deform in real time</span><button class="share-mini" onclick="shareURL(this)">&#x1F517; Share</button></div>
+    <div class="cb2">
+      <div class="cg"><div class="cl">a <span class="cv" id="t-a-l">1.50</span></div><input type="range" id="t-a" min="-2.5" max="2.5" step="0.05" value="1.5" oninput="D.trans()"></div>
+      <div class="cg"><div class="cl">b <span class="cv" id="t-b-l">0.50</span></div><input type="range" id="t-b" min="-2.5" max="2.5" step="0.05" value="0.5" oninput="D.trans()"></div>
+      <div class="cg"><div class="cl">c <span class="cv" id="t-c-l">0.50</span></div><input type="range" id="t-c" min="-2.5" max="2.5" step="0.05" value="0.5" oninput="D.trans()"></div>
+      <div class="cg"><div class="cl">d <span class="cv" id="t-d-l">1.50</span></div><input type="range" id="t-d" min="-2.5" max="2.5" step="0.05" value="1.5" oninput="D.trans()"></div>
+    </div>
+    <div class="gw" id="trans-win"><canvas id="trans-cv"></canvas><div class="gc">original (faint) &rarr; transformed grid (red)</div></div>
+    <div class="hint"><span class="hint-txt">&#128161; Set a=1, b=0, c=0, d=1 for the identity (nothing moves). Try a=1, b=1, c=0, d=1 for a horizontal shear where columns of points tilt but keep their spacing.</span></div>
+    <div class="rb">
+      <div class="ri hi"><div class="rl">det(A)</div><div class="rv" id="r-t-det">--</div></div>
+      <div class="ri"><div class="rl">i lands at</div><div class="rv" id="r-t-i" style="font-size:11px">--</div></div>
+      <div class="ri"><div class="rl">j lands at</div><div class="rv" id="r-t-j" style="font-size:11px">--</div></div>
+      <div class="ri"><div class="rl">Orientation</div><div class="rv" id="r-t-type" style="font-size:10px">--</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODULE 7: ABOUT -->
+<div id="la-about" class="mod">
+  <div class="ts" style="max-height:none">
+    <div class="cb">Creator &middot; About</div>
+    <h1 class="pt">About the Creator</h1>
+    <p class="ptag">Vyom Krothapalli, Class of 2027</p>
+  </div>
+  <div class="about-wrap">
+    <div class="about-hero">
+      <div class="about-avatar">VK</div>
+      <div>
+        <div class="about-hero-name">Vyom Krothapalli</div>
+        <div class="about-hero-meta">Class of 2027 &middot; Downingtown STEM Academy &middot; IB Program</div>
+      </div>
+    </div>
+    <div class="about-grid">
+      <div class="acard">
+        <div class="acard-title">&#9998; About This Module</div>
+        <p class="bio-p">Math Explorer is a collection of interactive modules for IB, AP, and college-level math. The linear algebra section covers vectors, determinants, eigenvalues, and transformations through canvas-based visualizations built without any external graphics libraries.</p>
+        <p class="bio-p">Most textbook treatments work through pages of notation before showing a single picture. These modules try to put the geometry first, so the intuition arrives before the algebra. The math is still there. It just shows up after you already know what it's describing.</p>
+        <div class="clink" style="margin-top:16px">
+          <div class="clink-icon">&#x1F419;</div>
+          <a href="https://github.com/hiccup2367" target="_blank">github.com/hiccup2367</a>
+        </div>
+      </div>
+      <div>
+        <div class="acard" style="text-align:center">
+          <div class="acard-title" style="justify-content:center">&#8592; Navigate</div>
+          <button class="share-big" onclick="window.location.href='index.html'">&#x1F3E0; Math Explorer Home</button>
+          <button class="share-big" onclick="window.location.href='calculus.html'" style="background:var(--b8)">&#x222B; Calculus Modules</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</main>
+</div>
 <script>
-const $ = id => document.getElementById(id);
-function goStub(section,modId,navEl){
-  const secEl=$('section-'+section);
-  if(!secEl)return;
-  secEl.querySelectorAll('.mod').forEach(m=>m.classList.remove('active'));
-  const mod=$(modId);if(mod)mod.classList.add('active');
-  secEl.querySelectorAll('.nv').forEach(n=>n.classList.remove('active'));
-  if(navEl)navEl.classList.add('active');
+const $=id=>document.getElementById(id);
+function shareURL(btn){
+  navigator.clipboard.writeText(location.href).then(()=>{
+    btn.textContent='Copied';btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent='Share';btn.classList.remove('copied');},1800);
+  }).catch(()=>{});
 }
+function gctx(id){
+  const cv=$(id);if(!cv)return null;
+  const dpr=devicePixelRatio||1,r=cv.getBoundingClientRect();
+  if(!r.width||!r.height)return null;
+  cv.width=r.width*dpr;cv.height=r.height*dpr;
+  const c=cv.getContext('2d');c.scale(dpr,dpr);
+  return{c,W:r.width,H:r.height};
+}
+function axes(c,W,H,ox,oy,sc){
+  c.strokeStyle='#fde8e8';c.lineWidth=0.8;
+  for(let x=((ox%sc)+sc)%sc;x<W;x+=sc){c.beginPath();c.moveTo(x,0);c.lineTo(x,H);c.stroke();}
+  for(let y=((oy%sc)+sc)%sc;y<H;y+=sc){c.beginPath();c.moveTo(0,y);c.lineTo(W,y);c.stroke();}
+  c.strokeStyle='#fca5a5';c.lineWidth=1.2;
+  c.beginPath();c.moveTo(0,oy);c.lineTo(W,oy);c.stroke();
+  c.beginPath();c.moveTo(ox,0);c.lineTo(ox,H);c.stroke();
+  c.fillStyle='#d1a0a0';c.font='8.5px JetBrains Mono,monospace';c.textAlign='center';
+  for(let i=-Math.ceil(ox/sc);i<=Math.ceil((W-ox)/sc);i++){
+    if(!i)continue;const x=ox+i*sc;if(x<6||x>W-6)continue;c.fillText(i,x,oy+11);
+  }
+  c.textAlign='right';
+  for(let i=-Math.ceil(oy/sc);i<=Math.ceil((H-oy)/sc);i++){
+    if(!i)continue;const y=oy-i*sc;if(y<6||y>H-6)continue;c.fillText(i,ox-4,y+3);
+  }
+}
+function arr(c,x1,y1,x2,y2,col,lw){
+  lw=lw||2.3;
+  const dx=x2-x1,dy=y2-y1,len=Math.hypot(dx,dy);if(len<4)return;
+  const ang=Math.atan2(dy,dx),hs=Math.min(12,len*.3);
+  c.save();c.strokeStyle=col;c.fillStyle=col;c.lineWidth=lw;c.lineCap='round';
+  c.beginPath();c.moveTo(x1,y1);c.lineTo(x2,y2);c.stroke();
+  c.beginPath();
+  c.moveTo(x2,y2);
+  c.lineTo(x2-hs*Math.cos(ang-Math.PI/7),y2-hs*Math.sin(ang-Math.PI/7));
+  c.lineTo(x2-hs*Math.cos(ang+Math.PI/7),y2-hs*Math.sin(ang+Math.PI/7));
+  c.closePath();c.fill();c.restore();
+}
+function vlbl(c,txt,x,y,col){
+  c.save();c.fillStyle=col;c.font='italic bold 11px Lora,serif';
+  c.textAlign='left';c.fillText(txt,x+7,y-5);c.restore();
+}
+function dot(c,x,y,r,col){
+  c.save();c.fillStyle=col;c.beginPath();c.arc(x,y,r,0,2*Math.PI);c.fill();c.restore();
+}
+function go(id,el){
+  document.querySelectorAll('#section-linalg .mod').forEach(m=>m.classList.remove('active'));
+  document.querySelectorAll('#section-linalg .nv').forEach(n=>n.classList.remove('active'));
+  const mod=$('la-'+id);if(mod)mod.classList.add('active');
+  if(el)el.classList.add('active');
+  setTimeout(()=>{if(D[id])D[id]();},40);
+}
+const D={};
+D.vec=function(){
+  const g=gctx('vec-cv');if(!g)return;
+  const{c,W,H}=g,ox=W/2,oy=H/2,sc=50;
+  const ux=+$('v-ux').value,uy=+$('v-uy').value;
+  const vx=+$('v-vx').value,vy=+$('v-vy').value;
+  $('v-ux-l').textContent=ux.toFixed(1);$('v-uy-l').textContent=uy.toFixed(1);
+  $('v-vx-l').textContent=vx.toFixed(1);$('v-vy-l').textContent=vy.toFixed(1);
+  c.clearRect(0,0,W,H);axes(c,W,H,ox,oy,sc);
+  const uM=Math.hypot(ux,uy),vM=Math.hypot(vx,vy);
+  if(uM>.02&&vM>.02){
+    const uA=Math.atan2(-uy,ux),vA=Math.atan2(-vy,vx);
+    let diff=vA-uA;
+    while(diff>Math.PI)diff-=2*Math.PI;while(diff<-Math.PI)diff+=2*Math.PI;
+    c.save();c.strokeStyle='#fca5a5';c.lineWidth=1.4;
+    c.beginPath();c.arc(ox,oy,30,uA,uA+diff,diff<0);c.stroke();c.restore();
+  }
+  arr(c,ox,oy,ox+ux*sc,oy-uy*sc,'#7f1d1d',2.8);
+  arr(c,ox,oy,ox+vx*sc,oy-vy*sc,'#dc2626',2.2);
+  vlbl(c,'u',ox+ux*sc,oy-uy*sc,'#7f1d1d');
+  vlbl(c,'v',ox+vx*sc,oy-vy*sc,'#dc2626');
+  const dp=ux*vx+uy*vy;
+  const ang=(uM>.02&&vM>.02)?Math.acos(Math.max(-1,Math.min(1,dp/(uM*vM))))*180/Math.PI:0;
+  $('r-umag').textContent=uM.toFixed(3);$('r-vmag').textContent=vM.toFixed(3);
+  $('r-dot').textContent=dp.toFixed(3);$('r-angle').textContent=ang.toFixed(1)+'deg';
+};
+D.mat=function(){
+  const g=gctx('mat-cv');if(!g)return;
+  const{c,W,H}=g,ox=W/2,oy=H/2,sc=52;
+  const a=+$('m-a').value,b=+$('m-b').value,mc=+$('m-c').value,d=+$('m-d').value;
+  const vx=+$('m-vx').value,vy=+$('m-vy').value;
+  ['m-a','m-b','m-c','m-d','m-vx','m-vy'].forEach(id=>{const e=$(id+'-l');if(e)e.textContent=(+$(id).value).toFixed(1);});
+  const tx=a*vx+b*vy,ty=mc*vx+d*vy;
+  c.clearRect(0,0,W,H);axes(c,W,H,ox,oy,sc);
+  arr(c,ox,oy,ox+vx*sc,oy-vy*sc,'#fca5a5',2.1);vlbl(c,'v',ox+vx*sc,oy-vy*sc,'#fca5a5');
+  arr(c,ox,oy,ox+tx*sc,oy-ty*sc,'#7f1d1d',2.8);vlbl(c,'Mv',ox+tx*sc,oy-ty*sc,'#7f1d1d');
+  dot(c,ox,oy,3,'#3b0a0a');
+  const vM=Math.hypot(vx,vy),mvM=Math.hypot(tx,ty);
+  $('r-tx').textContent=tx.toFixed(3);$('r-ty').textContent=ty.toFixed(3);
+  $('r-mdet').textContent=(a*d-b*mc).toFixed(3);
+  $('r-stretch').textContent=vM>.001?(mvM/vM).toFixed(3):'--';
+};
+D.det=function(){
+  const g=gctx('det-cv');if(!g)return;
+  const{c,W,H}=g,ox=W/2,oy=H/2,sc=55;
+  const a=+$('d-a').value,b=+$('d-b').value,dc_=+$('d-c').value,d=+$('d-d').value;
+  ['d-a','d-b','d-c','d-d'].forEach(id=>{const e=$(id+'-l');if(e)e.textContent=(+$(id).value).toFixed(1);});
+  const det=a*d-b*dc_;
+  c.clearRect(0,0,W,H);axes(c,W,H,ox,oy,sc);
+  const c1x=ox+a*sc,c1y=oy-dc_*sc,c2x=ox+b*sc,c2y=oy-d*sc;
+  c.save();c.beginPath();
+  c.moveTo(ox,oy);c.lineTo(c1x,c1y);c.lineTo(c1x+c2x-ox,c1y+c2y-oy);c.lineTo(c2x,c2y);c.closePath();
+  c.fillStyle=det>=0?'rgba(127,29,29,0.13)':'rgba(220,38,38,0.10)';c.fill();
+  c.strokeStyle=det>=0?'#991b1b':'#dc2626';c.lineWidth=1.5;c.stroke();c.restore();
+  arr(c,ox,oy,c1x,c1y,'#7f1d1d',2.8);arr(c,ox,oy,c2x,c2y,'#dc2626',2.3);
+  vlbl(c,'c1',c1x,c1y,'#7f1d1d');vlbl(c,'c2',c2x,c2y,'#dc2626');
+  c.save();c.fillStyle='#7f1d1d';c.font='bold 11px JetBrains Mono,monospace';
+  c.textAlign='center';c.fillText(det.toFixed(2),(c1x+c2x)/2,(c1y+c2y)/2);c.restore();
+  $('r-det-val').textContent=det.toFixed(4);
+  $('r-det-sign').textContent=det>.001?'CCW (positive)':det<-.001?'CW (negative)':'collinear (zero)';
+  $('r-det-c1').textContent='('+a.toFixed(1)+', '+dc_.toFixed(1)+')';
+  $('r-det-c2').textContent='('+b.toFixed(1)+', '+d.toFixed(1)+')';
+};
+D.sys=function(){
+  const g=gctx('sys-cv');if(!g)return;
+  const{c,W,H}=g,ox=W/2,oy=H/2,sc=50;
+  const a1=+$('s-a1').value,b1=+$('s-b1').value,c1=+$('s-c1').value;
+  const a2=+$('s-a2').value,b2=+$('s-b2').value,c2=+$('s-c2').value;
+  ['s-a1','s-b1','s-c1','s-a2','s-b2','s-c2'].forEach(id=>{const e=$(id+'-l');if(e)e.textContent=(+$(id).value).toFixed(1);});
+  c.clearRect(0,0,W,H);axes(c,W,H,ox,oy,sc);
+  function drawLine(a,b,rhs,col,lw){
+    c.save();c.strokeStyle=col;c.lineWidth=lw;c.beginPath();
+    if(Math.abs(b)>.001){
+      const wx0=-ox/sc,wx1=(W-ox)/sc;
+      c.moveTo(ox+wx0*sc,oy-(rhs-a*wx0)/b*sc);c.lineTo(ox+wx1*sc,oy-(rhs-a*wx1)/b*sc);
+    }else if(Math.abs(a)>.001){const cx=ox+(rhs/a)*sc;c.moveTo(cx,0);c.lineTo(cx,H);}
+    c.stroke();c.restore();
+  }
+  drawLine(a1,b1,c1,'#7f1d1d',2.4);drawLine(a2,b2,c2,'#ef4444',2.0);
+  const det=a1*b2-a2*b1;
+  $('r-sol-det').textContent=det.toFixed(3);
+  if(Math.abs(det)>.001){
+    const x=(c1*b2-c2*b1)/det,y=(a1*c2-a2*c1)/det;
+    const px=ox+x*sc,py=oy-y*sc;
+    c.save();c.strokeStyle='#3b0a0a';c.lineWidth=1.6;
+    c.beginPath();c.arc(px,py,7,0,2*Math.PI);c.stroke();
+    dot(c,px,py,3,'#3b0a0a');c.restore();
+    $('r-sol-x').textContent=x.toFixed(3);$('r-sol-y').textContent=y.toFixed(3);
+    $('r-sol-status').textContent='unique solution';
+  }else{
+    const nx=c1*b2-c2*b1,ny=a1*c2-a2*c1;
+    $('r-sol-x').textContent='--';$('r-sol-y').textContent='--';
+    $('r-sol-status').textContent=(Math.abs(nx)<.01&&Math.abs(ny)<.01)?'infinite solutions':'no solution (parallel)';
+  }
+};
+D.eig=function(){
+  const g=gctx('eig-cv');if(!g)return;
+  const{c,W,H}=g,ox=W/2,oy=H/2,sc=52;
+  const a=+$('e-a').value,b=+$('e-b').value,ec=+$('e-c').value,d=+$('e-d').value;
+  ['e-a','e-b','e-c','e-d'].forEach(id=>{const e=$(id+'-l');if(e)e.textContent=(+$(id).value).toFixed(1);});
+  const tr=a+d,det_=a*d-b*ec,disc=tr*tr-4*det_;
+  c.clearRect(0,0,W,H);axes(c,W,H,ox,oy,sc);
+  c.save();c.strokeStyle='#fecaca';c.lineWidth=1.2;c.beginPath();c.arc(ox,oy,sc,0,2*Math.PI);c.stroke();c.restore();
+  c.save();c.strokeStyle='#fca5a5';c.lineWidth=1.6;c.beginPath();
+  for(let i=0;i<=72;i++){
+    const t=i/72*2*Math.PI,px=Math.cos(t),py=Math.sin(t);
+    const tx_=a*px+b*py,ty_=ec*px+d*py;
+    i===0?c.moveTo(ox+tx_*sc,oy-ty_*sc):c.lineTo(ox+tx_*sc,oy-ty_*sc);
+  }
+  c.stroke();c.restore();
+  if(disc>=0){
+    const sqd=Math.sqrt(Math.max(0,disc)),l1=(tr+sqd)/2,l2=(tr-sqd)/2;
+    function eigvec(lam){
+      const r1=[a-lam,b],r2=[ec,d-lam];
+      const n1=Math.hypot(r1[0],r1[1]),n2=Math.hypot(r2[0],r2[1]);
+      const row=n1>n2?r1:r2;
+      const m=Math.hypot(row[1],-row[0]);
+      return m<.001?[1,0]:[row[1]/m,-row[0]/m];
+    }
+    const v1=eigvec(l1),v2=eigvec(l2),evL=Math.min(W,H)*.33;
+    arr(c,ox,oy,ox+v1[0]*evL,oy-v1[1]*evL,'#7f1d1d',2.8);
+    arr(c,ox,oy,ox-v1[0]*evL,oy+v1[1]*evL,'#7f1d1d',2.8);
+    arr(c,ox,oy,ox+v2[0]*evL,oy-v2[1]*evL,'#dc2626',2.2);
+    arr(c,ox,oy,ox-v2[0]*evL,oy+v2[1]*evL,'#dc2626',2.2);
+    c.save();c.font='10px JetBrains Mono,monospace';c.textAlign='center';
+    c.fillStyle='#7f1d1d';c.fillText('L1='+l1.toFixed(2),ox+v1[0]*evL*1.25,oy-v1[1]*evL*1.25);
+    c.fillStyle='#dc2626';c.fillText('L2='+l2.toFixed(2),ox+v2[0]*evL*1.25,oy-v2[1]*evL*1.25);
+    c.restore();
+    $('r-l1').textContent=l1.toFixed(3);$('r-l2').textContent=l2.toFixed(3);
+    $('r-evec1').textContent='['+v1[0].toFixed(2)+', '+v1[1].toFixed(2)+']';
+    $('r-evec2').textContent='['+v2[0].toFixed(2)+', '+v2[1].toFixed(2)+']';
+    $('r-eigtype').textContent='real eigenvalues';
+  }else{
+    const re=tr/2,im=Math.sqrt(-disc)/2;
+    $('r-l1').textContent=re.toFixed(2)+'+'+im.toFixed(2)+'i';
+    $('r-l2').textContent=re.toFixed(2)+'-'+im.toFixed(2)+'i';
+    $('r-evec1').textContent='complex';$('r-evec2').textContent='complex';
+    $('r-eigtype').textContent='no real eigenvectors';
+    c.save();c.fillStyle='#fca5a5';c.font='italic 11px Lora,serif';
+    c.textAlign='center';c.fillText('no real eigenvectors',ox,oy-sc-16);c.restore();
+  }
+};
+D.trans=function(){
+  const g=gctx('trans-cv');if(!g)return;
+  const{c,W,H}=g,ox=W/2,oy=H/2,sc=50;
+  const a=+$('t-a').value,b=+$('t-b').value,tc=+$('t-c').value,d=+$('t-d').value;
+  ['t-a','t-b','t-c','t-d'].forEach(id=>{const e=$(id+'-l');if(e)e.textContent=(+$(id).value).toFixed(2);});
+  c.clearRect(0,0,W,H);
+  const R=5;
+  c.save();c.strokeStyle='#fde8e8';c.lineWidth=0.7;
+  for(let i=-R;i<=R;i++){
+    c.beginPath();c.moveTo(ox+i*sc,0);c.lineTo(ox+i*sc,H);c.stroke();
+    c.beginPath();c.moveTo(0,oy+i*sc);c.lineTo(W,oy+i*sc);c.stroke();
+  }
+  c.restore();
+  const T=(wx,wy)=>({x:ox+(a*wx+b*wy)*sc,y:oy-(tc*wx+d*wy)*sc});
+  for(let i=-R;i<=R;i++){
+    c.save();c.strokeStyle=i===0?'#fca5a5':'#fecaca';c.lineWidth=i===0?1.4:0.8;
+    let p=T(i,-(R+1)),q=T(i,R+1);c.beginPath();c.moveTo(p.x,p.y);c.lineTo(q.x,q.y);c.stroke();
+    p=T(-(R+1),i);q=T(R+1,i);c.beginPath();c.moveTo(p.x,p.y);c.lineTo(q.x,q.y);c.stroke();
+    c.restore();
+  }
+  const sq=[T(0,0),T(1,0),T(1,1),T(0,1)];
+  c.save();c.beginPath();c.moveTo(sq[0].x,sq[0].y);
+  sq.slice(1).forEach(p=>c.lineTo(p.x,p.y));c.closePath();
+  c.fillStyle='rgba(127,29,29,0.14)';c.fill();c.strokeStyle='#991b1b';c.lineWidth=1.7;c.stroke();c.restore();
+  const orig=T(0,0),pi_=T(1,0),pj=T(0,1);
+  arr(c,orig.x,orig.y,pi_.x,pi_.y,'#7f1d1d',2.8);vlbl(c,'i',pi_.x,pi_.y,'#7f1d1d');
+  arr(c,orig.x,orig.y,pj.x,pj.y,'#dc2626',2.3);vlbl(c,'j',pj.x,pj.y,'#dc2626');
+  dot(c,orig.x,orig.y,3,'#3b0a0a');
+  const det=a*d-b*tc;
+  $('r-t-det').textContent=det.toFixed(3);
+  $('r-t-i').textContent='['+a.toFixed(2)+', '+tc.toFixed(2)+']';
+  $('r-t-j').textContent='['+b.toFixed(2)+', '+d.toFixed(2)+']';
+  $('r-t-type').textContent=Math.abs(det)<.001?'singular':det<0?'orientation reversed':'orientation preserved';
+};
 window.addEventListener('DOMContentLoaded',()=>{
   if(typeof renderMathInElement!=='undefined'){
-    renderMathInElement(document.body,{delimiters:[{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}],throwOnError:false});
+    renderMathInElement(document.body,{
+      delimiters:[{left:'\\(',right:'\\)',display:false},{left:'\\[',right:'\\]',display:true}],
+      throwOnError:false
+    });
   }
+  setTimeout(()=>D.vec(),120);
+  window.addEventListener('resize',()=>{
+    const active=document.querySelector('#section-linalg .mod.active');
+    if(active){const id=active.id.replace('la-','');if(D[id])D[id]();}
+  });
 });
 </script>
 </body>
